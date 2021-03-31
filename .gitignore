@@ -1,5 +1,6 @@
-__pycache__
-build/*
-dist/*
-Controller.spec
-.idea/*
+*/__pycache__
+*/build/*
+*/dist/*
+*/Controller.spec
+*/.idea/*
+*/logs/*.log
