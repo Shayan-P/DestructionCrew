@@ -10,6 +10,6 @@ class Attacker:
         return "man attacker am", 10
 
     def get_move(self):
-        return Direction.LEFT.value
+        return Direction.CENTER.value
 #        return random.choice(list(Direction)).value
 

@@ -21,13 +21,17 @@ class AI:
     """
 
     def turn(self) -> (str, int, int):
-        if FIRST_MOVE:
-            init(self.game)
-        ant = get_ant(self.game.antType)
-        ant.game = self.game
-        self.message, self.value = ant.get_message()
-        self.direction = ant.get_move()
-        return self.message, self.value, self.direction
+        try:
+            if FIRST_MOVE:
+                init(self.game)
+            ant = get_ant(self.game.antType)
+            ant.game = self.game
+            self.message, self.value = ant.get_message()
+            self.direction = ant.get_move()
+            logger.info(str([self.message, self.value, self.direction]))
+            return self.message, self.value, self.direction
+        except Exception as e:
+            logger.error(e)
 
 
 FIRST_MOVE = True
@@ -46,6 +50,6 @@ def init(game):
 
 def get_ant(ant_type):
     if ant_type == 0:
-        return worker
-    else:
         return attacker
+    else:
+        return worker
