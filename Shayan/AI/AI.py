@@ -51,7 +51,7 @@ def init(game):
 
 
 def get_ant(ant_type):
-    if ant_type == 0:
+    if ant_type == AntType.SARBAAZ.value:
         return attacker
     else:
         return worker
