@@ -1,17 +1,16 @@
 from .Map import *
-import random
 
 
 class Worker:
     def __init__(self, game):
         self.game = game
         self.grid = Grid(game)
-        self.dfs_generator = self.dfs(self.get_now_pos())
+        self.dfs_generator = self.dfs(self.get_now_pos_cell())
 
     def get_message(self):
         return "man worker am", 10
 
-    def get_move(self):
+    def update_map(self):
         view_distance = self.game.viewDistance
         print("VIEW IS ", view_distance)
         if view_distance == 0:  # ina bug zadan ino 0 midan!
@@ -22,23 +21,63 @@ class Worker:
                 if cell is not None:
                     self.grid.see_cell(cell)
 
-        print("I'm in", self.get_now_pos())
+    def print_statistics(self):
+        print("I'm in", self.get_now_pos_cell())
         self.grid.print_all_we_know_from_map()
 
-        x = next(self.dfs_generator)
-        print("I moved", x)
-        return x.value
+    def listen_to_chat_box(self):
+        pass
 
-    def get_now_pos(self):
+    def grid_pre_calculates(self):
+        self.grid.pre_calculate_bfs(self.get_now_pos_cell(), False)
+        self.grid.pre_calculate_bfs(self.get_now_pos_cell(), True)
+
+    def do_pre_tasks(self):
+        self.update_map()
+        self.grid_pre_calculates()
+        self.listen_to_chat_box()
+
+    def get_move(self):
+        self.do_pre_tasks()
+        self.print_statistics()
+        return self.find_best_and_grab_resource().value
+#        return next(self.dfs_generator).value
+
+    def get_now_pos_cell(self):
         return Cell(self.game.ant.currentX, self.game.ant.currentY)
+
+    def get_base_cell(self):
+        return Cell(self.game.baseX, self.game.baseY)
 
     def dfs(self, now):
         self.grid.visit_cell(now)
-        my_directions = DIRECTIONS.copy()
-        random.shuffle(my_directions)
-        for direction in my_directions:
+        for direction in get_random_directions():
             nxt = now.go_to(direction)
             if not self.grid.is_visited(nxt) and not self.grid.is_wall(nxt):
                 yield direction
                 yield from self.dfs(nxt)
                 yield nxt.direction_to(now)
+
+    def find_best_and_grab_resource(self):
+        # if you have grabbed it go back to base
+        if self.game.ant.currentResource.value - self.grid.expected_distance(self.get_now_pos_cell(), self.get_base_cell()) <= 0:
+            return self.go_grab_resource()
+        else:
+            return self.go_to_base()
+
+    def go_grab_resource(self):
+        cell, score = self.grid.get_best_cell_score_with_resource(self.get_now_pos_cell())
+        path = self.grid.get_bfs_path(self.get_now_pos_cell(), cell, False)
+        # what if path is None?
+        print("want to grab resource from", cell, "path is ", *path)
+        return self.get_first_step_direction(path)
+
+    def go_to_base(self):
+        path = self.grid.get_bfs_path(self.get_now_pos_cell(), self.get_base_cell(), False)
+        print("want to go back to base. path is ", *path)
+        return self.get_first_step_direction(path)
+
+    def get_first_step_direction(self, path):
+        assert path[0] == self.get_now_pos_cell()
+        assert len(path) > 1
+        return path[0].direction_to(path[1])

@@ -22,12 +22,14 @@ class AI:
 
     def turn(self) -> (str, int, int):
         try:
-            if FIRST_MOVE:
+            global turn_count
+            if turn_count == 0:
                 init(self.game)
+            turn_count += 1  # store the turns
             ant = get_ant(self.game.antType)
             ant.game = self.game
-            self.message, self.value = ant.get_message()
             self.direction = ant.get_move()
+            self.message, self.value = ant.get_message()
             logger.info(str([self.message, self.value, self.direction]))
             print("GO ", self.message, self.value, self.direction)
             return self.message, self.value, self.direction
@@ -36,16 +38,14 @@ class AI:
             raise e
 
 
-FIRST_MOVE = True
-
+turn_count = 0
 logger = get_logger()
 worker = None
 attacker = None
 
 
 def init(game):
-    global FIRST_MOVE, worker, attacker
-    FIRST_MOVE = False
+    global worker, attacker
     worker = Worker(game)
     attacker = Attacker(game)
 
