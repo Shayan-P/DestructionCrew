@@ -29,9 +29,11 @@ class AI:
             self.message, self.value = ant.get_message()
             self.direction = ant.get_move()
             logger.info(str([self.message, self.value, self.direction]))
+            print("GO ", self.message, self.value, self.direction)
             return self.message, self.value, self.direction
         except Exception as e:
-            logger.error(e)
+            logger.error(str(e))
+            raise e
 
 
 FIRST_MOVE = True

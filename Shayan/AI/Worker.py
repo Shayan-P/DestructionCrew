@@ -26,7 +26,7 @@ class Worker:
         random.shuffle(directions)
         for direction in directions:
             nxt = now.adjacent(direction)
-            if self.grid.is_unknown(nxt):
+            if self.grid.is_unknown(nxt) and self.game.ant.getMapRelativeCell(nxt.x-now.x, nxt.y-now.y) == CellType.EMPTY:
                 yield direction
                 self.grid.put_cell(nxt, 0)
                 if nxt != self.get_now_pos():
