@@ -8,10 +8,16 @@ class Graph:
     def __init__(self):
         pass
 
+    # maybe the edge is repeated
     def add_edge(self, a: Cell, b: Cell):
         pass
 
+    # maybe the vertex is repeated
     def add_vertex(self, a: Cell, w: int):
+        pass
+
+    # maybe the vertex is not available right now
+    def delete_vertex(self, a: Cell):
         pass
 
     def no_path(self, a: Cell, b: Cell) -> bool:

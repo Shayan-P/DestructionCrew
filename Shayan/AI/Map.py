@@ -3,6 +3,7 @@ import random
 from Model import *
 from Model import Cell as ModelCell
 from AI.Algorithms import Graph
+from copy import deepcopy
 
 
 class Cell:
@@ -60,19 +61,45 @@ class Grid:
         self.visited = [[False] * Grid.height for i in range(Grid.width)]
         self.known_graph = Graph()
         self.unknown_graph = Graph()
+        self.initialize_graphs()
 
     def is_visited(self, cell):
         return self.visited[cell.x][cell.y]
 
-    def see_cell(self, cell: ModelCell):
-        if cell is not None:
-            if self.model_cell[cell.x][cell.y] is None:
-                print("see this cell for first time", cell.x, cell.y, cell.resource_value, cell.resource_type,
-                      cell.resource_value) # agha inja ham bug zadan. resource type , resource value eshtebahe
-                if self.is_wall(Cell(cell.x, cell.y)):
-                    print("it was wall!")
-            # always see it even if you saw it before
-            self.model_cell[cell.x][cell.y] = cell  # it should be copy
+    def pre_calculations(self, now: Cell):
+        self.unknown_graph.precalculate_source(now)
+        self.known_graph.precalculate_source(now)
+
+    def update_vertex_in_graph(self, cell):
+        if self.is_wall(cell):
+            self.known_graph.delete_vertex(cell)
+            self.unknown_graph.delete_vertex(cell)
+            return
+        for direction in DIRECTIONS:
+            self.update_edge_in_graph(cell, cell.go_to(direction))
+
+    def update_edge_in_graph(self, cell1, cell2):
+        if self.is_wall(cell1) or self.is_wall(cell2):
+            return
+        self.known_graph.add_edge(cell1, cell2)
+
+    def initialize_graphs(self):
+        for i in range(Grid.width):
+            for j in range(Grid.height):
+                cell = Cell(i, j)
+                self.known_graph.add_vertex(cell, 1)  # 1 or 0?
+                self.unknown_graph.add_vertex(cell, 1)
+        for i in range(Grid.width):
+            for j in range(Grid.height):
+                cell = Cell(i, j)
+                for direction in DIRECTIONS:
+                    self.unknown_graph.add_edge(cell, cell.go_to(direction))
+
+    def see_cell(self, new_cell: ModelCell):
+        if new_cell is not None:
+            cell = Cell(new_cell.x, new_cell.y)
+            self.model_cell[cell.x][cell.y] = deepcopy(new_cell)  # it should be deep copy
+            self.update_vertex_in_graph(cell)
 
     def visit_cell(self, cell: Cell):
         self.visited[cell.x][cell.y] = True
@@ -96,14 +123,18 @@ class Grid:
         return self.model_cell[cell.x][cell.y] is None
 
     def expected_distance(self, cell_start: Cell, cell_end: Cell):
-        # now we only go knowns. later will change it
-        # in inf moshkeli ijad nemikone?
         if not self.known_graph.no_path(cell_start, cell_end):
             return self.known_graph.get_shortest_distance(cell_start, cell_end)
-
         if not self.unknown_graph.no_path(cell_start, cell_end):
-            return int(self.unknown_graph.get_shortest_path(cell_start, cell_end) * 1.5) + 5  # what the hell?!
+            return int(self.unknown_graph.get_shortest_distance(cell_start, cell_end) * 1.5) + 5  # what the hell?!
         return 1000  # inf
+
+    def get_best_path(self, cell_start: Cell, cell_end: Cell):
+        if not self.known_graph.no_path(cell_start, cell_end):
+            return self.known_graph.get_shortest_path(cell_start, cell_end)
+        if not self.unknown_graph.no_path(cell_start, cell_end):
+            return self.unknown_graph.get_shortest_path(cell_start, cell_end)
+        return None
 
     def print_all_we_know_from_map(self):
         for i in range(Grid.width):
@@ -111,15 +142,6 @@ class Grid:
             for j in range(Grid.height):
                 arr.append(self.is_wall(Cell(i, j)))
             print(*arr)
-
-    def get_cells(self, want_to_get_unknowns: bool):
-        ans = []
-        for x in range(Grid.width):
-            for y in range(Grid.height):
-                now = Cell(x, y)
-                if self.is_unknown(now) == want_to_get_unknowns:
-                    ans.append(now)
-        return ans
 
     def get_best_cell_score_with_resource(self, current_position: Cell):
         # score must be expected value
@@ -137,13 +159,11 @@ class Grid:
                     score = min(20, self.get_cell_resource_value(cell))  # in 20 avaz she
                 elif self.get_cell_resource_type(cell) == ResourceType.BREAD.value:
                     score = min(20, self.get_cell_resource_value(cell))  # in 20 avaz she
-                if not self.is_unknown(cell) and self.get_cell_resource_value(cell) <= 0:  # don't try to go to seen cells
+                if not self.is_unknown(cell) and self.get_cell_resource_value(cell) <= 0:  #  don't try to go to seen cells. also change this.
                     score = -1000  # inf
                 # age manabe tamoom beshan va hame chiz ro dide bashim ina miterekan
 
-                score -= 2 * self.expected_distance(current_position, cell)
-                # har bar bfs nazan mashti
-                # behtar az 2 * len ham mitoon taabe riazi bedim?
+                score -= 0.5 * self.expected_distance(current_position, cell)  # need to change  this
                 # ba in taabee momken nist dore khodemoon bekharkhim?
                 if best_cell is None or best_score < score:
                     best_cell = cell

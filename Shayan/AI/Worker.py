@@ -29,8 +29,8 @@ class Worker:
         pass
 
     def grid_pre_calculates(self):
-        self.grid.pre_calculate_bfs(self.get_now_pos_cell(), False)
-        self.grid.pre_calculate_bfs(self.get_now_pos_cell(), True)
+        self.grid.pre_calculations(self.get_now_pos_cell())
+        self.grid.pre_calculations(self.get_now_pos_cell())
 
     def do_pre_tasks(self):
         self.update_map()
@@ -67,13 +67,13 @@ class Worker:
 
     def go_grab_resource(self):
         cell, score = self.grid.get_best_cell_score_with_resource(self.get_now_pos_cell())
-        path = self.grid.get_bfs_path(self.get_now_pos_cell(), cell, False)
+        path = self.grid.get_best_path(self.get_now_pos_cell(), cell)
         # what if path is None?
         print("want to grab resource from", cell, "path is ", *path)
         return self.get_first_step_direction(path)
 
     def go_to_base(self):
-        path = self.grid.get_bfs_path(self.get_now_pos_cell(), self.get_base_cell(), False)
+        path = self.grid.get_best_path(self.get_now_pos_cell(), self.get_base_cell())
         print("want to go back to base. path is ", *path)
         return self.get_first_step_direction(path)
 
