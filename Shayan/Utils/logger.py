@@ -1,17 +1,25 @@
-from logging import handlers, getLogger, Formatter, DEBUG
+import logging
 import os
-from settings import LOG_PATH
 import json
+
+from settings import LOG_PATH
+from logging import handlers, Formatter
 
 
 def get_logger():
-    logger = getLogger()
+    logger = logging.getLogger()
     handler = handlers.RotatingFileHandler(os.path.join(LOG_PATH, str(log_id) + '.log'), 'a', maxBytes=10 * 1000 * 1000)
     formatter = Formatter(
         '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    logger.setLevel(DEBUG)
+    logger.setLevel(logging.DEBUG)
+    return logger
+
+
+def get_terminal_logger():
+    logger = logging.getLogger()
+    logger.addHandler(logging.StreamHandler())
     return logger
 
 
