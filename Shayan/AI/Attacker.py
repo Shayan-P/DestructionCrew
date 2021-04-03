@@ -1,5 +1,4 @@
 from Model import *
-import random
 
 
 class Attacker:

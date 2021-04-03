@@ -1,4 +1,5 @@
-from .Map import *
+from .Grid import Grid
+from .Cell import get_random_directions, Cell
 
 
 class Worker:

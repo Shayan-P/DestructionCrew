@@ -1,4 +1,4 @@
-from AI.Map import Cell
+from AI.Cell import Cell
 
 
 class Graph:
