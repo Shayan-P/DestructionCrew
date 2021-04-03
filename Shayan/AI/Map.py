@@ -2,6 +2,7 @@ import random
 
 from Model import *
 from Model import Cell as ModelCell
+from AI.Algorithms import Graph
 
 
 class Cell:
@@ -57,8 +58,8 @@ class Grid:
         Grid.height = game.mapHeight
         self.model_cell = [[None] * Grid.height for i in range(Grid.width)]
         self.visited = [[False] * Grid.height for i in range(Grid.width)]
-        # tof
-        self.bfs_precalculate = [{}, {}]
+        self.known_graph = Graph()
+        self.unknown_graph = Graph()
 
     def is_visited(self, cell):
         return self.visited[cell.x][cell.y]
@@ -71,7 +72,7 @@ class Grid:
                 if self.is_wall(Cell(cell.x, cell.y)):
                     print("it was wall!")
             # always see it even if you saw it before
-            self.model_cell[cell.x][cell.y] = cell # it should be copy
+            self.model_cell[cell.x][cell.y] = cell  # it should be copy
 
     def visit_cell(self, cell: Cell):
         self.visited[cell.x][cell.y] = True
@@ -94,46 +95,14 @@ class Grid:
     def is_unknown(self, cell: Cell):
         return self.model_cell[cell.x][cell.y] is None
 
-    def get_bfs_path(self, cell_start: Cell, cell_end: Cell, unknowns_assumed_empty: bool):
-        pars = self.bfs_precalculate[unknowns_assumed_empty]
-        if cell_end not in pars:
-            return None
-        tmp = cell_end
-        ans = []
-        while tmp != cell_start:
-            ans.append(tmp)
-            tmp = pars[tmp]
-        ans.append(cell_start)
-        ans.reverse()
-        return ans
-
-    def pre_calculate_bfs(self, cell_start: Cell, unknowns_assumed_empty: bool):
-        queue = [cell_start]
-        pars = {cell_start: None}
-        pointer = 0
-        while pointer < len(queue):
-            now = queue[pointer]
-            pointer += 1
-            for direction in get_random_directions():
-                nxt = now.go_to(direction)
-                if self.is_wall(nxt):
-                    continue
-                if not unknowns_assumed_empty and self.is_unknown(now): # it is now not nxt. it means you can go to unknown cells but just once!
-                    continue
-                if nxt not in pars:
-                    pars[nxt] = now
-                    queue.append(nxt)
-        self.bfs_precalculate[unknowns_assumed_empty] = pars
-
     def expected_distance(self, cell_start: Cell, cell_end: Cell):
         # now we only go knowns. later will change it
         # in inf moshkeli ijad nemikone?
-        path = self.get_bfs_path(cell_start, cell_end, False)
-        if path is not None:
-            return len(path)
-        path = self.get_bfs_path(cell_start, cell_end, True)
-        if path is not None:
-            return int(len(path) * 1.5) + 5  # what the hell?!
+        if not self.known_graph.no_path(cell_start, cell_end):
+            return self.known_graph.get_shortest_distance(cell_start, cell_end)
+
+        if not self.unknown_graph.no_path(cell_start, cell_end):
+            return int(self.unknown_graph.get_shortest_path(cell_start, cell_end) * 1.5) + 5  # what the hell?!
         return 1000  # inf
 
     def print_all_we_know_from_map(self):
