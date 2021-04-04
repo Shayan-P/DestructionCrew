@@ -2,9 +2,8 @@ echo "{\"count\": 0}" > logs/config.json
 rm logs/*.log
 
 cd ..
-cd ..
 cd AIC21-Game
 cd server
-client=../../DestructionCrew/Shayan/dist/Controller
+client=../../DestructionCrew/dist/Controller
 java -jar server-v1.2.2.jar --first-team=$client --second-team=$client --run-manually
 
