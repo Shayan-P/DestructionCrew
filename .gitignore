@@ -1,6 +1,7 @@
-*/__pycache__
-*/build/*
-*/dist/*
-*/Controller.spec
-*/.idea/*
-*/logs/*.log
+__pycache__
+build/*
+dist/*
+Controller.spec
+.idea/*
+logs/*
+settings/private.py
