@@ -8,8 +8,9 @@ class Vertex:
         self.weight = w
         self.adjacent = []
         # Set distance to infinity for all nodes
-        self.distance = -1
-        # Mark all nodes unvisited        
+        # this type of infinity can cause problem
+        self.distance = 2**31
+        # Mark all nodes unvisited
         self.visited = False
         # Predecessor
         self.previous = None
@@ -19,7 +20,8 @@ class Vertex:
         return self.distance < other.distance
 
     def prepare(self):
-        self.distance = -1
+        # change this
+        self.distance = 2**31
         self.visited = False
         self.previous = None
 
@@ -30,7 +32,8 @@ class Vertex:
         self.active = False
 
     def add_neighbor(self, neighbor):
-        self.adjacent.append(neighbor)
+        if neighbor not in self.adjacent:
+            self.adjacent.append(neighbor)
 
     def get_cell(self) -> Cell:
         return self.cell
@@ -140,9 +143,8 @@ class Graph:
         # we are going to ask for paths that probably one side is source.
         # you have to do the pre calculations here
         # between the pre calculations and asking queries we will not change the graph
-        
-        if(self.curr_source == source):
-            return 
+
+        print("START PRE CALCULATION ", source)
 
         self.curr_source = source
 
@@ -160,7 +162,6 @@ class Graph:
         while len(unvisited_queue) >= 1:
             current = heapq.heappop(unvisited_queue)[1]
             current.set_visited()
-
             for next in current.adjacent:
                 # if visited, skip
                 if next.visited:
@@ -170,8 +171,9 @@ class Graph:
                     continue
 
                 new_dist = current.get_distance() + next.get_weight()
-                next.set_distance(new_dist)
-                next.set_previous(current)
-                heapq.heappush(unvisited_queue, (new_dist, next) )
+                if new_dist < next.get_distance():
+                    next.set_distance(new_dist)
+                    next.set_previous(current)
+                    heapq.heappush(unvisited_queue, (new_dist, next))
 
     # use shortest path algorithms implemented on the other file

@@ -24,13 +24,13 @@ class Worker:
 
     def print_statistics(self):
         print("I'm in", self.get_now_pos_cell())
+        print(f"I have yummy of type {self.game.ant.currentResource.type} with value {self.game.ant.currentResource.value}", self.game.ant.currentResource)
         self.grid.print_all_we_know_from_map()
 
     def listen_to_chat_box(self):
         pass
 
     def grid_pre_calculates(self):
-        self.grid.pre_calculations(self.get_now_pos_cell())
         self.grid.pre_calculations(self.get_now_pos_cell())
 
     def do_pre_tasks(self):
@@ -61,7 +61,9 @@ class Worker:
 
     def find_best_and_grab_resource(self):
         # if you have grabbed it go back to base
-        if self.game.ant.currentResource.value - self.grid.expected_distance(self.get_now_pos_cell(), self.get_base_cell()) <= 0:
+        # mage har bar az arzeshesh yeki kam nemishod?
+        # if self.game.ant.currentResource.value - self.grid.expected_distance(self.get_now_pos_cell(), self.get_base_cell()) <= 0:
+        if self.game.ant.currentResource.value <= 0:
             return self.go_grab_resource()
         else:
             return self.go_to_base()

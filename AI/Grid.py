@@ -16,20 +16,20 @@ class Grid:
         self.model_cell = [[None] * Grid.height for i in range(Grid.width)]
         self.visited = [[False] * Grid.height for i in range(Grid.width)]
         self.known_graph = Graph()
-        self.unknown_graph = Graph()
+        # self.unknown_graph = Graph()
         self.initialize_graphs()
 
     def is_visited(self, cell):
         return self.visited[cell.x][cell.y]
 
     def pre_calculations(self, now: Cell):
-        self.unknown_graph.precalculate_source(now)
+        # self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
 
     def update_vertex_in_graph(self, cell):
         if self.is_wall(cell):
             self.known_graph.delete_vertex(cell)
-            self.unknown_graph.delete_vertex(cell)
+            # self.unknown_graph.delete_vertex(cell)
             return
         for direction in DIRECTIONS:
             self.update_edge_in_graph(cell, cell.go_to(direction))
@@ -44,12 +44,14 @@ class Grid:
             for j in range(Grid.height):
                 cell = Cell(i, j)
                 self.known_graph.add_vertex(cell, 1)  # 1 or 0?
-                self.unknown_graph.add_vertex(cell, 1)
+                # self.unknown_graph.add_vertex(cell, 1)
+                """
         for i in range(Grid.width):
             for j in range(Grid.height):
                 cell = Cell(i, j)
                 for direction in DIRECTIONS:
                     self.unknown_graph.add_edge(cell, cell.go_to(direction))
+                """
 
     def see_cell(self, new_cell: ModelCell):
         if new_cell is not None:
@@ -81,16 +83,16 @@ class Grid:
     def expected_distance(self, cell_start: Cell, cell_end: Cell):
         if not self.known_graph.no_path(cell_start, cell_end):
             return self.known_graph.get_shortest_distance(cell_start, cell_end)
-        if not self.unknown_graph.no_path(cell_start, cell_end):
-            return int(self.unknown_graph.get_shortest_distance(cell_start, cell_end) * 1.5) + 5  # what the hell?!
+        # if not self.unknown_graph.no_path(cell_start, cell_end):
+        #    return int(self.unknown_graph.get_shortest_distance(cell_start, cell_end) * 1.5) + 5  # what the hell?!
         return 1000  # inf
 
     def get_best_path(self, cell_start: Cell, cell_end: Cell):
         # nabayad chizaii ke midim be graph mutable bashe? age avazesh kone chi?
         if not self.known_graph.no_path(cell_start, cell_end):
             return self.known_graph.get_shortest_path(cell_start, cell_end)
-        if not self.unknown_graph.no_path(cell_start, cell_end):
-            return self.unknown_graph.get_shortest_path(cell_start, cell_end)
+        # if not self.unknown_graph.no_path(cell_start, cell_end):
+        #    return self.unknown_graph.get_shortest_path(cell_start, cell_end)
         return None
 
     def print_all_we_know_from_map(self):
