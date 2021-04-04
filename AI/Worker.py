@@ -7,9 +7,10 @@ class Worker:
         self.game = game
         self.grid = Grid(game)
         self.dfs_generator = self.dfs(self.get_now_pos_cell())
+        self.has_resource = False  # in tooye api khodeshoon bug dasht!
 
     def get_message(self):
-        return "man worker am", 10
+        return f"worker: I have yummy of type {self.game.ant.currentResource.type} with value {self.game.ant.currentResource.value}", 10
 
     def update_map(self):
         view_distance = self.game.viewDistance
@@ -36,6 +37,11 @@ class Worker:
     def do_pre_tasks(self):
         self.update_map()
         self.grid_pre_calculates()
+        # this is tof
+        if self.get_now_pos_cell() == self.get_base_cell():
+            self.has_resource = False
+        if self.grid.get_cell_resource_value(self.get_now_pos_cell()) > 0:
+            self.has_resource = True
         self.listen_to_chat_box()
 
     def get_move(self):
@@ -63,10 +69,11 @@ class Worker:
         # if you have grabbed it go back to base
         # mage har bar az arzeshesh yeki kam nemishod?
         # if self.game.ant.currentResource.value - self.grid.expected_distance(self.get_now_pos_cell(), self.get_base_cell()) <= 0:
-        if self.game.ant.currentResource.value <= 0:
-            return self.go_grab_resource()
-        else:
+        # change this
+        if self.has_resource:
             return self.go_to_base()
+        else:
+            return self.go_grab_resource()
 
     def go_grab_resource(self):
         cell, score = self.grid.get_best_cell_score_with_resource(self.get_now_pos_cell())
