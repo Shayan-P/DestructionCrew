@@ -40,8 +40,6 @@ class Worker:
         # this is tof
         if self.get_now_pos_cell() == self.get_base_cell():
             self.has_resource = False
-        if self.grid.get_cell_resource_value(self.get_now_pos_cell()) > 0:
-            self.has_resource = True
         self.listen_to_chat_box()
 
     def get_move(self):
@@ -90,4 +88,9 @@ class Worker:
     def get_first_step_direction(self, path):
         assert path[0] == self.get_now_pos_cell()
         assert len(path) > 1
+
+        # this is tof
+        if self.grid.get_cell_resource_value(path[1]) > 0:
+            self.has_resource = True
+
         return path[0].direction_to(path[1])

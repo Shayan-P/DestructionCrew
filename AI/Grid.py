@@ -70,12 +70,12 @@ class Grid:
     def get_cell_resource_value(self, cell: Cell):
         remembered: ModelCell = self.model_cell[cell.x][cell.y]
         if remembered is not None:
-            return remembered.resource_type # inja ro khodeshoon bug zadan. bejaye resource type, value gozashtan
+            return remembered.resource_value
 
     def get_cell_resource_type(self, cell: Cell):
         remembered: ModelCell = self.model_cell[cell.x][cell.y]
         if remembered is not None:
-            return remembered.resource_value  # momkene inam jabeja bashe?
+            return remembered.resource_type
 
     def is_unknown(self, cell: Cell):
         return self.model_cell[cell.x][cell.y] is None
