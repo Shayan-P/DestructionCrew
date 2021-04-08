@@ -1,4 +1,7 @@
 from Model import *
+from Utils import get_logger
+
+logger = get_logger()
 
 
 class Attacker:
@@ -7,8 +10,11 @@ class Attacker:
         self.counter = 0
     
     def get_message(self):
-        return f"man attacker am in turn f{self.counter}", 1
+        return "⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈", 1
 
     def get_move(self):
+        arr = [chat.text for chat in self.game.chatBox.allChats]
+#        logger.log(arr)
+        print(arr)
         return Direction.LEFT.value
 
