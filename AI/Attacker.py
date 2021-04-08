@@ -1,20 +1,16 @@
-from Model import *
-from Utils import get_logger
-
-logger = get_logger()
+from .BaseAnt import BaseAnt
+from .Movement import Explore
 
 
-class Attacker:
+class Attacker(BaseAnt):
     def __init__(self, game):
-        self.game = game
-        self.counter = 0
-    
+        super(Attacker, self).__init__(game)
+        self.movement = Explore(self)
+
     def get_message(self):
-        return "⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈⿈", 1
+        return "من اتکر هستم", 1
 
     def get_move(self):
-        arr = [chat.text for chat in self.game.chatBox.allChats]
-#        logger.log(arr)
-        print(arr)
-        return Direction.LEFT.value
+        super(Attacker, self).get_move()
+        return self.movement.get_direction()
 

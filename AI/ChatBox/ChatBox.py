@@ -1,14 +1,17 @@
-import BaseNews
-
-queueNews = []
+from .BaseNews import BaseNews
 
 
-def add_news(news):
-    queueNews.append(news)
+class ChatBox:
+    def __init__(self):
+        self.queueNews = []
 
+    def report(self, news: BaseNews):
+        self.queueNews.append(news)
 
-def flush():
-    ret = ""
-    for new in queueNews:
-        ret += new.encode()
-    return ret
+    def listen(self):
+        pass
+
+    def flush(self):
+        ret = "".join([new.encode for new in self.queueNews])
+        self.queueNews = []
+        return ret

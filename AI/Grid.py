@@ -4,6 +4,21 @@ from AI.Algorithms import Graph
 from copy import deepcopy
 
 
+# hell!
+# time consuming?
+def soft_max_choose(candidates):
+    from math import exp
+    from random import random
+    total = 0
+    for x in candidates:
+        total += exp(candidates[x])
+    rnd = random() * total
+    for x in candidates:
+        rnd -= exp(candidates[x])
+        if rnd < 0:
+            return x
+
+
 class Grid:
     width = None
     height = None
@@ -129,3 +144,14 @@ class Grid:
                     best_score = score
                     print("HEY BETTER SCORE! ", best_cell, best_score, self.is_unknown(cell), self.get_cell_resource_value(cell))
         return best_cell, best_score
+
+    def get_one_of_near_unknowns(self, current_position: Cell):
+        candidates = {}
+        for x in range(Grid.width):
+            for y in range(Grid.height):
+                cell = Cell(x, y)
+                if self.is_unknown(cell):
+                    candidates[cell] = -self.expected_distance(current_position, cell)
+                    # age yeki az 1000 ha bardashte beshe badbakht mishim
+                    print("can go to ", cell, "distance is ", self.expected_distance(current_position, cell))
+        return soft_max_choose(candidates)
