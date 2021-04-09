@@ -1,1 +1,1 @@
-from .ChatBox import ChatBox
+from .ChatBox import ChatBoxReader, ChatBoxWriter

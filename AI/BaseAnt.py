@@ -1,6 +1,6 @@
 from .Grid import Grid
 from .Cell import Cell
-from .ChatBox import ChatBox
+from .ChatBox import ChatBoxWriter, ChatBoxReader
 
 
 class BaseAnt:
@@ -8,7 +8,7 @@ class BaseAnt:
         self.game = game
         self.grid = Grid(game)
         self.has_resource = False  # in tooye api khodeshoon bug dasht!
-        self.chat_box = ChatBox()
+        self.chat_box = ChatBoxWriter
 
     def get_message(self):
         # implement in child
@@ -16,7 +16,7 @@ class BaseAnt:
 
     def get_move(self):
         self.grid.visit_cell(self.get_now_pos_cell())
-        self.chat_box.listen()
+        # self.chat_box.listen()
         self.update_map()
         self.grid.pre_calculations(self.get_now_pos_cell())
         # this is tof

@@ -1,63 +1,65 @@
 from .BaseNews import BaseNews
+from random import randint
+from Model import Game, ChatBox
+from .MessageHandlers import Reader, Writer
+
+from .AttackCell import AttackCell
+
+all_message_types : [BaseNews] = [AttackCell]
 
 
-def str_to_bin(char):
-	res = ""
-	asci = ord(char)
-	for i in range(8):
-		res = str(asci % 2) + res
-		asci /= 2
-	return res
-
-
-class Reader:
-	def __init__(self, message):
-		self.message = ""
-		for c in message:
-			self.message += str_to_bin(c)
-		self.pointer = 0
-
-	def read(self, count):
-		assert count + self.pointer <= len(self.message)
-		mes = int(self.message[self.pointer:self.pointer + count], 2)
-		self.pointer += count
-		return mes
-
-
-class Writer:
-	def __init__(self):
-		self.message = ""
-
-	def write(self, mes, bits):
-		res = ""
-		for i in range(bits):
-			res = str(mes % 2) + res
-			mes /= 2
-		self.message += res
-
-	def get_message(self):
-		res = ""
-		while len(self.message) < 256:
-			self.message += "0"
-		
-		for i in range(0, 256, 8):
-			res += chr(int(self.message[i: i + 8], 2))
-		return res
-
-
-class ChatBox:
-	def __init__(self):
-		self.queueNews = []
+class ChatBoxWriter:
+	def __init__(self, game: Game):
+		self.queueNews: [BaseNews] = []
+		self.game = game
 
 	def report(self, news: BaseNews):
 		self.queueNews.append(news)
 
-	def listen(self):
-		pass
-
-	def flush(self):
-		ret = Writer()
+	def flush(self) -> str:
+		self.queueNews.sort(key = lambda new: new.get_priority(), reverse = True)
+		# need to obtain from map configs
+		ret = Writer(32)
 		for new in self.queueNews:
-			new.encode(ret)
+			if(ret.enoughSpace(new)):
+				new.encode(ret)
+
 		self.queueNews = []
+
 		return ret.get_message()
+
+	def get_priority(self) -> int:
+		return randint(1, 1000)
+
+
+class ChatBoxReader:
+	def __init__(self, box: ChatBox):
+		self.news : [BaseNews] = []
+		msg_readers = []
+		for msg in box.allChats:
+			msg_readers.append(Reader(msg.text))
+		for reader in msg_readers:
+			prefix = ""
+			found = False
+			while not reader.EOF():
+				while (not reader.EOF()) and (prefix not in [new_type.huffman_prefix for new_type in all_message_types]):
+					prefix += reader.read_bit()
+					found = True
+				if not found:
+					continue
+				message_type = None
+				for new_type in all_message_types:
+					if(prefix == new_type.huffman_prefix):
+						message_type = new_type
+				self.news.append(message_type().decode(reader))
+
+	def get_X_news(self, new_type) -> [BaseNews]:
+		msgs = []
+		for new in self.news:
+			if(type(new) == new_type):
+				msgs.append(new)
+		return msgs
+
+	def get_attack_cell_news(self) -> [AttackCell]:
+		return self.get_X_news(AttackCell)
+

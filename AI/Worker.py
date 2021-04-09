@@ -14,4 +14,3 @@ class Worker(BaseAnt):
     def get_move(self):
         super(Worker, self).get_move()
         return self.movement.get_direction()
-
