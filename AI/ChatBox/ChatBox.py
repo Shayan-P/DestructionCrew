@@ -5,7 +5,7 @@ from .MessageHandlers import Reader, Writer
 
 from .AttackCell import AttackCell
 
-all_message_types : [BaseNews] = [AttackCell]
+all_message_types: [BaseNews] = [AttackCell]
 
 
 class ChatBoxWriter:
@@ -17,11 +17,11 @@ class ChatBoxWriter:
 		self.queueNews.append(news)
 
 	def flush(self) -> str:
-		self.queueNews.sort(key = lambda new: new.get_priority(), reverse = True)
+		self.queueNews.sort(key=lambda news: news.get_priority(), reverse=True)
 		# need to obtain from map configs
 		ret = Writer(32)
 		for new in self.queueNews:
-			if(ret.enoughSpace(new)):
+			if(ret.enough_space(new)):
 				new.encode(ret)
 
 		self.queueNews = []
@@ -34,7 +34,7 @@ class ChatBoxWriter:
 
 class ChatBoxReader:
 	def __init__(self, box: ChatBox):
-		self.news : [BaseNews] = []
+		self.news: [BaseNews] = []
 		msg_readers = []
 		for msg in box.allChats:
 			msg_readers.append(Reader(msg.text))

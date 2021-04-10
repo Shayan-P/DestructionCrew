@@ -2,15 +2,16 @@ from .BaseNews import BaseNews
 from .MessageHandlers import Reader, Writer
 from Model import Cell as ModelCell
 
+
 class ViewCell(BaseNews):
 	huffman_prefix = "1"
 
 	def __init__(self, cell: ModelCell):
 		super().__init__()
-		self.cell : ModelCell = cell
+		self.cell: ModelCell = cell
 
 	def message_size(self) -> int:
-		return len(self.huffman_prefix) + 12 + 2 # prefix (x, y) type
+		return len(self.huffman_prefix) + 12 + 2  # prefix (x, y) type
 
 	def get_priority(self):
 		return 5

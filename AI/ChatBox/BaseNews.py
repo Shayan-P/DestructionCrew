@@ -1,5 +1,6 @@
 from .MessageHandlers import Reader, Writer
 
+
 class BaseNews:
 	huffman_prefix = ""
 
@@ -8,13 +9,14 @@ class BaseNews:
 		self.turn = 0
 
 	def message_size(self) -> int:
-		return 0
+		NotImplementedError
 
 	def encode(self, writer: Writer):
-		pass
+		NotImplementedError
+
+	def decode(self, reader: Reader):
+		NotImplementedError
 
 	def get_priority(self) -> int:
 		return self.priority
 
-	def decode(self, reader: Reader):
-		pass
