@@ -29,7 +29,7 @@ class AI:
             ant = get_ant(self.game.antType)
             ant.game = self.game
             self.direction = ant.get_move()
-            self.message, self.value = ant.get_message()
+            self.message, self.value = ant.get_message_and_priority()
             logger.info(str([self.message, self.value, self.direction]))
             print("GO ", self.message, self.value, self.direction)
             return self.message, self.value, self.direction.value

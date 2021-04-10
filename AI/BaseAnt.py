@@ -1,6 +1,7 @@
 from .Grid import Grid
 from .Cell import Cell
 from .ChatBox import ChatBoxWriter, ChatBoxReader
+from .ChatBox import ViewCell
 
 
 class BaseAnt:
@@ -8,16 +9,15 @@ class BaseAnt:
         self.game = game
         self.grid = Grid(game)
         self.has_resource = False  # in tooye api khodeshoon bug dasht!
-        self.chat_box = ChatBoxWriter
+        self.chat_box = ChatBoxWriter(game)  # change this
 
-    def get_message(self):
-        # implement in child
-        pass
+    def get_message_and_priority(self):
+        return self.chat_box.flush(), self.chat_box.get_priority()
 
     def get_move(self):
         self.grid.visit_cell(self.get_now_pos_cell())
         # self.chat_box.listen()
-        self.update_map()
+        self.update_and_report_map()
         self.grid.pre_calculations(self.get_now_pos_cell())
         # this is tof
         if self.get_now_pos_cell() == self.get_base_cell():
@@ -26,16 +26,17 @@ class BaseAnt:
         # implement in child
         pass
 
-    def update_map(self):
+    def update_and_report_map(self):  # reporting here is not optimal
         view_distance = self.game.viewDistance
         print("VIEW IS ", view_distance)
         if view_distance == 0:  # ina bug zadan ino 0 midan!
             view_distance = 8
         for dx in range(-view_distance-2, view_distance+2):
             for dy in range(-view_distance-2, view_distance+2):
-                cell = self.game.ant.getMapRelativeCell(dx, dy)
-                if cell is not None:
-                    self.grid.see_cell(cell)
+                model_cell = self.game.ant.getMapRelativeCell(dx, dy)
+                if model_cell is not None:
+                    self.grid.see_cell(model_cell)
+                    self.chat_box.report(ViewCell(model_cell))
 
     def print_statistics(self):
         print("I'm in", self.get_now_pos_cell())

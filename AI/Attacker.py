@@ -7,9 +7,6 @@ class Attacker(BaseAnt):
         super(Attacker, self).__init__(game)
         self.movement = Explore(self)
 
-    def get_message(self):
-        return "من اتکر هستم", 1
-
     def get_move(self):
         super(Attacker, self).get_move()
         return self.movement.get_direction()
