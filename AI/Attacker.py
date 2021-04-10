@@ -1,6 +1,5 @@
 from .BaseAnt import BaseAnt
 from .Movement import Explore
-from Model import Direction
 
 
 class Attacker(BaseAnt):
@@ -10,6 +9,5 @@ class Attacker(BaseAnt):
 
     def get_move(self):
         self.pre_move()
-        return Direction.DOWN
-#        return self.movement.get_direction()
+        return self.movement.get_direction()
 

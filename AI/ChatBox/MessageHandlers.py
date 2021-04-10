@@ -6,7 +6,7 @@ def str_to_bin(char):
 	asci = ord(char)
 	for i in range(8):
 		res = str(asci % 2) + res
-		asci /= 2
+		asci //= 2
 	return res
 
 
@@ -28,7 +28,7 @@ class Reader:
 		return self.message[self.pointer - 1]
 
 	def EOF(self) -> bool:
-		return self.pointer == self.message
+		return self.pointer == len(self.message)
 
 
 class Writer:
@@ -43,7 +43,7 @@ class Writer:
 		res = ""
 		for i in range(bits):
 			res = str(mes % 2) + res
-			mes /= 2
+			mes //= 2
 		self.message += res
 
 	def get_message(self) -> str:
@@ -51,6 +51,6 @@ class Writer:
 		while len(self.message) % 8 == 0:
 			self.message += "0"
 
-		for i in range(0, 8 * self.limit, 8):
+		for i in range(0, len(self.message), 8):
 			res += chr(int(self.message[i: i + 8], 2))
 		return res

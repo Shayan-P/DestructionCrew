@@ -1,17 +1,17 @@
 from .BaseNews import BaseNews
 from random import randint
-from Model import Game, ChatBox
+from Model import ChatBox
 from .MessageHandlers import Reader, Writer
 
 from .AttackCell import AttackCell
+from .ViewCell import ViewCell
 
-all_message_types: [BaseNews] = [AttackCell]
+all_message_types: [BaseNews] = [AttackCell, ViewCell]
 
 
 class ChatBoxWriter:
-	def __init__(self, game: Game):
+	def __init__(self):
 		self.queueNews: [BaseNews] = []
-		self.game = game
 
 	def report(self, news: BaseNews):
 		self.queueNews.append(news)
@@ -29,6 +29,7 @@ class ChatBoxWriter:
 		return ret.get_message()
 
 	def get_priority(self) -> int:
+		# todo
 		return randint(1, 1000)
 
 
@@ -53,7 +54,7 @@ class ChatBoxReader:
 						message_type = new_type
 				self.news.append(message_type().decode(reader))
 
-	def get_X_news(self, new_type) -> [BaseNews]:
+	def get_x_news(self, new_type) -> [BaseNews]:
 		msgs = []
 		for new in self.news:
 			if(type(new) == new_type):
@@ -61,5 +62,7 @@ class ChatBoxReader:
 		return msgs
 
 	def get_attack_cell_news(self) -> [AttackCell]:
-		return self.get_X_news(AttackCell)
+		return self.get_x_news(AttackCell)
 
+	def get_view_cell_news(self) -> [ViewCell]:
+		return self.get_x_news(ViewCell)

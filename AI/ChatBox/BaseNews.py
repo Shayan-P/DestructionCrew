@@ -15,6 +15,7 @@ class BaseNews:
 		NotImplementedError
 
 	def decode(self, reader: Reader):
+		# todo
 		NotImplementedError
 
 	def get_priority(self) -> int:
