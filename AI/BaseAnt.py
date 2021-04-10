@@ -9,12 +9,13 @@ class BaseAnt:
         self.game = game
         self.grid = Grid(game)
         self.has_resource = False  # in tooye api khodeshoon bug dasht!
-        self.chat_box = ChatBoxWriter(game)  # change this
+        self.chat_box_writer = ChatBoxWriter(game)  # change this
+        self.chat_box_reader = ChatBoxReader(game)
 
     def get_message_and_priority(self):
-        return self.chat_box.flush(), self.chat_box.get_priority()
+        return self.chat_box_writer.flush(), self.chat_box_writer.get_priority()
 
-    def get_move(self):
+    def pre_move(self):
         self.grid.visit_cell(self.get_now_pos_cell())
         # self.chat_box.listen()
         self.update_and_report_map()
@@ -23,8 +24,6 @@ class BaseAnt:
         if self.get_now_pos_cell() == self.get_base_cell():
             self.has_resource = False
         self.print_statistics()
-        # implement in child
-        pass
 
     def update_and_report_map(self):  # reporting here is not optimal
         view_distance = self.game.viewDistance
@@ -36,7 +35,7 @@ class BaseAnt:
                 model_cell = self.game.ant.getMapRelativeCell(dx, dy)
                 if model_cell is not None:
                     self.grid.see_cell(model_cell)
-                    self.chat_box.report(ViewCell(model_cell))
+                    self.chat_box_writer.report(ViewCell(model_cell))
 
     def print_statistics(self):
         print("I'm in", self.get_now_pos_cell())

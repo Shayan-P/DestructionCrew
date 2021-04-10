@@ -1,7 +1,8 @@
 from Model import *
 from .Attacker import Attacker
 from .Worker import Worker
-from Utils import get_logger
+from Utils import logger
+# just remove this and everything will be printed in console
 
 
 class AI:
@@ -21,25 +22,19 @@ class AI:
     """
 
     def turn(self) -> (str, int, int):
-        try:
-            global turn_count
-            if turn_count == 0:
-                init(self.game)
-            turn_count += 1  # store the turns
-            ant = get_ant(self.game.antType)
-            ant.game = self.game
-            self.direction = ant.get_move()
-            self.message, self.value = ant.get_message_and_priority()
-            logger.info(str([self.message, self.value, self.direction]))
-            print("GO ", self.message, self.value, self.direction)
-            return self.message, self.value, self.direction.value
-        except Exception as e:
-            logger.error(str(e))
-            raise e
+        global turn_count
+        if turn_count == 0:
+            init(self.game)
+        turn_count += 1  # store the turns
+        ant = get_ant(self.game.antType)
+        ant.game = self.game
+        self.direction = ant.get_move()
+        self.message, self.value = ant.get_message_and_priority()
+        print("turn ", self.message, self.value, self.direction)
+        return self.message, self.value, self.direction.value
 
 
 turn_count = 0
-logger = get_logger()
 worker = None
 attacker = None
 

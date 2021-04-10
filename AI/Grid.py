@@ -151,7 +151,9 @@ class Grid:
             for y in range(Grid.height):
                 cell = Cell(x, y)
                 if self.is_unknown(cell):
-                    candidates[cell] = -self.expected_distance(current_position, cell)
+                    distance = self.expected_distance(current_position, cell)
+                    candidates[cell] = -distance
                     # age yeki az 1000 ha bardashte beshe badbakht mishim
-                    print("can go to ", cell, "distance is ", self.expected_distance(current_position, cell))
+                    if distance != 1000:
+                        print("can go to ", cell, "distance is ", distance)
         return soft_max_choose(candidates)

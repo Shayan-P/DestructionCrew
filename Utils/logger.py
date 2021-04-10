@@ -1,26 +1,23 @@
-import logging
 import os
 import json
+import sys
 
 from settings import LOG_PATH
-from logging import handlers, Formatter
 
 
-def get_logger():
-    logger = logging.getLogger()
-    handler = handlers.RotatingFileHandler(os.path.join(LOG_PATH, str(log_id) + '.log'), 'a', maxBytes=10 * 1000 * 1000)
-    formatter = Formatter(
-        '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    logger.setLevel(logging.DEBUG)
-    return logger
+class Logger:
+    def __init__(self, filename):
+        self.console = sys.stdout
+        self.file = open(filename, 'w')
 
+    def write(self, message):
+        message = str(message)
+        self.console.write(message)
+        self.file.write(message)
 
-def get_terminal_logger():
-    logger = logging.getLogger()
-    logger.addHandler(logging.StreamHandler())
-    return logger
+    def flush(self):
+        self.console.flush()
+        self.file.flush()
 
 
 def set_config(config):
@@ -35,3 +32,7 @@ def get_config():
 
 log_id = get_config()['count']
 set_config({'count': log_id+1})
+
+logger = Logger(os.path.join(LOG_PATH, f"{log_id}.log"))
+sys.stdout = logger
+sys.stderr = logger

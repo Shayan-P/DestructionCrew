@@ -1,6 +1,6 @@
 from .BaseAnt import BaseAnt
 from .Movement import GrabAndReturn
-
+from Model import Direction
 
 class Worker(BaseAnt):
     def __init__(self, game):
@@ -8,5 +8,6 @@ class Worker(BaseAnt):
         self.movement = GrabAndReturn(self)
 
     def get_move(self):
-        super(Worker, self).get_move()
-        return self.movement.get_direction()
+        self.pre_move()
+        return Direction.UP
+#        return self.movement.get_direction()
