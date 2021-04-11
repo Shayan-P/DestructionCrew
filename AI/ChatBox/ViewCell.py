@@ -23,8 +23,10 @@ class ViewCell(BaseNews):
 		writer.write(self.cell.y, 6)
 		writer.write(self.cell.type, 2)
 
-	def decode(self, reader: Reader):
+	@staticmethod
+	def decode(reader: Reader) -> BaseNews:
 		x = reader.read(6)
 		y = reader.read(6)
-		cell_type = reader.read(6)
-		self.cell = ModelCell(x, y, cell_type, None, None)
+		cell_type = reader.read(2)
+		cell = ModelCell(x, y, cell_type, None, None)
+		return ViewCell(cell)

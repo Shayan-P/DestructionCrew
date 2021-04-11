@@ -18,6 +18,7 @@ class Reader:
 		self.pointer = 0
 
 	def read(self, count):
+		print("!!", count, self.pointer, " : ", len(self.message))
 		assert count + self.pointer <= len(self.message)
 		mes = int(self.message[self.pointer:self.pointer + count], 2)
 		self.pointer += count
@@ -40,6 +41,7 @@ class Writer:
 		return len(self.message) + new.message_size() <= self.limit
 
 	def write(self, mes, bits):
+		print("wrt ", bits)
 		res = ""
 		for i in range(bits):
 			res = str(mes % 2) + res
@@ -48,7 +50,7 @@ class Writer:
 
 	def get_message(self) -> str:
 		res = ""
-		while len(self.message) % 8 == 0:
+		while len(self.message) % 8 != 0:
 			self.message += "0"
 
 		for i in range(0, len(self.message), 8):

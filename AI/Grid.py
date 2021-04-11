@@ -133,7 +133,7 @@ class Grid:
                     score = min(20, self.get_cell_resource_value(cell))  # in 20 avaz she
                 elif self.get_cell_resource_type(cell) == ResourceType.BREAD.value:
                     score = min(20, self.get_cell_resource_value(cell))  # in 20 avaz she
-                if not self.is_unknown(cell) and self.get_cell_resource_value(cell) <= 0: #  don't try to go to seen cells. also change this.
+                if (not self.is_unknown(cell)) and (self.get_cell_resource_value(cell) is not None) and (self.get_cell_resource_value(cell) <= 0): #  don't try to go to seen cells. also change this.
                     score = -1000  # inf
                 # age manabe tamoom beshan va hame chiz ro dide bashim ina miterekan
 

@@ -6,7 +6,7 @@ from .MessageHandlers import Reader, Writer
 from .AttackCell import AttackCell
 from .ViewCell import ViewCell
 
-all_message_types: [BaseNews] = [AttackCell, ViewCell]
+all_message_types: [BaseNews] = BaseNews.__subclasses__()
 
 
 class ChatBoxWriter:
@@ -40,19 +40,18 @@ class ChatBoxReader:
 		for msg in box.allChats:
 			msg_readers.append(Reader(msg.text))
 		for reader in msg_readers:
-			prefix = ""
-			found = False
 			while not reader.EOF():
+				prefix = ""
 				while (not reader.EOF()) and (prefix not in [new_type.huffman_prefix for new_type in all_message_types]):
 					prefix += reader.read_bit()
-					found = True
-				if not found:
+				if prefix not in [new_type.huffman_prefix for new_type in all_message_types]:
 					continue
 				message_type = None
 				for new_type in all_message_types:
 					if(prefix == new_type.huffman_prefix):
 						message_type = new_type
-				self.news.append(message_type().decode(reader))
+				print("##", reader.message)
+				self.news.append(message_type.decode(reader))
 
 	def get_x_news(self, new_type) -> [BaseNews]:
 		msgs = []

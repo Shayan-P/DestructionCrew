@@ -30,7 +30,7 @@ class AI:
         ant.game = self.game
         self.direction = ant.get_move()
         self.message, self.value = ant.get_message_and_priority()
-        print("turn ", self.message, self.value, self.direction)
+        # print("turn ", self.message, self.value, self.direction)
         return self.message, self.value, self.direction.value
 
 

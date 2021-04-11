@@ -21,6 +21,8 @@ class AttackCell(BaseNews):
 		writer.write(self.x, 6)
 		writer.write(self.y, 6)
 
-	def decode(self, reader: Reader):
-		self.x = reader.read(6)
-		self.y = reader.read(6)
+	@staticmethod
+	def decode(reader: Reader) -> BaseNews:
+		x = reader.read(6)
+		y = reader.read(6)
+		return AttackCell(x, y)

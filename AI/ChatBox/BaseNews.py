@@ -9,14 +9,15 @@ class BaseNews:
 		self.turn = 0
 
 	def message_size(self) -> int:
-		NotImplementedError
+		pass
 
 	def encode(self, writer: Writer):
 		NotImplementedError
 
-	def decode(self, reader: Reader):
+	@staticmethod
+	def decode(reader: Reader):
 		# todo
-		NotImplementedError
+		pass
 
 	def get_priority(self) -> int:
 		return self.priority
