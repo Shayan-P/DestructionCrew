@@ -10,8 +10,9 @@ all_message_types: [BaseNews] = BaseNews.__subclasses__()
 
 
 class ChatBoxWriter:
-	def __init__(self):
+	def __init__(self, limit = 32):
 		self.queueNews: [BaseNews] = []
+		self.limit = limit
 
 	def report(self, news: BaseNews):
 		self.queueNews.append(news)
@@ -19,7 +20,7 @@ class ChatBoxWriter:
 	def flush(self) -> str:
 		self.queueNews.sort(key=lambda news: news.get_priority(), reverse=True)
 		# need to obtain from map configs
-		ret = Writer(32)
+		ret = Writer(self.limit)
 		for new in self.queueNews:
 			if(ret.enough_space(new)):
 				new.encode(ret)
@@ -50,7 +51,6 @@ class ChatBoxReader:
 				for new_type in all_message_types:
 					if(prefix == new_type.huffman_prefix):
 						message_type = new_type
-				print("##", reader.message)
 				self.news.append(message_type.decode(reader))
 
 	def get_x_news(self, new_type) -> [BaseNews]:
@@ -65,3 +65,19 @@ class ChatBoxReader:
 
 	def get_view_cell_news(self) -> [ViewCell]:
 		return self.get_x_news(ViewCell)
+
+
+"""
+ChatBoxWriter:
+Build Once (optional: every turn)
+Add All news with ChatBoxWriter.report(news) before flushing
+at the end use ChatBoxWriter.flush to get coded message
+and use ChatBoxWriter.get_priority() to get priority of message
+
+ChatBoxReader:
+
+ATTENTION: Build EVERY fucking turn !
+
+you should pass game.chatBox to constructor
+use ChatBoxReader.get_(name of news you need)_news() to get list of news of that type
+"""

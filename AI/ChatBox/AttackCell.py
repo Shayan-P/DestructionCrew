@@ -10,6 +10,12 @@ class AttackCell(BaseNews):
 		self.x = x
 		self.y = y
 
+	def get_x(self):
+		return self.x
+
+	def get_y(self):
+		return self.y
+
 	def message_size(self) -> int:
 		return len(AttackCell.huffman_prefix) + 12
 
@@ -26,3 +32,12 @@ class AttackCell(BaseNews):
 		x = reader.read(6)
 		y = reader.read(6)
 		return AttackCell(x, y)
+
+
+"""
+initialize it with x, y of cell that you saw
+
+use get_x()/get_y() to get x/y of that cell
+
+don't use another functions
+"""

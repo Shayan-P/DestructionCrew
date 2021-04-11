@@ -18,7 +18,6 @@ class Reader:
 		self.pointer = 0
 
 	def read(self, count):
-		print("!!", count, self.pointer, " : ", len(self.message))
 		assert count + self.pointer <= len(self.message)
 		mes = int(self.message[self.pointer:self.pointer + count], 2)
 		self.pointer += count
@@ -41,7 +40,6 @@ class Writer:
 		return len(self.message) + new.message_size() <= self.limit
 
 	def write(self, mes, bits):
-		print("wrt ", bits)
 		res = ""
 		for i in range(bits):
 			res = str(mes % 2) + res
@@ -56,3 +54,8 @@ class Writer:
 		for i in range(0, len(self.message), 8):
 			res += chr(int(self.message[i: i + 8], 2))
 		return res
+
+
+"""
+don't use any of this functions. they are just helper classes for ChatBox.py
+"""

@@ -11,10 +11,14 @@ class ViewCell(BaseNews):
 		super().__init__()
 		self.cell: ModelCell = cell
 
+	def get_cell(self) -> ModelCell:
+		return self.cell
+
 	def message_size(self) -> int:
 		return len(self.huffman_prefix) + 12 + 2  # prefix (x, y) type
 
 	def get_priority(self):
+		# todo
 		return 5
 
 	def encode(self, writer: Writer):
@@ -30,3 +34,11 @@ class ViewCell(BaseNews):
 		cell_type = reader.read(2)
 		cell = ModelCell(x, y, cell_type, None, None)
 		return ViewCell(cell)
+
+"""
+initialize it with cell that you want to report
+
+use get_cell() to get Model.Cell of that cell (Maybe some data is unknown and set as None)
+
+don't use another functions
+"""
