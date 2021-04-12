@@ -1,7 +1,6 @@
 from .Grid import Grid
 from .Cell import Cell
 from .ChatBox import ChatBoxWriter, ChatBoxReader
-from .ChatBox import ViewCell
 
 
 class BaseAnt:
@@ -9,23 +8,15 @@ class BaseAnt:
         self.game = game
         self.grid = Grid(game)
         self.has_resource = False  # in tooye api khodeshoon bug dasht!
-        self.chat_box_writer = None
-        self.chat_box_reader = None
 
     def get_message_and_priority(self):
-        return self.chat_box_writer.flush(), self.chat_box_writer.get_priority()
+        return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
 
     def pre_move(self):
-        self.chat_box_writer = ChatBoxWriter()  # change this
-        self.chat_box_reader = ChatBoxReader(self.game.chatBox)
+        self.grid.chat_box_writer = ChatBoxWriter()  # change this
+        self.grid.chat_box_reader = ChatBoxReader(self.game.chatBox)
 
         self.grid.visit_cell(self.get_now_pos_cell())
-
-        # added
-        for news in self.chat_box_reader.get_view_cell_news():
-            ccc = news.cell
-            print("WE SEE CELL ", ccc.x, ccc.y)
-            self.grid.see_cell(news.cell)
 
         self.update_and_report_map()
         self.grid.pre_calculations(self.get_now_pos_cell())
@@ -46,8 +37,6 @@ class BaseAnt:
                 model_cell = self.game.ant.getMapRelativeCell(dx, dy)
                 if model_cell is not None:
                     self.grid.see_cell(model_cell)
-                    self.chat_box_writer.report(ViewCell(model_cell))
-                    print("REPORT ", model_cell.x, model_cell.y)
 
     def print_statistics(self):
         print("I'm in", self.get_now_pos_cell())

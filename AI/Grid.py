@@ -2,6 +2,7 @@ from Model import CellType, ResourceType, Cell as ModelCell
 from .Cell import Cell, DIRECTIONS
 from AI.Algorithms import Graph
 from copy import deepcopy
+from .ChatBox import ViewCell
 
 
 # hell!
@@ -33,11 +34,18 @@ class Grid:
         self.known_graph = Graph()
         # self.unknown_graph = Graph()
         self.initialize_graphs()
+        self.chat_box_writer = None
+        self.chat_box_reader = None
 
     def is_visited(self, cell):
         return self.visited[cell.x][cell.y]
 
     def pre_calculations(self, now: Cell):
+        for news in self.chat_box_reader.get_view_cell_news():
+            ccc = news.cell
+            print("WE SEE CELL ", ccc.x, ccc.y)
+            self.see_cell(news.cell, update_chat_box=False)
+
         # self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
 
@@ -68,11 +76,29 @@ class Grid:
                     self.unknown_graph.add_edge(cell, cell.go_to(direction))
                 """
 
-    def see_cell(self, new_cell: ModelCell):
-        if new_cell is not None:
-            cell = Cell(new_cell.x, new_cell.y)
+    def see_cell(self, new_cell: ModelCell, update_chat_box=True):
+        if new_cell is None:
+            return
+        cell = Cell(new_cell.x, new_cell.y)
+        if self.model_cell[cell.x][cell.y] is None:
             self.model_cell[cell.x][cell.y] = deepcopy(new_cell)  # it should be deep copy
+        else:
+            is_new_info = False
+            if new_cell.type is not None and new_cell.type != self.model_cell[cell.x][cell.y].type:
+                self.model_cell[cell.x][cell.y].type = new_cell.type
+                is_new_info = True
+            if not is_new_info:
+                return
+            # ignore resource type and value for now...
+            # and later cover more info...
+
+        # are we reporting the cells that become empty?
+        # todo
+        # store time here and check if the new information is newer than now
+        if self.model_cell[cell.x][cell.y]:
             self.update_vertex_in_graph(cell)
+        if update_chat_box:
+            self.chat_box_writer.report(ViewCell(self.model_cell[cell.x][cell.y]))
 
     def visit_cell(self, cell: Cell):
         self.visited[cell.x][cell.y] = True
@@ -85,11 +111,15 @@ class Grid:
     def get_cell_resource_value(self, cell: Cell):
         remembered: ModelCell = self.model_cell[cell.x][cell.y]
         if remembered is not None:
+            if remembered.resource_value is None:
+                return 0 # todo remove this
             return remembered.resource_value
 
     def get_cell_resource_type(self, cell: Cell):
         remembered: ModelCell = self.model_cell[cell.x][cell.y]
         if remembered is not None:
+            if remembered.resource_type is None:
+                return -1 # todo remove this
             return remembered.resource_type
 
     def is_unknown(self, cell: Cell):
@@ -130,9 +160,9 @@ class Grid:
                 if self.is_unknown(cell):
                     score = 0
                 elif self.get_cell_resource_type(cell) == ResourceType.GRASS.value:
-                    score = min(20, self.get_cell_resource_value(cell))  # in 20 avaz she
+                    score = min(10, self.get_cell_resource_value(cell)) * 0.5  # in 10 avaz she
                 elif self.get_cell_resource_type(cell) == ResourceType.BREAD.value:
-                    score = min(20, self.get_cell_resource_value(cell))  # in 20 avaz she
+                    score = min(10, self.get_cell_resource_value(cell))  # in 10 avaz she
                 if (not self.is_unknown(cell)) and (self.get_cell_resource_value(cell) is not None) and (self.get_cell_resource_value(cell) <= 0): #  don't try to go to seen cells. also change this.
                     score = -1000  # inf
                 # age manabe tamoom beshan va hame chiz ro dide bashim ina miterekan
