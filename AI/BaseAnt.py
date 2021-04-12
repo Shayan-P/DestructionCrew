@@ -23,6 +23,8 @@ class BaseAnt:
 
         # added
         for news in self.chat_box_reader.get_view_cell_news():
+            ccc = news.cell
+            print("WE SEE CELL ", ccc.x, ccc.y)
             self.grid.see_cell(news.cell)
 
         self.update_and_report_map()
@@ -30,6 +32,8 @@ class BaseAnt:
         # this is tof
         if self.get_now_pos_cell() == self.get_base_cell():
             self.has_resource = False
+        if self.grid.get_cell_resource_value(self.get_now_pos_cell()) > 0:
+            self.has_resource = True
         self.print_statistics()
 
     def update_and_report_map(self):  # reporting here is not optimal
@@ -43,6 +47,7 @@ class BaseAnt:
                 if model_cell is not None:
                     self.grid.see_cell(model_cell)
                     self.chat_box_writer.report(ViewCell(model_cell))
+                    print("REPORT ", model_cell.x, model_cell.y)
 
     def print_statistics(self):
         print("I'm in", self.get_now_pos_cell())

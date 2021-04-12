@@ -27,6 +27,9 @@ class ChatBoxWriter:
 
 		self.queueNews = []
 
+		# todo
+		# store the messages that ignored because of not enough space
+
 		return ret.get_message()
 
 	def get_priority(self) -> int:
