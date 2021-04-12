@@ -37,7 +37,7 @@ class Writer:
 		self.limit = limit
 
 	def enough_space(self, new) -> bool:
-		return len(self.message) + new.message_size() <= self.limit
+		return len(self.message) + new.message_size() <= 8 * self.limit
 
 	def write(self, mes, bits):
 		res = ""

@@ -17,7 +17,7 @@ class AI:
 
     """
     Return a tuple with this form:
-        (message: str, message_value: int, message_dirction: int)
+        (message: str, message_value: int, message_direction: int)
     check example
     """
 
