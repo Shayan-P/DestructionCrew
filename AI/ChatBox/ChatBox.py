@@ -5,12 +5,13 @@ from .MessageHandlers import Reader, Writer
 
 from .AttackCell import AttackCell
 from .ViewCell import ViewCell
+from .ViewOppBase import ViewOppBase
 
 all_message_types: [BaseNews] = BaseNews.__subclasses__()
 
 
 class ChatBoxWriter:
-	def __init__(self, limit = 32):
+	def __init__(self, limit=32):
 		self.queueNews: [BaseNews] = []
 		self.limit = limit
 
@@ -22,7 +23,7 @@ class ChatBoxWriter:
 		# need to obtain from map configs
 		ret = Writer(self.limit)
 		for new in self.queueNews:
-			if(ret.enough_space(new)):
+			if ret.enough_space(new):
 				new.encode(ret)
 
 		self.queueNews = []
@@ -39,6 +40,7 @@ class ChatBoxWriter:
 
 class ChatBoxReader:
 	def __init__(self, box: ChatBox):
+		print("!!!!", len(all_message_types), " -> ", all_message_types)
 		self.news: [BaseNews] = []
 		msg_readers = []
 		for msg in box.allChats:
@@ -52,14 +54,14 @@ class ChatBoxReader:
 					continue
 				message_type = None
 				for new_type in all_message_types:
-					if(prefix == new_type.huffman_prefix):
+					if prefix == new_type.huffman_prefix:
 						message_type = new_type
 				self.news.append(message_type.decode(reader))
 
 	def get_x_news(self, new_type) -> [BaseNews]:
 		msgs = []
 		for new in self.news:
-			if(type(new) == new_type):
+			if type(new) == new_type:
 				msgs.append(new)
 		return msgs
 
@@ -68,6 +70,9 @@ class ChatBoxReader:
 
 	def get_view_cell_news(self) -> [ViewCell]:
 		return self.get_x_news(ViewCell)
+
+	# def get_view_opp_base_news(self) -> [ViewOppBase]:
+	# 	return self.get_x_news(ViewOppBase)
 
 
 """
