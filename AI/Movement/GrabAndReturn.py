@@ -22,6 +22,7 @@ class GrabAndReturn(MovementStrategy):
             return self.go_grab_resource()
 
     def get_best_cell_score_with_resource(self, current_position: Cell):
+        print("Current position is ", current_position)
         # score must be expected value
         best_cell = None
         best_score = -1
@@ -43,6 +44,7 @@ class GrabAndReturn(MovementStrategy):
                 score = -1000  # inf
             # age manabe tamoom beshan va hame chiz ro dide bashim ina miterekan
             score -= 0.5 * self.grid.expected_distance(current_position, cell)  # need to change  this
+            print("candidate", cell, score, self.grid.expected_distance(current_position, cell))
             # ba in taabee momken nist dore khodemoon bekharkhim?
             if best_cell is None or best_score < score:
                 best_cell = cell

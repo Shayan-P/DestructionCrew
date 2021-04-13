@@ -25,9 +25,10 @@ class AI:
 
     def turn(self) -> (str, int, int):
         global turn_count
+
+        update_config(self.game)
         if turn_count == 0:
             init(self.game)
-        update_config(self.game)
         self.game.turn = turn_count
         # this is number of turns we were alive
         turn_count += 1  # store the turns

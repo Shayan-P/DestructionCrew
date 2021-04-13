@@ -5,7 +5,7 @@ from .Movement import Explore, Follower
 class Attacker(BaseAnt):
     def __init__(self, game):
         super(Attacker, self).__init__(game)
-        self.movement = Follower(self)
+        self.movement = Explore(self)
 
     def get_move(self):
         self.pre_move()

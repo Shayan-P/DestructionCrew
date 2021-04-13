@@ -3,8 +3,8 @@ from typing import List
 from Model import CellType, ResourceType, Cell as ModelCell
 from .Cell import DIRECTIONS, Cell
 from AI.Algorithms import Graph
-from AI.ChatBox import BaseNews, ViewCell, ViewOppBase, ViewScorpion
-from .sync_information import see_cell, view_opp_base, view_scorpion
+from AI.ChatBox import BaseNews, ViewCell, ViewOppBase, ViewScorpion, ViewResource
+from .sync_information import see_cell, view_opp_base, view_scorpion, see_resource
 from AI.Config import Config
 
 
@@ -34,11 +34,13 @@ class Grid:
         if type(base_news) == ViewCell:
             if update_chat_box is False:
                 print("WE SEE CELL In ChatBox", base_news.get_cell().x, base_news.get_cell().y)
-            see_cell(self, base_news.get_cell(), update_chat_box=update_chat_box, force_update_grid=force_update_grid)
+            see_cell(self, base_news, update_chat_box=update_chat_box, force_update_grid=force_update_grid)
         if type(base_news) == ViewOppBase:
             view_opp_base(self, base_news, update_chat_box=update_chat_box, force_update_grid=force_update_grid)
         if type(base_news) == ViewScorpion:
             view_scorpion(self, base_news, update_chat_box=update_chat_box, force_update_grid=force_update_grid)
+        if type(base_news) == ViewResource:
+            see_resource(self, base_news, update_chat_box=update_chat_box, force_update_grid=force_update_grid)
         # todo add other types of messages
 
     def pre_calculations(self, now: Cell):
@@ -71,8 +73,7 @@ class Grid:
                 self.unknown_graph.add_edge(cell, cell.go_to(direction))
         """
 
-    # todo
-    # behold that this functions may return None in case there is nothing in memory
+    # todo is there a case were cell is not None but .type is None?
     def is_wall(self, cell: Cell):
         remembered: ModelCell = self.model_cell[cell.x][cell.y]
         if remembered is not None:

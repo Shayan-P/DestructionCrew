@@ -1,6 +1,6 @@
 from AI.Grid import Grid
 from AI.Grid.Cell import Cell
-from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell
+from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell, ViewResource
 from AI.Config import Config
 
 
@@ -14,7 +14,6 @@ class BaseAnt:
         return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
 
     def pre_move(self):
-        self.game.initGameConfig()
         self.grid.chat_box_writer = ChatBoxWriter()
         self.grid.chat_box_reader = ChatBoxReader(self.game.chatBox)
 
@@ -38,6 +37,8 @@ class BaseAnt:
                 model_cell = self.game.ant.getMapRelativeCell(dx, dy)
                 if model_cell is not None:
                     self.grid.update_with_news(ViewCell(model_cell), update_chat_box=True, force_update_grid=True)
+                    self.grid.update_with_news(ViewResource(model_cell), update_chat_box=True, force_update_grid=True)
+                    # todo remove this ViewResource
 
     def print_statistics(self):
         print("I'm in", self.get_now_pos_cell())
