@@ -45,7 +45,7 @@ class Grid:
             ccc = news.cell
             print("WE SEE CELL ", ccc.x, ccc.y)
             self.see_cell(news.cell, update_chat_box=False)
-
+        # todo handle other news
         # self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
 

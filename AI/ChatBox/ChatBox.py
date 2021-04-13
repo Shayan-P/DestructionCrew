@@ -42,10 +42,9 @@ class ChatBoxReader:
 	def __init__(self, box: ChatBox):
 		print("!!!!", len(all_message_types), " -> ", all_message_types)
 		self.news: [BaseNews] = []
-		msg_readers = []
 		for msg in box.allChats:
-			msg_readers.append(Reader(msg.text))
-		for reader in msg_readers:
+			turn = msg.turn
+			reader = Reader(msg.text)
 			while not reader.EOF():
 				prefix = ""
 				while (not reader.EOF()) and (prefix not in [new_type.huffman_prefix for new_type in all_message_types]):
@@ -56,7 +55,9 @@ class ChatBoxReader:
 				for new_type in all_message_types:
 					if prefix == new_type.huffman_prefix:
 						message_type = new_type
-				self.news.append(message_type.decode(reader))
+				this_news = message_type.decode(reader)
+				this_news.turn = turn
+				self.news.append(this_news)
 
 	def get_x_news(self, new_type) -> [BaseNews]:
 		msgs = []
