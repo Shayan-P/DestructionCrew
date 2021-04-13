@@ -26,6 +26,7 @@ class AI:
         if turn_count == 0:
             init(self.game)
         self.game.turn = turn_count
+        # this is number of turns we were alive
         turn_count += 1  # store the turns
         ant = get_ant(self.game.antType)
         ant.game = self.game
