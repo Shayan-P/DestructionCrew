@@ -5,12 +5,16 @@ from random import random, choice
 # time consuming?
 # candidates is a candid->val dictionary
 def soft_max_choose(candidates):
+	max_score = None
+	for x in candidates:
+		if max_score is None or max_score < candidates[x]:
+			max_score = candidates[x]
 	total = 0
 	for x in candidates:
-		total += exp(candidates[x])
+		total += exp(candidates[x]-max_score)
 	rnd = random() * total
 	for x in candidates:
-		rnd -= exp(candidates[x])
+		rnd -= exp(candidates[x]-max_score)
 		if rnd < 0:
 			return x
 	assert False
