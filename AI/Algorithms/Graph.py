@@ -1,3 +1,4 @@
+from typing import List
 from AI.Cell import Cell
 import heapq, sys
 
@@ -65,7 +66,7 @@ class Graph:
     # simple edges
 
     def __init__(self):
-        self.no_of_vertices = 0;
+        self.no_of_vertices = 0
         self.vert_dict = {}
         self.curr_source = None
 
@@ -88,8 +89,8 @@ class Graph:
     def add_edge(self, a: Cell, b: Cell):
         # add_vertex(a)
         # add_vertex(b)
-        self.get_vertex(a).add_neighbor(self.get_vertex(b));
-        self.get_vertex(b).add_neighbor(self.get_vertex(a));
+        self.get_vertex(a).add_neighbor(self.get_vertex(b))
+        self.get_vertex(b).add_neighbor(self.get_vertex(a))
 
     # maybe the vertex is not available right now
     def delete_vertex(self, a: Cell):
@@ -106,9 +107,9 @@ class Graph:
             return None
         if(end == self.curr_source):
             start, end = end, start
-        return self.get_vertex(end).get_distance();
+        return self.get_vertex(end).get_distance()
 
-    def get_shortest_path(self, start: Cell, end: Cell) -> [Cell]:
+    def get_shortest_path(self, start: Cell, end: Cell) -> List[Cell]:
         assert self.get_vertex(start) != None
         assert self.get_vertex(end) != None
 

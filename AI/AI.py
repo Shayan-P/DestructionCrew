@@ -21,7 +21,7 @@ class AI:
     check example
     """
 
-    def turn(self) -> (str, int, int):
+    def turn(self) -> Tuple(str, int, int):
         global turn_count
         if turn_count == 0:
             init(self.game)
