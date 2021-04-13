@@ -1,9 +1,10 @@
+import Model
+from typing import List
 from Model import CellType, ResourceType, Cell as ModelCell
 from .Cell import Cell, DIRECTIONS
 from AI.Algorithms import Graph
 from copy import deepcopy
 from .ChatBox import ViewCell
-
 
 # hell!
 # time consuming?
@@ -122,6 +123,11 @@ class Grid:
                 return -1 # todo remove this
             return remembered.resource_type
 
+    def get_cell_ants(self, cell: Cell) -> List[Model.Ant]:
+        remembered: ModelCell = self.model_cell[cell.x][cell.y]
+        if remembered is not None:
+            return remembered.ants
+    
     def is_unknown(self, cell: Cell):
         return self.model_cell[cell.x][cell.y] is None
 
@@ -187,3 +193,18 @@ class Grid:
                     if distance != 1000:
                         print("can go to ", cell, "distance is ", distance)
         return soft_max_choose(candidates)
+
+    def get_closest_worker(self, source: Cell) -> Cell:
+        self.known_graph.precalculate_source(source)
+        best_cell = None
+        for x in range(Grid.width):
+            for y in range(Grid.height):
+                cell = Cell(x, y)
+                if self.is_unknown(Cell) or len(self.get_cell_ants(Cell)) == 0:
+                    continue
+                for ant in self.get_cell_ants(Cell):
+                    if ant.antTeam == Model.AntTeam.ALLIED \
+                    and ant.antType == Model.AntType.get_value("KARGAR") \
+                    and (best_cell is None or best_cell.distance > self.known_graph.get_vertex(cell).distance):
+                        best_cell = self.known_graph.get_vertex(cell)
+        return best_cell.cell

@@ -1,13 +1,14 @@
+from AI.Grid import Grid
 from AI.BaseAnt import BaseAnt
 from AI.Cell import Cell
 
 
 class MovementStrategy:
     def __init__(self, base_ant: BaseAnt):
-        self.base_ant = base_ant
-        self.grid = base_ant.grid
-        self.get_now_pos_cell = base_ant.get_now_pos_cell
-        self.get_base_cell = base_ant.get_base_cell
+        self.base_ant: BaseAnt = base_ant
+        self.grid: Grid = base_ant.grid
+        self.get_now_pos_cell: Cell = base_ant.get_now_pos_cell
+        self.get_base_cell: Cell = base_ant.get_base_cell
         # is this ok?
 
     def get_direction(self):

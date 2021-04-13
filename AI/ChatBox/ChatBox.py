@@ -6,6 +6,7 @@ from .MessageHandlers import Reader, Writer
 from .AttackCell import AttackCell
 from .ViewCell import ViewCell
 from .ViewOppBase import ViewOppBase
+from .ViewScorpion import ViewScorpion
 
 all_message_types: [BaseNews] = BaseNews.__subclasses__()
 
@@ -72,8 +73,11 @@ class ChatBoxReader:
 	def get_view_cell_news(self) -> [ViewCell]:
 		return self.get_x_news(ViewCell)
 
-	# def get_view_opp_base_news(self) -> [ViewOppBase]:
-	# 	return self.get_x_news(ViewOppBase)
+	def get_view_opp_base_news(self) -> [ViewOppBase]:
+		return self.get_x_news(ViewOppBase)
+
+	def get_view_scorpion_news(self) -> [ViewScorpion]:
+		return self.get_x_news(ViewScorpion)
 
 
 """
