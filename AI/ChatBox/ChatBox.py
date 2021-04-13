@@ -35,7 +35,7 @@ class ChatBoxWriter:
 		return ret.get_message()
 
 	def get_priority(self) -> int:
-		# todo
+		# todo fix priorities
 		return randint(1, 1000)
 
 

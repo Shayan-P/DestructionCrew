@@ -21,7 +21,6 @@ class BaseNews:
 
 	@staticmethod
 	def decode(reader: Reader):
-		# todo
 		pass
 
 	def get_priority(self) -> int:
