@@ -23,6 +23,10 @@ def see_cell(grid, new_cell: ModelCell, update_chat_box):
 	# are we reporting the cells that become empty?
 	# todo
 	# store time here and check if the new information is newer than now
+
+	# todo
+	# give nearby ants we see
+
 	if grid.model_cell[cell.x][cell.y]:
 		grid.update_vertex_in_graph(cell)
 	if update_chat_box:
