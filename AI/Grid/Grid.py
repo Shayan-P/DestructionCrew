@@ -31,17 +31,17 @@ class Grid:
         self.chat_box_writer = None
         self.chat_box_reader = None
 
-    def update_with_news(self, base_news: BaseNews, update_chat_box=True):
+    def update_with_news(self, base_news: BaseNews, update_chat_box=False, force_update_grid=False):
         if type(base_news) == ViewCell:
             if update_chat_box is False:
                 print("WE SEE CELL In ChatBox", base_news.get_cell().x, base_news.get_cell().y)
-            see_cell(self, base_news.get_cell(), update_chat_box=update_chat_box)
+            see_cell(self, base_news.get_cell(), update_chat_box=update_chat_box, force_update_grid=force_update_grid)
         pass
         # todo add other news
 
     def pre_calculations(self, now: Cell):
         for news in self.chat_box_reader.get_all_news():
-            self.update_with_news(news, update_chat_box=False)
+            self.update_with_news(news, update_chat_box=False, force_update_grid=False)
         # self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
 
