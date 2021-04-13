@@ -1,10 +1,10 @@
-from AI.Grid import Grid, Cell
+from .Cell import Cell
 from Model import Cell as ModelCell
 from copy import deepcopy
 from AI.ChatBox import ViewCell
 
 
-def see_cell(grid: Grid, new_cell: ModelCell, update_chat_box):
+def see_cell(grid, new_cell: ModelCell, update_chat_box):
 	if new_cell is None:
 		return
 	cell = Cell(new_cell.x, new_cell.y)

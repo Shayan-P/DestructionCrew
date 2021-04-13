@@ -1,10 +1,10 @@
 import Model
 from typing import List
 from Model import CellType, ResourceType, Cell as ModelCell
-from AI.Grid.Cell import Cell, DIRECTIONS
+from .Cell import DIRECTIONS, Cell
 from AI.Algorithms import Graph
 from AI.ChatBox import BaseNews, ViewCell
-from sync_information import *
+from .sync_information import see_cell
 
 
 class Grid:
@@ -14,8 +14,8 @@ class Grid:
     @staticmethod
     def get_all_cells():
         res = []
-        for x in Grid.width:
-            for y in Grid.height:
+        for x in range(Grid.width):
+            for y in range(Grid.height):
                 res.append(Cell(x, y))
         return res
 
@@ -122,10 +122,11 @@ class Grid:
             if self.is_unknown(cell):
                 return "?"
             if self.get_cell_resource_value(cell) > 0:
-                if self.get_cell_resource_type(cell) == ResourceType.GRASS:
+                if self.get_cell_resource_type(cell) == ResourceType.GRASS.value:
                     return colorful_print("G", OKGREEN)
-                if self.get_cell_resource_type(cell) == ResourceType.BREAD:
+                if self.get_cell_resource_type(cell) == ResourceType.BREAD.value:
                     return colorful_print("B", OKGREEN)
+                print(colorful_print(FAIL, "SHIT SHIT SHIT SHIT ANOTHER TYPE"), self.get_cell_resource_value(cell), self.get_cell_resource_type(cell), ResourceType.GRASS, ResourceType.BREAD)
                 assert False
             return colorful_print("E", OKCYAN)
 

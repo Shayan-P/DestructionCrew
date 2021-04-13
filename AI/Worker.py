@@ -1,11 +1,11 @@
 from .BaseAnt import BaseAnt
-from .Movement import GrabAndReturn
+from .Movement import GrabAndReturn, Explore
 
 
 class Worker(BaseAnt):
     def __init__(self, game):
         super(Worker, self).__init__(game)
-        self.movement = GrabAndReturn(self)
+        self.movement = Explore(self)
 
     def get_move(self):
         self.pre_move()

@@ -60,7 +60,7 @@ class ChatBoxReader:
 				this_news.turn = turn
 				self.news.append(this_news)
 
-	def get_all_news(self, new_type) -> [BaseNews]:
+	def get_all_news(self) -> [BaseNews]:
 		return self.news
 
 
