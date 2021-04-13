@@ -1,21 +1,29 @@
 from AI.Grid import Grid
 from AI.BaseAnt import BaseAnt
-from AI.Cell import Cell
+from AI.Grid.Cell import Cell
 
 
 class MovementStrategy:
     def __init__(self, base_ant: BaseAnt):
         self.base_ant: BaseAnt = base_ant
         self.grid: Grid = base_ant.grid
-        self.get_now_pos_cell: Cell = base_ant.get_now_pos_cell
-        self.get_base_cell: Cell = base_ant.get_base_cell
+        self.get_now_pos_cell = base_ant.get_now_pos_cell
+        self.get_base_cell = base_ant.get_base_cell
         # is this ok?
 
     def get_direction(self):
         NotImplementedError
 
+    def get_best_path(self, cell_start: Cell, cell_end: Cell):
+        # nabayad chizaii ke midim be graph mutable bashe? age avazesh kone chi?
+        if not self.grid.known_graph.no_path(cell_start, cell_end):
+            return self.grid.known_graph.get_shortest_path(cell_start, cell_end)
+        # if not self.unknown_graph.no_path(cell_start, cell_end):
+        #    return self.unknown_graph.get_shortest_path(cell_start, cell_end)
+        return None
+
     def go_to(self, destination: Cell):
-        path = self.grid.get_best_path(self.get_now_pos_cell(), destination)
+        path = self.get_best_path(self.get_now_pos_cell(), destination)
         # what if path is None?
         print("going to ", destination, "path is ", *path)
         return self.get_first_step_direction(path)

@@ -6,7 +6,12 @@ class BaseNews:
 
 	def __init__(self):
 		self.priority: int = 0
-		self.turn = 0
+		self.turn = 10000
+		# turn 10000 should mean that it is this turn
+		# todo fix this?
+
+	def get_turn(self):
+		return self.turn
 
 	def message_size(self) -> int:
 		pass

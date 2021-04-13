@@ -1,6 +1,6 @@
 from typing import List
-from AI.Cell import Cell
-import heapq, sys
+from AI.Grid.Cell import Cell
+import heapq
 
 
 class Vertex:

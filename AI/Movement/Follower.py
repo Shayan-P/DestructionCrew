@@ -1,6 +1,5 @@
-from typing import Tuple
 from .MovementStrategy import MovementStrategy
-from AI.Cell import Cell
+from AI.Grid.Cell import Cell
 
 class Follower(MovementStrategy):
 	def __init__(self, base_ant):

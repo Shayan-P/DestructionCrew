@@ -1,6 +1,6 @@
-from .Grid import Grid
-from .Cell import Cell
-from .ChatBox import ChatBoxWriter, ChatBoxReader
+from AI.Grid import Grid
+from AI.Grid.Cell import Cell
+from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell
 
 
 class BaseAnt:
@@ -13,10 +13,8 @@ class BaseAnt:
         return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
 
     def pre_move(self):
-        self.grid.chat_box_writer = ChatBoxWriter()  # change this
+        self.grid.chat_box_writer = ChatBoxWriter()
         self.grid.chat_box_reader = ChatBoxReader(self.game.chatBox)
-
-        self.grid.visit_cell(self.get_now_pos_cell())
 
         self.update_and_report_map()
         self.grid.pre_calculations(self.get_now_pos_cell())
@@ -36,7 +34,7 @@ class BaseAnt:
             for dy in range(-view_distance-2, view_distance+2):
                 model_cell = self.game.ant.getMapRelativeCell(dx, dy)
                 if model_cell is not None:
-                    self.grid.see_cell(model_cell)
+                    self.grid.update_with_news(ViewCell(model_cell))
 
     def print_statistics(self):
         print("I'm in", self.get_now_pos_cell())

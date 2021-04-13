@@ -60,24 +60,8 @@ class ChatBoxReader:
 				this_news.turn = turn
 				self.news.append(this_news)
 
-	def get_x_news(self, new_type) -> [BaseNews]:
-		msgs = []
-		for new in self.news:
-			if type(new) == new_type:
-				msgs.append(new)
-		return msgs
-
-	def get_attack_cell_news(self) -> [AttackCell]:
-		return self.get_x_news(AttackCell)
-
-	def get_view_cell_news(self) -> [ViewCell]:
-		return self.get_x_news(ViewCell)
-
-	def get_view_opp_base_news(self) -> [ViewOppBase]:
-		return self.get_x_news(ViewOppBase)
-
-	def get_view_scorpion_news(self) -> [ViewScorpion]:
-		return self.get_x_news(ViewScorpion)
+	def get_all_news(self, new_type) -> [BaseNews]:
+		return self.news
 
 
 """
