@@ -7,6 +7,7 @@ from .AttackCell import AttackCell
 from .ViewCell import ViewCell
 from .ViewOppBase import ViewOppBase
 from .ViewScorpion import ViewScorpion
+from .ViewResource import ViewResource
 
 all_message_types: [BaseNews] = BaseNews.__subclasses__()
 

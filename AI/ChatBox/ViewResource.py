@@ -1,10 +1,11 @@
 from .BaseNews import BaseNews
 from .MessageHandlers import Reader, Writer
 from Model import Cell as ModelCell
+from Model import CellType
 
 
-class ViewCell(BaseNews):
-	huffman_prefix = "1"
+class ViewResource(BaseNews):
+	huffman_prefix = "00001"
 
 	def __init__(self, cell: ModelCell):
 		super().__init__()
@@ -14,27 +15,27 @@ class ViewCell(BaseNews):
 		return self.cell
 
 	def message_size(self) -> int:
-		return len(self.huffman_prefix) + 12 + 2  # prefix (x, y) type
+		return len(self.huffman_prefix) + 12 + 1 + 8  # prefix (x, y) type
 
 	def get_priority(self):
 		# todo
 		return 5
 
 	def encode(self, writer: Writer):
-		print("ENCODING ", self.cell.x, self.cell.y)
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
 		writer.write(self.cell.x, 6)
 		writer.write(self.cell.y, 6)
-		writer.write(self.cell.type, 2)
+		writer.write(self.cell.resource_type, 1)
+		writer.write(min(255, self.cell.resource_value), 8)
 
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:
 		x = reader.read(6)
 		y = reader.read(6)
-		cell_type = reader.read(2)
-		cell = ModelCell(x, y, cell_type, None, None)
-		return ViewCell(cell)
-
+		cell_resource_type = reader.read(1)
+		cell_resource_value = reader.read(8)
+		cell = ModelCell(x, y, CellType.EMPTY, cell_resource_value, cell_resource_type)
+		return ViewResource(cell)
 
 """
 initialize it with cell that you want to report
