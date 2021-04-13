@@ -2,6 +2,8 @@ from Model import *
 from .Attacker import Attacker
 from .Worker import Worker
 from Utils import logger
+from AI.Config import Config
+
 # just remove this and everything will be printed in console
 
 
@@ -25,6 +27,7 @@ class AI:
         global turn_count
         if turn_count == 0:
             init(self.game)
+        update_config(self.game)
         self.game.turn = turn_count
         # this is number of turns we were alive
         turn_count += 1  # store the turns
@@ -52,3 +55,20 @@ def get_ant(ant_type):
         return attacker
     else:
         return worker
+
+
+def update_config(game: Game):
+    Config.ant_type = game.antType
+    Config.map_width = game.mapWidth
+    Config.map_height = game.mapHeight
+    Config.base_x = game.baseX
+    Config.base_y = game.baseY
+    Config.health_kargar = game.healthKargar
+    Config.health_sarbaaz = game.healthSarbaaz
+    Config.attack_distance = game.attackDistance
+    Config.view_distance = game.viewDistance
+    Config.generate_kargar = game.generateKargar
+    Config.generate_sarbaaz = game.generateSarbaaz
+    Config.rate_death_resource = game.rateDeathResource
+    Config.now_x = game.ant.currentX
+    Config.now_y = game.ant.currentY

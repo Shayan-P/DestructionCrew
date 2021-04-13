@@ -1,15 +1,19 @@
 from AI.Grid import Grid
 from AI.BaseAnt import BaseAnt
 from AI.Grid.Cell import Cell
+from AI.Config import Config
 
 
 class MovementStrategy:
     def __init__(self, base_ant: BaseAnt):
-        # dont save base_ant
+        self.base_ant = base_ant
         self.grid: Grid = base_ant.grid
-        self.get_now_pos_cell = base_ant.get_now_pos_cell
-        self.get_base_cell = base_ant.get_base_cell
-        # is this ok?
+
+    def get_now_pos_cell(self):
+        return Cell(Config.now_x, Config.now_y)
+
+    def get_base_cell(self):
+        return Cell(Config.now_x, Config.now_y)
 
     def get_direction(self):
         NotImplementedError

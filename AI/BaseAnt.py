@@ -1,18 +1,20 @@
 from AI.Grid import Grid
 from AI.Grid.Cell import Cell
 from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell
+from AI.Config import Config
 
 
 class BaseAnt:
     def __init__(self, game):
         self.game = game
-        self.grid = Grid(game)
+        self.grid = Grid()
         self.has_resource = False  # in tooye api khodeshoon bug dasht!
 
     def get_message_and_priority(self):
         return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
 
     def pre_move(self):
+        self.game.initGameConfig()
         self.grid.chat_box_writer = ChatBoxWriter()
         self.grid.chat_box_reader = ChatBoxReader(self.game.chatBox)
 
@@ -43,7 +45,7 @@ class BaseAnt:
         self.grid.print_all_we_know_from_map()
 
     def get_now_pos_cell(self):
-        return Cell(self.game.ant.currentX, self.game.ant.currentY)
+        return Cell(Config.now_x, Config.now_y)
 
     def get_base_cell(self):
-        return Cell(self.game.baseX, self.game.baseY)
+        return Cell(Config.base_x, Config.base_y)

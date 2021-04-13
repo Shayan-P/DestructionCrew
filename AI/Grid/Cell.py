@@ -1,12 +1,10 @@
 import random
 
 from Model import Direction
+from AI.Config import Config
 
 
 class Cell:
-    width = None
-    height = None
-
     def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
@@ -27,16 +25,20 @@ class Cell:
 
     @staticmethod
     def normalize_mod_n(x: int, y: int):
-        return (x + Cell.width) % Cell.width, (y + Cell.height) % Cell.height
+        return (x + Config.map_width) % Config.map_width, (y + Config.map_height) % Config.map_height
 
     @staticmethod
     def normalize_direction(x: int, y: int):
         x, y = Cell.normalize_mod_n(x, y)
-        if x == Cell.width - 1:
+        if x == Config.map_width - 1:
             x = -1
-        if y == Cell.height - 1:
+        if y == Config.map_height - 1:
             y = -1
         return x, y
+
+    @staticmethod
+    def from_model_cell(model_cell):
+        return Cell(model_cell.x, model_cell.y)
 
     def go_to(self, direction: Direction):
         delta_x, delta_y = get_direction_delta(direction)
@@ -45,6 +47,9 @@ class Cell:
 
     def delta_to(self, cell):
         return Cell.normalize_direction(cell.x - self.x, cell.y - self.y)
+
+    def move_to(self, x, y):
+        return Cell(*Cell.normalize_mod_n(self.x + x, self.y + y))
 
     def direction_to(self, cell):
         return get_direction_by_delta(self.delta_to(cell))

@@ -1,7 +1,8 @@
 from .Cell import Cell
 from Model import Cell as ModelCell
 from copy import deepcopy
-from AI.ChatBox import ViewCell
+from AI.ChatBox import ViewCell, ViewOppBase, ViewScorpion, AttackCell
+from AI.Config import Config
 
 
 def see_cell(grid, news: ViewCell, update_chat_box, force_update_grid):
@@ -35,3 +36,31 @@ def see_cell(grid, news: ViewCell, update_chat_box, force_update_grid):
 		grid.update_vertex_in_graph(Cell(x, y))  # it is not model cell
 	if update_chat_box:
 		grid.chat_box_writer.report(ViewCell(grid.model_cell[x][y]))  # or only pass new information we saw?
+
+
+def view_opp_base(grid, news: ViewOppBase, update_chat_box, force_update_grid):
+	grid.opponent_base = Cell.from_model_cell(news.get_cell())
+	grid.add_danger(
+		start_cell=Cell.from_model_cell(news.get_cell()),
+		starting_danger=Config.base_range * 10 + 10,
+		reduction_ratio=10,
+		steps=Config.base_range
+	)
+	if update_chat_box:
+		grid.chat_box_writer.report(news)
+
+
+def view_scorpion(grid, news: ViewScorpion, update_chat_box, force_update_grid):
+	# todo handle delete scorpion
+	# when a scorpion dies we should go and gather resource!
+	grid.add_danger(
+		start_cell=Cell.from_model_cell(news.get_cell()),
+		starting_danger=Config.base_range * 5 + 5,
+		reduction_ratio=5,
+		steps=Config.attacker_range
+	)
+	if update_chat_box:
+		grid.chat_box_writer.report(news)
+
+
+# todo add attack cell
