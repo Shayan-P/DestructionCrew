@@ -3,12 +3,15 @@ from AI.Grid import Grid, Cell
 from AI.Choosing import soft_max_choose
 import Config
 
+
 class Explore(MovementStrategy):
     def __init__(self, base_ant):
         super(Explore, self).__init__(base_ant)
 
     def best_strategy(self):
         if self.base_ant.currentResource.value > 0.5 * Config.ant_max_rec_amount:
+            return GrabAndReturn
+        if self.grid.chat_box_reader.get_now_turn() > Config.max_turn * 0.8:
             return GrabAndReturn
         return Explore
 
@@ -21,6 +24,9 @@ class Explore(MovementStrategy):
                 # age yeki az 1000 ha bardashte beshe badbakht mishim
                 if distance != 1000:
                     print("can go to ", cell, "distance is ", distance)
+            elif self.grid.get_cell_resource_value(cell) > 0:
+                distance = self.grid.expected_distance(current_position, cell)
+                candidates[cell] = -(distance ** 1.5)  # can be optimized
         return soft_max_choose(candidates)
 
     def get_direction(self):

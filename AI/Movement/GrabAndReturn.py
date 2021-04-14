@@ -10,6 +10,9 @@ class GrabAndReturn(MovementStrategy):
         super(GrabAndReturn, self).__init__(base_ant)
 
     def best_strategy(self):
+        if self.grid.chat_box_reader.get_now_turn() - self.start_turn > \
+                (Config.map_width + Config.map_height) * 0.9:  # need conditions like all cells are known or not ...
+            return Explore
         return GrabAndReturn
 
     def get_direction(self):
@@ -22,7 +25,7 @@ class GrabAndReturn(MovementStrategy):
 
         print("We are choosing direction. we have resource: ", self.base_ant.has_resource)
         # shayad bad nabashe ye vaghta tama kone bishtar biare
-        if self.base_ant.currentResource.value > 0.5 * Config.ant_max_rec_amount:
+        if self.base_ant.game.ant.currentResource.value > 0.5 * Config.ant_max_rec_amount:
             return self.go_to_base()
         else:
             return self.go_grab_resource()
@@ -39,15 +42,15 @@ class GrabAndReturn(MovementStrategy):
             score = 0
             # dar yek khoone momkene do no manbaa bashan?
             if self.grid.is_unknown(cell):
-                score = 0
+                score = 0.5 * self.grid.expected_distance(current_position, cell) + 1  # unknown > emptycell
             elif self.grid.get_cell_resource_type(cell) == ResourceType.GRASS.value:
-                score = min(10, self.grid.get_cell_resource_value(cell)) * 0.5  # in 10 avaz she
+                score = self.grid.get_cell_resource_value(cell) * self.need_grass()  # in 10 avaz she
             elif self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
-                score = min(10, self.grid.get_cell_resource_value(cell))  # in 10 avaz she
+                score = self.grid.get_cell_resource_value(cell) * self.need_bread()  # in 10 avaz she
             if (not self.grid.is_unknown(cell)) and (self.grid.get_cell_resource_value(cell) is not None) and \
                     (self.grid.get_cell_resource_value(cell) <= 0):
                 # don't try to go to seen cells. also change this.
-                score = -1000  # inf
+                score = -1000  # -inf
             # age manabe tamoom beshan va hame chiz ro dide bashim ina miterekan
             score -= 0.5 * self.grid.expected_distance(current_position, cell)  # need to change  this
             # ba in taabee momken nist dore khodemoon bekharkhim?
@@ -63,4 +66,8 @@ class GrabAndReturn(MovementStrategy):
         print("base cell is ", self.get_base_cell())
         return self.go_to(self.get_base_cell())
 
+    def need_grass(self):
+        return 1
 
+    def need_bread(self):
+        return 1

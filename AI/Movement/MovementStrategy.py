@@ -2,12 +2,12 @@ from AI.Grid import Grid
 from AI.BaseAnt import BaseAnt
 from AI.Grid.Cell import Cell
 from AI.Config import Config
-from ...Model import Ant
 
 class MovementStrategy:
     def __init__(self, base_ant: BaseAnt):
-        self.base_ant: Ant = base_ant
+        self.base_ant: BaseAnt = base_ant
         self.grid: Grid = base_ant.grid
+        self.start_turn = base_ant.grid.chat_box_reader.get_now_turn()
 
     def get_now_pos_cell(self):
         return Cell(Config.now_x, Config.now_y)
