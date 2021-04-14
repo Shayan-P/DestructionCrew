@@ -35,8 +35,8 @@ class Grid:
 
     def update_with_news(self, base_news: BaseNews, is_from_chat_box=True, update_chat_box=False):
         if type(base_news) == ViewCell:
-            if update_chat_box is False:
-                print("WE SEE CELL In ChatBox", base_news.get_cell().x, base_news.get_cell().y)
+            # if update_chat_box is False:
+            # print("WE SEE CELL In ChatBox", base_news.get_cell().x, base_news.get_cell().y)
             see_cell(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
         if type(base_news) == ViewOppBase:
             view_opp_base(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)

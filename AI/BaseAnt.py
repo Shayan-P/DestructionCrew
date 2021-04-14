@@ -1,6 +1,8 @@
 from AI.Grid import Grid
 from AI.Grid.Cell import Cell
-from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell, ViewResource
+from Model import Cell as ModelCell
+from Model import AntTeam, AntType, CellType
+from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell, ViewResource, ViewScorpion, ViewOppBase
 from AI.Config import Config
 
 
@@ -30,19 +32,22 @@ class BaseAnt:
         self.print_statistics()
 
     def update_and_report_map(self):  # reporting here is not optimal
-        view_distance = self.game.viewDistance
-        print("VIEW IS ", view_distance)
-        if view_distance == 0:  # ina bug zadan ino 0 midan!
-            view_distance = 8
+        view_distance = Config.view_distance  # be nazar bugeshoon bartaraf shode
         for dx in range(-view_distance-2, view_distance+2):
             for dy in range(-view_distance-2, view_distance+2):
-                model_cell = self.game.ant.getMapRelativeCell(dx, dy)
+                model_cell : ModelCell = self.game.ant.getMapRelativeCell(dx, dy)
                 if model_cell is not None:
                     self.grid.update_with_news(ViewCell(model_cell),
                                                update_chat_box=self.game.alive_turn != 0, is_from_chat_box=False)
                     self.grid.update_with_news(ViewResource(model_cell),
                                                update_chat_box=self.game.alive_turn != 0, is_from_chat_box=False)
-                    # todo remove this ViewResource
+                    for ant in model_cell.ants:
+                        if ant.antTeam == AntTeam.ENEMY and ant.antType == AntType.SARBAAZ:
+                            self.grid.update_with_news(ViewScorpion(model_cell),
+                                                       update_chat_box=True, is_from_chat_box=False)
+                    if model_cell.type == CellType.BASE and Cell.from_model_cell(model_cell) != self.get_base_cell():
+                        self.grid.update_with_news(ViewOppBase(model_cell),
+                                                   update_chat_box=True, is_from_chat_box=False)
 
     def print_statistics(self):
         print("I'm in", self.get_now_pos_cell())
