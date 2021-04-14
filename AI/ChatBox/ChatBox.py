@@ -4,6 +4,11 @@ from Model import ChatBox
 from .MessageHandlers import Reader, Writer
 from AI.Config import Config
 
+from .AttackCell import AttackCell
+from .ViewCell import ViewCell
+from .ViewScorpion import ViewScorpion
+from .ViewOppBase import ViewOppBase
+from .ViewResource import ViewResource
 
 all_message_types: [BaseNews] = BaseNews.__subclasses__()
 
