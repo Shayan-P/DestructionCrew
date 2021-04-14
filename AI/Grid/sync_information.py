@@ -4,7 +4,7 @@ from AI.ChatBox import ViewCell, ViewOppBase, ViewScorpion, ViewResource, Attack
 from AI.Config import Config
 
 
-def see_cell(grid, news: ViewCell, update_chat_box):
+def see_cell(grid, news: ViewCell, is_from_chat_box, update_chat_box):
 	new_cell = news.get_cell()
 	if new_cell is None:
 		return
@@ -13,7 +13,7 @@ def see_cell(grid, news: ViewCell, update_chat_box):
 		grid.model_cell[x][y] = ModelCell(x, y, new_cell.type, None, None)
 		grid.model_cell[x][y].ants = new_cell.ants
 	else:
-		if update_chat_box:
+		if not is_from_chat_box:
 			grid.model_cell[x][y].ants = new_cell.ants
 			# it is not new info because we dont report it to chat_box
 		is_new_info = False
@@ -27,7 +27,7 @@ def see_cell(grid, news: ViewCell, update_chat_box):
 		grid.chat_box_writer.report(ViewCell(grid.model_cell[x][y]))  # or only pass new information we saw?
 
 
-def see_resource(grid, news: ViewResource, update_chat_box):
+def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
 	news_turn = min(news.turn, grid.chat_box_reader.get_now_turn())
 	new_cell = news.get_cell()
 	if new_cell is None:
@@ -37,7 +37,7 @@ def see_resource(grid, news: ViewResource, update_chat_box):
 		grid.model_cell[x][y] = ModelCell(x, y, None, new_cell.resource_value, new_cell.resource_type)
 		grid.model_cell[x][y] = new_cell.ants
 	else:
-		if update_chat_box:
+		if not is_from_chat_box:
 			grid.model_cell[x][y].ants = new_cell.ants
 		is_new_info = False
 		if new_cell.resource_type is not None and grid.last_update[x][y] <= news_turn and new_cell.resource_type != grid.model_cell[x][y].resource_type:
@@ -57,7 +57,7 @@ def see_resource(grid, news: ViewResource, update_chat_box):
 		grid.chat_box_writer.report(ViewResource(grid.model_cell[x][y]))
 
 
-def view_opp_base(grid, news: ViewOppBase, update_chat_box):
+def view_opp_base(grid, news: ViewOppBase, is_from_chat_box, update_chat_box):
 	grid.opponent_base = Cell.from_model_cell(news.get_cell())
 	grid.add_danger(
 		start_cell=Cell.from_model_cell(news.get_cell()),
@@ -69,7 +69,7 @@ def view_opp_base(grid, news: ViewOppBase, update_chat_box):
 		grid.chat_box_writer.report(news)
 
 
-def view_scorpion(grid, news: ViewScorpion, update_chat_box):
+def view_scorpion(grid, news: ViewScorpion, is_from_chat_box, update_chat_box):
 	# todo handle delete scorpion
 	# when a scorpion dies we should go and gather resource!
 	grid.add_danger(

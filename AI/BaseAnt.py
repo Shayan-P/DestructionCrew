@@ -38,8 +38,10 @@ class BaseAnt:
             for dy in range(-view_distance-2, view_distance+2):
                 model_cell = self.game.ant.getMapRelativeCell(dx, dy)
                 if model_cell is not None:
-                    self.grid.update_with_news(ViewCell(model_cell), update_chat_box=True)
-                    self.grid.update_with_news(ViewResource(model_cell), update_chat_box=True)
+                    self.grid.update_with_news(ViewCell(model_cell),
+                                               update_chat_box=self.game.alive_turn != 0, is_from_chat_box=False)
+                    self.grid.update_with_news(ViewResource(model_cell),
+                                               update_chat_box=self.game.alive_turn != 0, is_from_chat_box=False)
                     # todo remove this ViewResource
 
     def print_statistics(self):
