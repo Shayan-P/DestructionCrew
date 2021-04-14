@@ -1,3 +1,4 @@
+import Model
 from AI.Grid import Grid
 from AI.Grid.Cell import Cell
 from Model import Cell as ModelCell
@@ -8,7 +9,7 @@ from AI.Config import Config
 
 class BaseAnt:
     def __init__(self, game):
-        self.game = game
+        self.game: Model.Game = game
         self.grid = Grid()
         self.has_resource = False  # in tooye api khodeshoon bug dasht!
 
@@ -30,6 +31,7 @@ class BaseAnt:
         if self.grid.get_cell_resource_value(self.get_now_pos_cell()) > 0:
             self.has_resource = True # todo ask this
         self.print_statistics()
+
 
     def update_and_report_map(self):  # reporting here is not optimal
         view_distance = Config.view_distance  # be nazar bugeshoon bartaraf shode

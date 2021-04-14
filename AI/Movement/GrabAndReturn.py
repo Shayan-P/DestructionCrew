@@ -1,11 +1,16 @@
-from .MovementStrategy import MovementStrategy
+from ..Movement import *
 from Model import CellType, ResourceType
 from AI.Grid import Grid, Cell
+from ..BaseAnt import BaseAnt, Config
+from .. import Choosing
 
 
 class GrabAndReturn(MovementStrategy):
     def __init__(self, base_ant):
         super(GrabAndReturn, self).__init__(base_ant)
+
+    def best_strategy(self):
+        return GrabAndReturn
 
     def get_direction(self):
         # if you have grabbed it go back to base
@@ -16,7 +21,8 @@ class GrabAndReturn(MovementStrategy):
         # todo bebinim moorche ii ke dastesh ja dashte bashe mitoone bazam chi bardare ya na?
 
         print("We are choosing direction. we have resource: ", self.base_ant.has_resource)
-        if self.base_ant.has_resource:
+        # shayad bad nabashe ye vaghta tama kone bishtar biare
+        if self.base_ant.currentResource.value > 0.5 * Config.ant_max_rec_amount:
             return self.go_to_base()
         else:
             return self.go_grab_resource()
@@ -28,6 +34,7 @@ class GrabAndReturn(MovementStrategy):
 
         # todo
         # change this
+        candidates = {}
         for cell in Grid.get_all_cells():
             score = 0
             # dar yek khoone momkene do no manbaa bashan?
@@ -44,13 +51,12 @@ class GrabAndReturn(MovementStrategy):
             # age manabe tamoom beshan va hame chiz ro dide bashim ina miterekan
             score -= 0.5 * self.grid.expected_distance(current_position, cell)  # need to change  this
             # ba in taabee momken nist dore khodemoon bekharkhim?
-            if best_cell is None or best_score < score:
-                best_cell = cell
-                best_score = score
-        return best_cell, best_score
+            candidates[cell] = score
+
+        return Choosing.soft_max_choose(candidates)
 
     def go_grab_resource(self):
-        cell, score = self.get_best_cell_score_with_resource(self.get_now_pos_cell())
+        cell = self.get_best_cell_score_with_resource(self.get_now_pos_cell())
         return self.go_to(cell)
 
     def go_to_base(self):

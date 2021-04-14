@@ -1,11 +1,16 @@
-from .MovementStrategy import MovementStrategy
+from ..Movement import *
 from AI.Grid import Grid, Cell
 from AI.Choosing import soft_max_choose
-
+import Config
 
 class Explore(MovementStrategy):
     def __init__(self, base_ant):
         super(Explore, self).__init__(base_ant)
+
+    def best_strategy(self):
+        if self.base_ant.currentResource.value > 0.5 * Config.ant_max_rec_amount:
+            return GrabAndReturn
+        return Explore
 
     def get_one_of_near_unknowns(self, current_position: Cell):
         candidates = {}

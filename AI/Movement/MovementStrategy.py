@@ -2,11 +2,11 @@ from AI.Grid import Grid
 from AI.BaseAnt import BaseAnt
 from AI.Grid.Cell import Cell
 from AI.Config import Config
-
+from ...Model import Ant
 
 class MovementStrategy:
     def __init__(self, base_ant: BaseAnt):
-        self.base_ant = base_ant
+        self.base_ant: Ant = base_ant
         self.grid: Grid = base_ant.grid
 
     def get_now_pos_cell(self):
