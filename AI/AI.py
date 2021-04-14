@@ -1,4 +1,4 @@
-from Model import *
+from .Model import *
 from .Attacker import Attacker
 from .Worker import Worker
 from Utils import logger
@@ -11,7 +11,7 @@ class AI:
     def __init__(self):
         # Current Game State
         self.game: Game = None
-
+        
         # Answer
         self.message: str = None
         self.direction: int = None
