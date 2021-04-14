@@ -1,9 +1,8 @@
-from .Model import *
+from Model import *
 from .Attacker import Attacker
 from .Worker import Worker
-from Utils import logger
 from AI.Config import Config
-
+from Utils import logger
 # just remove this and everything will be printed in console
 
 
@@ -11,7 +10,7 @@ class AI:
     def __init__(self):
         # Current Game State
         self.game: Game = None
-        
+
         # Answer
         self.message: str = None
         self.direction: int = None

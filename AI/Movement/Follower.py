@@ -1,3 +1,4 @@
+from AI.Movement import *
 from .MovementStrategy import MovementStrategy
 from AI.Grid import Grid, Cell
 from AI.Grid.Cell import get_random_directions
@@ -9,6 +10,7 @@ class Follower(MovementStrategy):
 		super(Follower, self).__init__(base_ant)
 
 	def best_strategy(self):
+
 		return Follower
 
 	def get_direction(self):

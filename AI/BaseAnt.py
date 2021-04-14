@@ -12,9 +12,20 @@ class BaseAnt:
         self.game: Model.Game = game
         self.grid = Grid()
         self.has_resource = False  # in tooye api khodeshoon bug dasht!
+        self.movement = None
 
     def get_message_and_priority(self):
         return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
+
+    def get_move(self):
+        self.pre_move()
+        self.choose_best_strategy()
+        return self.movement.get_direction()
+
+    def choose_best_strategy(self):
+        best_strategy = self.movement.best_strategy()
+        del self.movement
+        self.movement = best_strategy(self)
 
     def pre_move(self):
         self.grid.chat_box_writer = ChatBoxWriter()
@@ -31,7 +42,6 @@ class BaseAnt:
         if self.grid.get_cell_resource_value(self.get_now_pos_cell()) > 0:
             self.has_resource = True # todo ask this
         self.print_statistics()
-
 
     def update_and_report_map(self):  # reporting here is not optimal
         view_distance = Config.view_distance  # be nazar bugeshoon bartaraf shode
