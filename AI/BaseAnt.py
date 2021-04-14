@@ -17,8 +17,10 @@ class BaseAnt:
         self.grid.chat_box_writer = ChatBoxWriter()
         self.grid.chat_box_reader = ChatBoxReader(self.game.chatBox)
 
-        self.grid.pre_calculations(self.get_now_pos_cell())
+        self.grid.listen_to_chat_box()
         self.update_and_report_map()
+        self.grid.pre_calculations(self.get_now_pos_cell())
+
         # aval chatBox ro Bebin baad map ro bebin ta etelaat override she. todo fix this
 
         if self.get_now_pos_cell() == self.get_base_cell():
@@ -36,8 +38,8 @@ class BaseAnt:
             for dy in range(-view_distance-2, view_distance+2):
                 model_cell = self.game.ant.getMapRelativeCell(dx, dy)
                 if model_cell is not None:
-                    self.grid.update_with_news(ViewCell(model_cell), update_chat_box=True, force_update_grid=True)
-                    self.grid.update_with_news(ViewResource(model_cell), update_chat_box=True, force_update_grid=True)
+                    self.grid.update_with_news(ViewCell(model_cell), update_chat_box=True)
+                    self.grid.update_with_news(ViewResource(model_cell), update_chat_box=True)
                     # todo remove this ViewResource
 
     def print_statistics(self):

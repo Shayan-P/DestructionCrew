@@ -13,7 +13,7 @@ class MovementStrategy:
         return Cell(Config.now_x, Config.now_y)
 
     def get_base_cell(self):
-        return Cell(Config.now_x, Config.now_y)
+        return Cell(Config.base_x, Config.base_y)
 
     def get_direction(self):
         NotImplementedError
@@ -38,3 +38,4 @@ class MovementStrategy:
         assert path[0] == self.get_now_pos_cell()
         assert len(path) > 1
         return path[0].direction_to(path[1])
+

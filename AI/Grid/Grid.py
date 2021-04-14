@@ -21,6 +21,9 @@ class Grid:
 
     def __init__(self):
         self.model_cell = [[None] * Config.map_height for i in range(Config.map_width)]
+        self.last_update = [[-1] * Config.map_height for i in range(Config.map_width)]
+        # this probably has some bugs. when there are plenty of things with different update time
+
         self.danger = [[0] * Config.map_height for i in range(Config.map_width)]
         self.known_graph = Graph()
         # self.unknown_graph = Graph()
@@ -30,22 +33,24 @@ class Grid:
 
         self.opponent_base = None  # there is no function to return this. and it's type is ModelCell
 
-    def update_with_news(self, base_news: BaseNews, update_chat_box=False, force_update_grid=False):
+    def update_with_news(self, base_news: BaseNews, update_chat_box=False):
         if type(base_news) == ViewCell:
             if update_chat_box is False:
                 print("WE SEE CELL In ChatBox", base_news.get_cell().x, base_news.get_cell().y)
-            see_cell(self, base_news, update_chat_box=update_chat_box, force_update_grid=force_update_grid)
+            see_cell(self, base_news, update_chat_box=update_chat_box)
         if type(base_news) == ViewOppBase:
-            view_opp_base(self, base_news, update_chat_box=update_chat_box, force_update_grid=force_update_grid)
+            view_opp_base(self, base_news, update_chat_box=update_chat_box)
         if type(base_news) == ViewScorpion:
-            view_scorpion(self, base_news, update_chat_box=update_chat_box, force_update_grid=force_update_grid)
+            view_scorpion(self, base_news, update_chat_box=update_chat_box)
         if type(base_news) == ViewResource:
-            see_resource(self, base_news, update_chat_box=update_chat_box, force_update_grid=force_update_grid)
+            see_resource(self, base_news, update_chat_box=update_chat_box)
         # todo add other types of messages
 
-    def pre_calculations(self, now: Cell):
+    def listen_to_chat_box(self):
         for news in self.chat_box_reader.get_all_news():
-            self.update_with_news(news, update_chat_box=False, force_update_grid=False)
+            self.update_with_news(news, update_chat_box=False)
+
+    def pre_calculations(self, now: Cell):
         # self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
 
@@ -87,7 +92,7 @@ class Grid:
         if remembered is not None:
             if remembered.resource_value is None:
                 return 0 # todo remove this
-            return remembered.resource_value
+            return max(0, remembered.resource_value)
 
     def get_cell_resource_type(self, cell: Cell):
         remembered: ModelCell = self.model_cell[cell.x][cell.y]
@@ -144,6 +149,7 @@ class Grid:
                 assert False
             return colorful_print("E", OKCYAN)
 
-        for i in range(Config.map_width):
-            arr = [colorful_cell(Cell(i, j)) for j in range(Config.map_height)]
+        # you should rotate and then print
+        for j in range(Config.map_height):
+            arr = [colorful_cell(Cell(i, j)) for i in range(Config.map_width)]
             print(*arr)

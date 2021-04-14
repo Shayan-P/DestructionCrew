@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from .BaseNews import BaseNews
 from .MessageHandlers import Reader, Writer
 from Model import Cell as ModelCell
@@ -8,7 +10,7 @@ class ViewCell(BaseNews):
 
 	def __init__(self, cell: ModelCell):
 		super().__init__()
-		self.cell: ModelCell = cell
+		self.cell: ModelCell = deepcopy(cell)
 
 	def get_cell(self) -> ModelCell:
 		return self.cell

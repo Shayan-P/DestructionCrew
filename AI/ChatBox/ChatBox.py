@@ -2,20 +2,16 @@ from .BaseNews import BaseNews
 from random import randint
 from Model import ChatBox
 from .MessageHandlers import Reader, Writer
+from AI.Config import Config
 
-from .AttackCell import AttackCell
-from .ViewCell import ViewCell
-from .ViewOppBase import ViewOppBase
-from .ViewScorpion import ViewScorpion
-from .ViewResource import ViewResource
 
 all_message_types: [BaseNews] = BaseNews.__subclasses__()
 
 
 class ChatBoxWriter:
-	def __init__(self, limit=32):
+	def __init__(self):
 		self.queueNews: [BaseNews] = []
-		self.limit = limit
+		self.limit = Config.max_com_length
 
 	def report(self, news: BaseNews):
 		self.queueNews.append(news)
@@ -44,8 +40,10 @@ class ChatBoxReader:
 	def __init__(self, box: ChatBox):
 		print("!!!!", len(all_message_types), " -> ", all_message_types)
 		self.news: [BaseNews] = []
+		self.my_turn = 0
 		for msg in box.allChats:
 			turn = msg.turn
+			self.my_turn = max(self.my_turn, turn + 1)
 			reader = Reader(msg.text)
 			while not reader.EOF():
 				prefix = ""
@@ -60,6 +58,10 @@ class ChatBoxReader:
 				this_news = message_type.decode(reader)
 				this_news.turn = turn
 				self.news.append(this_news)
+
+	def get_now_turn(self):
+		return self.my_turn
+		# todo this may be wrong. there might be a case were chat box does not update. but probably it makes no problem
 
 	def get_all_news(self) -> [BaseNews]:
 		return self.news

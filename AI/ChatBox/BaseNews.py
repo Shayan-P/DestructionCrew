@@ -1,6 +1,8 @@
 from .MessageHandlers import Reader, Writer
 
 
+# todo deepcopy all inputs
+
 class BaseNews:
 	huffman_prefix = ""
 

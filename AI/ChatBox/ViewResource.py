@@ -2,6 +2,7 @@ from .BaseNews import BaseNews
 from .MessageHandlers import Reader, Writer
 from Model import Cell as ModelCell
 from Model import CellType
+from copy import deepcopy
 
 
 class ViewResource(BaseNews):
@@ -9,7 +10,7 @@ class ViewResource(BaseNews):
 
 	def __init__(self, cell: ModelCell):
 		super().__init__()
-		self.cell: ModelCell = cell
+		self.cell: ModelCell = deepcopy(cell)
 
 	def get_cell(self) -> ModelCell:
 		return self.cell
@@ -25,6 +26,8 @@ class ViewResource(BaseNews):
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
 		writer.write(self.cell.x, 6)
 		writer.write(self.cell.y, 6)
+		# todo behold. resource value can be -1
+		self.cell.resource_value = max(0, self.cell.resource_value)
 		writer.write(self.cell.resource_type, 1)
 		writer.write(min(255, self.cell.resource_value), 8)
 
