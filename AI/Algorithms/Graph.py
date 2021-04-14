@@ -79,7 +79,7 @@ class Graph:
 
     # maybe the vertex is repeated
     def add_vertex(self, a: Cell, w: int) -> Vertex:
-        if(a not in self.vert_dict):
+        if a not in self.vert_dict:
             self.vert_dict[a] = Vertex(a, w)
             self.no_of_vertices += 1
 
@@ -94,34 +94,34 @@ class Graph:
 
     # maybe the vertex is not available right now
     def delete_vertex(self, a: Cell):
-        self.get_vertex(a).deactivate();    
+        self.get_vertex(a).deactivate()
 
     def no_path(self, a: Cell, b: Cell) -> bool:
-        if(self.get_vertex(a).get_previous() == None and self.get_vertex(b).get_previous() == None):
+        if self.get_vertex(a).get_previous() is None and self.get_vertex(b).get_previous() is None:
             return True
         return False
 
     # always return None if there is no path
     def get_shortest_distance(self, start: Cell, end: Cell) -> int:
-        if(self.no_path(start, end)):
+        if self.no_path(start, end):
             return None
-        if(end == self.curr_source):
+        if end == self.curr_source:
             start, end = end, start
         return self.get_vertex(end).get_distance()
 
     def get_shortest_path(self, start: Cell, end: Cell) -> List[Cell]:
-        assert self.get_vertex(start) != None
-        assert self.get_vertex(end) != None
+        assert self.get_vertex(start) is not None
+        assert self.get_vertex(end) is not None
 
         swap = False
-        if(end == self.curr_source):
+        if end == self.curr_source:
             start, end = end, start
             swap = True
 
         assert start == self.curr_source
 
         end_ver = self.get_vertex(end)
-        print ("^^", self.curr_source, start, end_ver.get_cell())
+        print("^^", self.curr_source, start, end_ver.get_cell())
 
         ans = []
         while end_ver.get_cell() != start:
@@ -133,7 +133,7 @@ class Graph:
 
         ans.append(start)
         
-        if(not swap):
+        if not swap:
             ans.reverse()
         return ans
 

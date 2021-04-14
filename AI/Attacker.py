@@ -9,5 +9,10 @@ class Attacker(BaseAnt):
 
     def get_move(self):
         self.pre_move()
+        self.choose_best_strategy()
         return self.movement.get_direction()
 
+    def choose_best_strategy(self):
+        best_strategy = self.movement.best_strategy()
+        del self.movement
+        self.movement = best_strategy(self)
