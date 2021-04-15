@@ -20,8 +20,6 @@ class MovementStrategy:
 
     def get_best_path(self, cell_start: Cell, cell_end: Cell):
         # nabayad chizaii ke midim be graph mutable bashe? age avazesh kone chi?
-        print(self.grid.known_graph.no_path(cell_start, cell_end))
-        print(self.grid.known_graph.get_shortest_path(cell_start, cell_end))
         if not self.grid.known_graph.no_path(cell_start, cell_end):
             return self.grid.known_graph.get_shortest_path(cell_start, cell_end)
         # if not self.unknown_graph.no_path(cell_start, cell_end):

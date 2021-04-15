@@ -11,8 +11,7 @@ class GrabAndReturn(MovementStrategy):
         super(GrabAndReturn, self).__init__(base_ant)
 
     def get_direction(self):
-        print("We are choosing direction. we have resource: ", self.base_ant.has_resource)
-        print("My current resource is ", self.base_ant.game.ant.currentResource.value)
+        print("We are choosing direction. we have resource: ", self.base_ant.game.ant.currentResource.value)
         # shayad bad nabashe ye vaghta tama kone bishtar biare
         if self.base_ant.game.ant.currentResource.value > 0.5 * Config.ant_max_rec_amount:
             return self.go_to_base()
@@ -41,11 +40,21 @@ class GrabAndReturn(MovementStrategy):
             candidates[cell] = score
         return candidates
 
-    def not_good(self):
+    def is_not_good(self):
         candidates = self.get_scores()
         if len(candidates) == 0:
             return True
         # other stuff todo
+        return False
+
+    def is_really_good(self):
+        print("RUNNING IS REALLY GOOD")
+        candidates = self.get_scores()
+        if len(candidates) == 0:
+            return False
+        print("VAL IS ", Choosing.max_choose(candidates))
+        if self.grid.expected_distance(self.base_ant.get_now_pos_cell(), Choosing.max_choose(candidates)) <= 4: # change this todo
+            return True
         return False
 
     def get_best_cell(self):

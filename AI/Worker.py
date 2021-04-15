@@ -15,7 +15,10 @@ class Worker(BaseAnt):
             self.previous_strategy_object = GrabAndReturn(self)
         if self.game.ant.currentResource.value > Config.ant_max_rec_amount * 0.5:
             return GrabAndReturn
-        if self.previous_strategy is GrabAndReturn and self.previous_strategy_object.not_good():
+        print("IS not GRAB AND RETURN ", self.previous_strategy is not GrabAndReturn)
+        if (self.previous_strategy is not GrabAndReturn) and GrabAndReturn(self).is_really_good():
+            return GrabAndReturn
+        if self.previous_strategy is GrabAndReturn and self.previous_strategy_object.is_not_good():
             return Explore
         if self.previous_strategy is Explore:
             return Explore

@@ -13,7 +13,7 @@ class Explore(MovementStrategy):
     def get_one_of_near_unknowns(self):
         candidates = {}
         current_position = self.base_ant.get_now_pos_cell()
-        if self.previous_purpose == current_position:
+        if self.previous_purpose is not None and not self.grid.is_unknown(self.previous_purpose):
             self.previous_purpose = None
         if self.previous_purpose is not None:
             candidates[self.previous_purpose] = 3  # change this todo

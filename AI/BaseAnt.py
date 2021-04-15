@@ -11,7 +11,6 @@ class BaseAnt:
     def __init__(self, game):
         self.game: Model.Game = game
         self.grid = Grid()
-        self.has_resource = False  # in tooye api khodeshoon bug dasht!
         self.start_turn = None
         self.previous_strategy = None
         self.previous_strategy_object = None
@@ -25,7 +24,7 @@ class BaseAnt:
     def get_move(self):
         self.pre_move()
         strategy = self.choose_best_strategy()
-        print("startegies are ", strategy, self.previous_strategy)
+        print("now startegy is", strategy, "previouse strategy was", self.previous_strategy)
         if strategy is self.previous_strategy:
             return self.previous_strategy_object.get_direction()
         else:
@@ -44,19 +43,13 @@ class BaseAnt:
         if self.start_turn is None:
             self.start_turn = self.grid.chat_box_reader.get_now_turn()
 
-        # aval chatBox ro Bebin baad map ro bebin ta etelaat override she. todo fix this
-
-        if self.get_now_pos_cell() == self.get_base_cell():
-            self.has_resource = False
-        if self.grid.get_cell_resource_value(self.get_now_pos_cell()) > 0:
-            self.has_resource = True # todo ask this
         self.print_statistics()
 
-    def update_and_report_map(self):  # reporting here is not optimal
+    def update_and_report_map(self):
         view_distance = Config.view_distance  # be nazar bugeshoon bartaraf shode
         for dx in range(-view_distance-2, view_distance+2):
             for dy in range(-view_distance-2, view_distance+2):
-                model_cell : ModelCell = self.game.ant.getMapRelativeCell(dx, dy)
+                model_cell: ModelCell = self.game.ant.getMapRelativeCell(dx, dy)
                 if model_cell is not None:
                     self.grid.update_with_news(ViewCell(model_cell),
                                                update_chat_box=self.game.alive_turn != 0, is_from_chat_box=False)
