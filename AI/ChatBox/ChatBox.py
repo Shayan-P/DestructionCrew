@@ -45,7 +45,7 @@ class ChatBoxReader:
 	def __init__(self, box: ChatBox):
 		print("!!!!", len(all_message_types), " -> ", all_message_types)
 		self.news: [BaseNews] = []
-		self.my_turn = 0
+		self.my_turn = 1
 		for msg in box.allChats:
 			turn = msg.turn
 			self.my_turn = max(self.my_turn, turn + 1)
@@ -63,6 +63,7 @@ class ChatBoxReader:
 				this_news = message_type.decode(reader)
 				this_news.turn = turn
 				self.news.append(this_news)
+		print("testing turn : ", self.my_turn)
 
 	def get_now_turn(self):
 		return self.my_turn

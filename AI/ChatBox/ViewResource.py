@@ -6,7 +6,7 @@ from copy import deepcopy
 
 
 class ViewResource(BaseNews):
-	huffman_prefix = "00001"
+	huffman_prefix = "011"
 
 	def __init__(self, cell: ModelCell):
 		super().__init__()
@@ -19,14 +19,14 @@ class ViewResource(BaseNews):
 		return len(self.huffman_prefix) + 12 + 1 + 8  # prefix (x, y) type
 
 	def get_priority(self):
-		# todo
-		return 5
+		return 4
 
 	def encode(self, writer: Writer):
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
 		writer.write(self.cell.x, 6)
 		writer.write(self.cell.y, 6)
-		# todo behold. resource value can be -1
+		print("resource value -> ", self.cell.resource_value)
+		# need to test carefully todo
 		self.cell.resource_value = max(0, self.cell.resource_value)
 		writer.write(self.cell.resource_type, 1)
 		writer.write(min(255, self.cell.resource_value), 8)

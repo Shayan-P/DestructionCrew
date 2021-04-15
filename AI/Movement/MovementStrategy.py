@@ -8,6 +8,8 @@ class MovementStrategy:
     def __init__(self, base_ant: BaseAnt):
         self.base_ant: BaseAnt = base_ant
         self.grid: Grid = base_ant.grid
+        # chat_box_reader is None. just changed to build has to be debugged, todo
+        base_ant.pre_move()
         self.start_turn = base_ant.grid.chat_box_reader.get_now_turn()
         # make sure that in every turn start_turn is fresh
 
@@ -22,7 +24,8 @@ class MovementStrategy:
 
     def get_best_path(self, cell_start: Cell, cell_end: Cell):
         # nabayad chizaii ke midim be graph mutable bashe? age avazesh kone chi?
-        print(self.grid.known_graph.no_path(cell_start, cell_end), self.grid.known_graph.get_shortest_path(cell_start, cell_end))
+        print(self.grid.known_graph.no_path(cell_start, cell_end))
+        print(self.grid.known_graph.get_shortest_path(cell_start, cell_end))
         if not self.grid.known_graph.no_path(cell_start, cell_end):
             return self.grid.known_graph.get_shortest_path(cell_start, cell_end)
         # if not self.unknown_graph.no_path(cell_start, cell_end):

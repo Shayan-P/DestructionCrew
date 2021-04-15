@@ -35,6 +35,10 @@ class GrabAndReturn(MovementStrategy):
     def get_best_cell_score_with_resource(self, current_position: Cell):
         candidates = {}
         for cell in Grid.get_all_cells():
+
+            if(self.grid.known_graph.no_path(current_position, cell)):
+                continue
+
             score = 0
             if self.grid.is_unknown(cell):
                 score = 0.5 * self.grid.expected_distance(current_position, cell) + 1  # unknown > emptycell

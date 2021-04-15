@@ -6,7 +6,7 @@ from Model import Cell as ModelCell
 
 
 class ViewScorpion(BaseNews):
-	huffman_prefix = "0001"
+	huffman_prefix = "001"
 
 	def __init__(self, cell: ModelCell = None):
 		super().__init__()
@@ -19,8 +19,7 @@ class ViewScorpion(BaseNews):
 		return len(self.huffman_prefix) + 12  # prefix (x, y) type
 
 	def get_priority(self):
-		# todo
-		return 7
+		return 3
 
 	def encode(self, writer: Writer):
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))

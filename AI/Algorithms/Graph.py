@@ -96,10 +96,12 @@ class Graph:
     def delete_vertex(self, a: Cell):
         self.get_vertex(a).deactivate()
 
-    def no_path(self, a: Cell, b: Cell) -> bool:
-        if self.get_vertex(a).get_previous() is None and self.get_vertex(b).get_previous() is None:
-            return True
-        return False
+    def no_path(self, a: Cell, b: Cell) -> bool: # True if there isn't any path between a & b
+        reach_a = (a == self.curr_source) or (self.get_vertex(a).get_previous() is not None)
+        reach_b = (b == self.curr_source) or (self.get_vertex(b).get_previous() is not None)
+        if reach_a and reach_b:
+            return False
+        return True
 
     # always return None if there is no path
     def get_shortest_distance(self, start: Cell, end: Cell) -> int:
@@ -127,7 +129,7 @@ class Graph:
         while end_ver.get_cell() != start:
             print("Fuck Shayan !")
             ans.append(end_ver.get_cell())
-            print(type(ans[0]), ans[0], ",$$$$$$")
+            print(type(ans[-1]), ans[-1], ",$$$$$$")
             end_ver = end_ver.get_previous()
             print(type(end_ver))
 

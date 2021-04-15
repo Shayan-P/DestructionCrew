@@ -6,7 +6,7 @@ from Model import Cell as ModelCell
 
 
 class ViewOppBase(BaseNews):
-	huffman_prefix = "01"
+	huffman_prefix = "0001"
 
 	def __init__(self, cell: ModelCell):
 		super().__init__()
@@ -19,7 +19,6 @@ class ViewOppBase(BaseNews):
 		return len(self.huffman_prefix) + 12  # prefix (x, y)
 
 	def get_priority(self):
-		# todo
 		return 5
 
 	def encode(self, writer: Writer):

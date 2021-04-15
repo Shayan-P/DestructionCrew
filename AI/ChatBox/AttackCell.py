@@ -3,7 +3,7 @@ from .MessageHandlers import Reader, Writer
 
 
 class AttackCell(BaseNews):
-	huffman_prefix = "001"
+	huffman_prefix = "010"
 
 	def __init__(self, x=None, y=None):
 		super().__init__()
@@ -20,7 +20,7 @@ class AttackCell(BaseNews):
 		return len(AttackCell.huffman_prefix) + 12
 
 	def get_priority(self):
-		return 0
+		return 2
 
 	def encode(self, writer: Writer):
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
