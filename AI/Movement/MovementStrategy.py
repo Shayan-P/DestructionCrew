@@ -35,6 +35,7 @@ class MovementStrategy:
 
     def get_first_step_direction(self, path):
         assert path[0] == self.get_now_pos_cell()
-        assert len(path) > 1
+        if len(path) == 1:
+            print("alert! size of path is 1")
+            return path[0].direction_to(path[0])
         return path[0].direction_to(path[1])
-
