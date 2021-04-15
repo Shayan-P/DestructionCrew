@@ -30,9 +30,12 @@ class GrabAndReturn(MovementStrategy):
             if self.grid.get_cell_resource_value(cell) <= 0:
                 continue
             score = 0
-            if self.grid.get_cell_resource_type(cell) == ResourceType.GRASS.value:
+            my_resource = self.base_ant.game.ant.currentResource
+            if (my_resource.value == 0 or my_resource.type == ResourceType.GRASS.value) and \
+                    self.grid.get_cell_resource_type(cell) == ResourceType.GRASS.value:
                 score = min(Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.need_grass()
-            if self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
+            if (my_resource.value == 0 or my_resource.type == ResourceType.BREAD.value) and \
+                    self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
                 score = min(Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.need_bread()
             score -= 0.5 * self.grid.expected_distance(current_position, cell)  # need to change  this
             # boro be samti ke expected score et max she todo
