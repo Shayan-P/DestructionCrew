@@ -9,10 +9,6 @@ class Follower(MovementStrategy):
 	def __init__(self, base_ant):
 		super(Follower, self).__init__(base_ant)
 
-	def best_strategy(self):
-
-		return Follower
-
 	def get_direction(self):
 		cell = self.get_closest_worker(self.get_now_pos_cell())
 		if cell is None:

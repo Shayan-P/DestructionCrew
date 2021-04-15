@@ -15,7 +15,7 @@ def soft_max_choose(candidates):
 	rnd = random() * total
 	for x in candidates:
 		rnd -= exp(candidates[x]-max_score)
-		if rnd < 0:
+		if rnd <= float(1e-5):
 			return x
 	assert False
 

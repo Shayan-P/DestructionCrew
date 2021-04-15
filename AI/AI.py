@@ -31,7 +31,6 @@ class AI:
 			init(self.game)
 		turn_count += 1  # store the turns
 		ant = get_ant(self.game.antType)
-		ant.game = self.game
 		self.direction = ant.get_move()
 		self.message, self.value = ant.get_message_and_priority()
 		# print("turn ", self.message, self.value, self.direction)

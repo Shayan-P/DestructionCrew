@@ -8,34 +8,27 @@ from AI.Config import Config
 class Explore(MovementStrategy):
     def __init__(self, base_ant):
         super(Explore, self).__init__(base_ant)
+        self.previous_purpose = None
 
-    def best_strategy(self):
-        # todo ye if ham bezarim ke kheili az mabda door nashe.
-        # age ye manbaadashte bashe mitoone az yek nooe dige ham bardare?
-        if self.base_ant.game.ant.currentResource.value > 0.5 * Config.ant_max_rec_amount:
-            return GrabAndReturn
-        # todo change this if.
-        # if there is a resource near me. go grab it.
-        # if there is no near resource then go explore!
-        if self.grid.chat_box_reader.get_now_turn() > Config.max_turn * 0.8:
-            return GrabAndReturn
-        return Explore
-
-    def get_one_of_near_unknowns(self, current_position: Cell):
+    def get_one_of_near_unknowns(self):
         candidates = {}
+        current_position = self.base_ant.get_now_pos_cell()
+        if self.previous_purpose == current_position:
+            self.previous_purpose = None
+        if self.previous_purpose is not None:
+            candidates[self.previous_purpose] = 3  # change this todo
         for cell in Grid.get_all_cells():
-            if self.grid.is_unknown(cell):
+            if self.grid.is_unknown(cell) and not self.grid.known_graph.no_path(self.base_ant.get_now_pos_cell(), cell):
                 distance = self.grid.expected_distance(current_position, cell)
+                if cell not in candidates:
+                    candidates[cell] = 0
                 candidates[cell] = -distance
-                # age yeki az 1000 ha bardashte beshe badbakht mishim
-                # todo : motmaen shim ke 1000 ha ro bar nemidarim. magar na runtime error mikhorim.
-            elif self.grid.get_cell_resource_value(cell) > 0:
-                distance = self.grid.expected_distance(current_position, cell)
-                candidates[cell] = -(distance ** 1.5)  # can be optimized
-        return soft_max_choose(candidates)
+                for dx in range(-3, 4):
+                    for dy in range(-3, 4):
+                        if self.grid.get_cell_resource_value(cell.move_to(dx, dy)) > 0:
+                            candidates[cell] += 5 - (abs(dx) + abs(dy)) * 0.3  # change this todo
+        self.previous_purpose = soft_max_choose(candidates)
+        return self.previous_purpose
 
     def get_direction(self):
-        # this has some bugs.
-        # you must not change your destination after you fixed it!
-        # dor khodesh micharkhe!
-        return self.go_to(self.get_one_of_near_unknowns(self.get_now_pos_cell()))
+        return self.go_to(self.get_one_of_near_unknowns())

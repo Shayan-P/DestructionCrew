@@ -35,7 +35,7 @@ def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
 	x, y = new_cell.x, new_cell.y
 	if grid.model_cell[x][y] is None:
 		grid.model_cell[x][y] = ModelCell(x, y, None, new_cell.resource_value, new_cell.resource_type)
-		grid.model_cell[x][y] = new_cell.ants
+		grid.model_cell[x][y].ants = new_cell.ants
 	else:
 		if not is_from_chat_box:
 			grid.model_cell[x][y].ants = new_cell.ants

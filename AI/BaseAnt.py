@@ -12,20 +12,26 @@ class BaseAnt:
         self.game: Model.Game = game
         self.grid = Grid()
         self.has_resource = False  # in tooye api khodeshoon bug dasht!
-        self.movement = None
+        self.start_turn = None
+        self.previous_strategy = None
+        self.previous_strategy_object = None
 
     def get_message_and_priority(self):
         return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
 
+    def choose_best_strategy(self):
+        NotImplementedError
+
     def get_move(self):
         self.pre_move()
-        self.choose_best_strategy()
-        return self.movement.get_direction()
-
-    def choose_best_strategy(self):
-        best_strategy = self.movement.best_strategy()
-        del self.movement
-        self.movement = best_strategy(self)
+        strategy = self.choose_best_strategy()
+        print("startegies are ", strategy, self.previous_strategy)
+        if strategy is self.previous_strategy:
+            return self.previous_strategy_object.get_direction()
+        else:
+            self.previous_strategy = strategy
+            self.previous_strategy_object = strategy(self)
+            return self.previous_strategy_object.get_direction()
 
     def pre_move(self):
         self.grid.chat_box_writer = ChatBoxWriter()
@@ -34,6 +40,9 @@ class BaseAnt:
         self.grid.listen_to_chat_box()
         self.update_and_report_map()
         self.grid.pre_calculations(self.get_now_pos_cell())
+
+        if self.start_turn is None:
+            self.start_turn = self.grid.chat_box_reader.get_now_turn()
 
         # aval chatBox ro Bebin baad map ro bebin ta etelaat override she. todo fix this
 

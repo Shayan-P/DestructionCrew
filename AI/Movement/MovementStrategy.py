@@ -8,10 +8,6 @@ class MovementStrategy:
     def __init__(self, base_ant: BaseAnt):
         self.base_ant: BaseAnt = base_ant
         self.grid: Grid = base_ant.grid
-        # chat_box_reader is None. just changed to build has to be debugged, todo
-        base_ant.pre_move()
-        self.start_turn = base_ant.grid.chat_box_reader.get_now_turn()
-        # make sure that in every turn start_turn is fresh
 
     def get_now_pos_cell(self):
         return Cell(Config.now_x, Config.now_y)

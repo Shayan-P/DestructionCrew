@@ -6,6 +6,7 @@ from AI.Algorithms import Graph
 from AI.ChatBox import BaseNews, ViewCell, ViewOppBase, ViewScorpion, ViewResource
 from .sync_information import see_cell, view_opp_base, view_scorpion, see_resource
 from AI.Config import Config
+from AI.ChatBox import ChatBoxWriter, ChatBoxReader
 
 
 class Grid:
@@ -28,8 +29,8 @@ class Grid:
         self.known_graph = Graph()
         # self.unknown_graph = Graph()
         self.initialize_graphs()
-        self.chat_box_writer = None
-        self.chat_box_reader = None
+        self.chat_box_writer: ChatBoxWriter = None
+        self.chat_box_reader: ChatBoxReader = None
 
         self.opponent_base = None  # there is no function to return this. and it's type is ModelCell
 
@@ -91,15 +92,17 @@ class Grid:
         remembered: ModelCell = self.model_cell[cell.x][cell.y]
         if remembered is not None:
             if remembered.resource_value is None:
-                return 0 # todo remove this
+                return 0
             return max(0, remembered.resource_value)
+        return 0
 
     def get_cell_resource_type(self, cell: Cell):
         remembered: ModelCell = self.model_cell[cell.x][cell.y]
         if remembered is not None:
             if remembered.resource_type is None:
-                return -1 # todo remove this
+                return -1
             return remembered.resource_type
+        return -1
 
     def get_cell_ants(self, cell: Cell) -> List[Model.Ant]:
         remembered: ModelCell = self.model_cell[cell.x][cell.y]
@@ -136,6 +139,8 @@ class Grid:
             return str(clr) + str(txt) + ENDC
 
         def colorful_cell(cell):
+            if Config.now_x == cell.x and Config.now_y == cell.y:
+                return colorful_print("X", OKBLUE)
             if self.is_wall(cell):
                 return colorful_print("W", WARNING)
             if self.is_unknown(cell):
