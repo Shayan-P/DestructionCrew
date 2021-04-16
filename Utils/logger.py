@@ -30,9 +30,9 @@ def get_config():
         return json.loads(f.read())
 
 
-log_id = get_config()['count']
-set_config({'count': log_id+1})
-
-logger = Logger(os.path.join(LOG_PATH, f"{log_id}.log"))
-sys.stdout = logger
-sys.stderr = logger
+# log_id = get_config()['count']
+# set_config({'count': log_id+1})
+#
+# logger = Logger(os.path.join(LOG_PATH, f"{log_id}.log"))
+# sys.stdout = logger
+# sys.stderr = logger

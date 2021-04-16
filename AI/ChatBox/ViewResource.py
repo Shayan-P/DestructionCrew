@@ -16,7 +16,7 @@ class ViewResource(BaseNews):
 		return self.cell
 
 	def message_size(self) -> int:
-		return len(self.huffman_prefix) + 12 + 1 + 8  # prefix (x, y) type
+		return len(self.huffman_prefix) + 12 + 1 + 8  # prefix (x, y) type value
 
 	def get_priority(self):
 		return 4

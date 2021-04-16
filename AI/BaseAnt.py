@@ -24,7 +24,7 @@ class BaseAnt:
     def get_move(self):
         self.pre_move()
         strategy = self.choose_best_strategy()
-        print("now startegy is", strategy, "previouse strategy was", self.previous_strategy)
+        # print("now startegy is", strategy, "previouse strategy was", self.previous_strategy)
         if strategy is self.previous_strategy:
             return self.previous_strategy_object.get_direction()
         else:
@@ -43,7 +43,7 @@ class BaseAnt:
         if self.start_turn is None:
             self.start_turn = self.grid.chat_box_reader.get_now_turn()
 
-        self.print_statistics()
+        # self.print_statistics()
 
     def update_and_report_map(self):
         view_distance = Config.view_distance  # be nazar bugeshoon bartaraf shode
@@ -64,8 +64,8 @@ class BaseAnt:
                                                    update_chat_box=True, is_from_chat_box=False)
 
     def print_statistics(self):
-        print("I'm in", self.get_now_pos_cell())
-        print(f"I have yummy of type {self.game.ant.currentResource.type} with value {self.game.ant.currentResource.value}", self.game.ant.currentResource)
+        # print("I'm in", self.get_now_pos_cell())
+        # print(f"I have yummy of type {self.game.ant.currentResource.type} with value {self.game.ant.currentResource.value}", self.game.ant.currentResource)
         self.grid.print_all_we_know_from_map()
 
     def get_now_pos_cell(self):
