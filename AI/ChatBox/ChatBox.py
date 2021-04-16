@@ -14,9 +14,11 @@ all_message_types: [BaseNews] = BaseNews.__subclasses__()
 
 
 class ChatBoxWriter:
-	def __init__(self):
+	def __init__(self, turn = 1):
 		self.queueNews: [BaseNews] = []
 		self.limit = Config.max_com_length
+		self.priority = 0
+		self.turn = turn
 
 	def report(self, news: BaseNews):
 		self.queueNews.append(news)
@@ -24,10 +26,12 @@ class ChatBoxWriter:
 	def flush(self) -> str:
 		self.queueNews.sort(key=lambda news: news.get_priority(), reverse=True)
 		# need to obtain from map configs
+		self.priority = 0
 		ret = Writer(self.limit)
 		for new in self.queueNews:
 			if ret.enough_space(new):
 				new.encode(ret)
+				self.priority += new.get_priority()
 
 		self.queueNews = []
 
@@ -37,8 +41,7 @@ class ChatBoxWriter:
 		return ret.get_message()
 
 	def get_priority(self) -> int:
-		# todo fix priorities
-		return randint(1, 1000)
+		return self.turn * 10000 + self.priority
 
 
 class ChatBoxReader:
