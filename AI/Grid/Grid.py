@@ -158,3 +158,7 @@ class Grid:
         for j in range(Config.map_height):
             arr = [colorful_cell(Cell(i, j)) for i in range(Config.map_width)]
             print(*arr)
+
+        for j in range(Config.map_height):
+            arr = [self.danger[i][j] for i in range(Config.map_width)]
+            print(*arr)

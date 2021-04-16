@@ -62,6 +62,7 @@ class GrabAndReturn(MovementStrategy):
 
     def get_best_cell(self):
         candidates = self.get_scores()
+        print("Candidates are :", candidates)
         return Choosing.soft_max_choose(candidates)
 
     def go_grab_resource(self):

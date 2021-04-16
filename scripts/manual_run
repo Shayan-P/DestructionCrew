@@ -5,5 +5,5 @@ cd ..
 cd AIC21-Game
 cd server
 client=../../DestructionCrew/dist/Controller
-java -jar server-v1.2.5.jar --first-team=$client --second-team=$client --run-manually
+java -jar server-v1.2.8.jar --first-team=$client --second-team=$client --run-manually
 
