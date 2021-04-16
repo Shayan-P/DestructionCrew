@@ -37,7 +37,7 @@ class ChatBoxWriter:
 
 		# todo
 		# store the messages that ignored because of not enough space
-
+		# return ""
 		return ret.get_message()
 
 	def get_priority(self) -> int:
@@ -46,7 +46,6 @@ class ChatBoxWriter:
 
 class ChatBoxReader:
 	def __init__(self, box: ChatBox):
-		print("!!!!", len(all_message_types), " -> ", all_message_types)
 		self.news: [BaseNews] = []
 		self.my_turn = 1
 		for msg in box.allChats:
@@ -66,7 +65,7 @@ class ChatBoxReader:
 				this_news = message_type.decode(reader)
 				this_news.turn = turn
 				self.news.append(this_news)
-		print("testing turn : ", self.my_turn)
+		# print("testing turn : ", self.my_turn)
 
 	def get_now_turn(self):
 		return self.my_turn

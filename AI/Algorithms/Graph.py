@@ -123,15 +123,15 @@ class Graph:
         assert start == self.curr_source
 
         end_ver = self.get_vertex(end)
-        print("^^", self.curr_source, start, end_ver.get_cell())
+        # print("^^", self.curr_source, start, end_ver.get_cell())
 
         ans = []
         while end_ver.get_cell() != start:
-            print("Fuck Shayan !")
+            # print("Fuck Shayan !")
             ans.append(end_ver.get_cell())
-            print(type(ans[-1]), ans[-1], ",$$$$$$")
+            # print(type(ans[-1]), ans[-1], ",$$$$$$")
             end_ver = end_ver.get_previous()
-            print(type(end_ver))
+            # print(type(end_ver))
 
         ans.append(start)
         
@@ -147,7 +147,7 @@ class Graph:
         # you have to do the pre calculations here
         # between the pre calculations and asking queries we will not change the graph
 
-        print("START PRE CALCULATION ", source)
+        # print("START PRE CALCULATION ", source)
 
         self.curr_source = source
 

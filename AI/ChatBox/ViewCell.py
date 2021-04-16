@@ -22,7 +22,7 @@ class ViewCell(BaseNews):
 		return 1
 
 	def encode(self, writer: Writer):
-		print("ENCODING ", self.cell.x, self.cell.y)
+		# print("ENCODING ", self.cell.x, self.cell.y)
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
 		writer.write(self.cell.x, 6)
 		writer.write(self.cell.y, 6)
