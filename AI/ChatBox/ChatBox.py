@@ -55,6 +55,8 @@ class ChatBoxWriter:
 
 
 class ChatBoxReader:
+	all_previous_messages = set()
+
 	def __init__(self, box: ChatBox):
 		self.news: [BaseNews] = []
 		self.my_turn = 1
@@ -76,7 +78,11 @@ class ChatBoxReader:
 						message_type = new_type
 				this_news = message_type.decode(reader)
 				this_news.turn = turn
-				self.news.append(this_news)
+
+				if this_news not in ChatBoxReader.all_previous_messages:
+					self.news.append(this_news)
+				ChatBoxReader.all_previous_messages.add(this_news)
+
 
 	def get_now_turn(self):
 		return self.my_turn

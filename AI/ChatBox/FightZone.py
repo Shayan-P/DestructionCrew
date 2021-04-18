@@ -6,6 +6,7 @@ from Model import Cell as ModelCell
 from AI.Config import Config
 from AI.Grid.Cell import Cell as GridCell
 
+
 class FightZone(BaseNews):
 	huffman_prefix = "11"
 
@@ -36,7 +37,6 @@ class FightZone(BaseNews):
 		# print("!! (", my.x, ",", my.y,") + (", opp.x,",",opp.y,") -> (", self.cell.x, ", ", self.cell.y, ")")
 		# assert min_dis <= 3
 
-
 	def get_cell(self) -> ModelCell:
 		return ModelCell(self.cell.x, self.cell.y, None, None, None)
 
@@ -51,6 +51,9 @@ class FightZone(BaseNews):
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
 		writer.write(self.cell.x, 6)
 		writer.write(self.cell.y, 6)
+
+	def __hash__(self):
+		return hash(FightZone.huffman_prefix, self.turn, self.cell.x, self.cell.y)
 
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:

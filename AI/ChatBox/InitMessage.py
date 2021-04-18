@@ -25,6 +25,9 @@ class InitMessage(BaseNews):
 		for c in InitMessage.init_message:
 			writer.write(ord(c), 8)
 
+	def __hash__(self):
+		return hash(InitMessage.huffman_prefix, self.turn)
+
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:
 		for c in InitMessage.init_message:
