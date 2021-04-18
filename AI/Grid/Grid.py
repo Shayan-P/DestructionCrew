@@ -114,6 +114,14 @@ class Grid:
         if remembered is not None:
             return remembered.ants
 
+    def get_near_cell_ants(self, cell: Cell, distance: int) -> List[Model.Ant]:
+        ants = []
+        for dx in range(-distance, distance+1):
+            for dy in range(-distance, distance+1):
+                if abs(dx) + abs(dy) <= distance:
+                    ants += self.get_cell_ants(cell.move_to(dx, dy))
+        return ants
+
     def get_empty_adjacents(self, cell: Cell):
         result = []
         for direction in DIRECTIONS:

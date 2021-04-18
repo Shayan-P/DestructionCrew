@@ -10,8 +10,17 @@ from .ViewScorpion import ViewScorpion
 from .ViewOppBase import ViewOppBase
 from .ViewResource import ViewResource
 from .FightZone import FightZone
+from .InitMessage import InitMessage
+
 
 all_message_types: [BaseNews] = BaseNews.__subclasses__()
+
+for t1 in all_message_types:
+	for t2 in all_message_types:
+		if t1 is t2:
+			continue
+		ln = min(len(t1.huffman_prefix), len(t2.huffman_prefix))
+		assert t1.huffman_prefix[:ln] != t2.huffman_prefix[:ln]
 
 
 class ChatBoxWriter:

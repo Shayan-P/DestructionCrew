@@ -6,6 +6,7 @@ from AI.Grid.Cell import Cell as GridCell
 
 
 class InitMessage(BaseNews):
+	# felan natoonestam prefix printable barash peyda konam ke chap she!
 	huffman_prefix = "0000000000000000"
 
 	init_message = "We are Destruction Crew. Heh!"
