@@ -82,9 +82,9 @@ def view_scorpion(grid, news: ViewScorpion, is_from_chat_box, update_chat_box):
 	if update_chat_box:
 		grid.chat_box_writer.report(news)
 
+
 def view_fight(grid, news: FightZone, is_from_chat_box, update_chat_box):
 	grid.add_fight(Cell.from_model_cell(news.get_cell()), 2, 1, 1)
-
-	if(update_chat_box):
+	if update_chat_box:
 		grid.chat_box_writer.report(news)
 # todo add attack cell

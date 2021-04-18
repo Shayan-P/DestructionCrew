@@ -56,14 +56,10 @@ class BaseAnt:
                     self.grid.update_with_news(ViewResource(model_cell),
                                                update_chat_box=self.game.alive_turn != 0, is_from_chat_box=False)
                     for ant in model_cell.ants:
-                        # print("Found ant ", ant.antTeam)
                         if ant.antTeam == AntTeam.ENEMY.value and ant.antType == AntType.SARBAAZ.value:
                             self.grid.update_with_news(ViewScorpion(model_cell),
                                                        update_chat_box=True, is_from_chat_box=False)
-                        # if(ant.antTeam == 1):
-                            # print("Fuck !", AntTeam.ENEMY.value)
                         if ant.antTeam == AntTeam.ENEMY.value:
-                            # print("Hi :)")
                             self.grid.update_with_news(FightZone(self.get_now_pos_cell(), model_cell),
                                                        update_chat_box=True, is_from_chat_box=False)
 
