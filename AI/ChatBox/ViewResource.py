@@ -32,7 +32,7 @@ class ViewResource(BaseNews):
 		writer.write(min(255, self.cell.resource_value), 8)
 
 	def __hash__(self):
-		return hash(ViewResource.huffman_prefix, self.turn, self.cell.x, self.cell.y, self.cell.resource_type, min(255, max(0, self.cell.resource_value)))
+		return hash((ViewResource.huffman_prefix, self.turn, self.cell.x, self.cell.y, self.cell.resource_type, min(255, max(0, self.cell.resource_value))))
 
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:

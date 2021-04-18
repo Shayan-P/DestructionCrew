@@ -74,7 +74,7 @@ def view_safe_danger_cell(grid, news: SafeDangerCell, is_from_chat_box, update_c
 	# not handled danger == True case. todo
 	if not news.danger:
 		grid.divide_danger(
-			start_cell=Cell(news.get_x(), news.get_y()),
+			start_cell=news.get_cell(),
 			steps=Config.view_distance // 2,
 			division=2
 		)

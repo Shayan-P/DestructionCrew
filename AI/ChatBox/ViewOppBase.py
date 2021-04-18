@@ -27,7 +27,7 @@ class ViewOppBase(BaseNews):
 		writer.write(self.cell.y, 6)
 
 	def __hash__(self):
-		return hash(ViewOppBase.huffman_prefix, self.turn, self.cell.x, self.cell.y)
+		return hash((ViewOppBase.huffman_prefix, self.turn, self.cell.x, self.cell.y))
 
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:

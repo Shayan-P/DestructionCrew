@@ -29,7 +29,7 @@ class ViewCell(BaseNews):
 		writer.write(max(0, self.cell.type - 1), 1)
 
 	def __hash__(self):
-		return hash(ViewCell.huffman_prefix, self.turn, self.cell.x, self.cell.y, max(0, self.cell.type - 1))
+		return hash((ViewCell.huffman_prefix, self.turn, self.cell.x, self.cell.y, max(0, self.cell.type - 1)))
 
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:
