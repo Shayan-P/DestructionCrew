@@ -10,13 +10,12 @@ class Follower(MovementStrategy):
 		super(Follower, self).__init__(base_ant)
 
 	def get_direction(self):
-		cell = self.get_closest_worker(self.get_now_pos_cell())
+		cell = self.get_closest_worker()
 		if cell is None:
 			return get_random_directions()[0]
 		return self.go_to(cell)
 
-	def get_closest_worker(self, source: Cell) -> Cell:
-		self.grid.pre_calculations(source)
+	def get_closest_worker(self) -> Cell:
 		best_cell = None
 		best_distance = 0
 		for cell in Grid.get_all_cells():
