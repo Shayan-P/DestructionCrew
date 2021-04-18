@@ -38,11 +38,11 @@ class GrabAndReturn(MovementStrategy):
             my_resource = self.base_ant.game.ant.currentResource
             if (my_resource.value == 0 or my_resource.type == ResourceType.GRASS.value) and \
                     self.grid.get_cell_resource_type(cell) == ResourceType.GRASS.value:
-                score = min(Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.need_grass()
+                score = min(Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.grass_importance()
             if (my_resource.value == 0 or my_resource.type == ResourceType.BREAD.value) and \
                     self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
-                score = min(Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.need_bread()
-            score -= 0.5 * self.grid.expected_distance(current_position, cell)  # need to change  this
+                score = min(Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.bread_importance()
+            score -= self.grid.expected_distance(current_position, cell)  # need to change this
             # boro be samti ke expected score et max she todo
             # ba in taabee momken nist dore khodemoon bekharkhim?
             candidates[cell] = score
@@ -82,8 +82,8 @@ class GrabAndReturn(MovementStrategy):
         # print("base cell is ", self.get_base_cell())
         return self.go_to(self.get_base_cell())
 
-    def need_grass(self):
-        return 1
+    def grass_importance(self):
+        return 2
 
-    def need_bread(self):
-        return 1
+    def bread_importance(self):
+        return 2

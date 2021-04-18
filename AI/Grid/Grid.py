@@ -114,6 +114,13 @@ class Grid:
         if remembered is not None:
             return remembered.ants
 
+    def get_empty_adjacents(self, cell: Cell):
+        result = []
+        for direction in DIRECTIONS:
+            if self.is_wall(cell.go_to(direction)) is False:
+                result.append(cell.go_to(direction))
+        return result
+
     # probably we want to change this function so that it does not include danger!
     def expected_distance(self, cell_start: Cell, cell_end: Cell):
         if not self.known_graph.no_path(cell_start, cell_end):

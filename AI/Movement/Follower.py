@@ -16,7 +16,7 @@ class Follower(MovementStrategy):
 		return self.go_to(cell)
 
 	def get_closest_worker(self, source: Cell) -> Cell:
-		self.grid.known_graph.precalculate_source(source)
+		self.grid.pre_calculations(source)
 		best_cell = None
 		best_distance = 0
 		for cell in Grid.get_all_cells():

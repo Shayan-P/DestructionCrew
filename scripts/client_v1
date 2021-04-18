@@ -1,0 +1,11 @@
+rm -r dist
+python3 -m PyInstaller --onefile Controller.py
+echo "{\"count\": 0}" > logs/config.json
+rm logs/*.log
+
+cd ..
+cd AIC21-Game
+cd server
+client=../../DestructionCrew/dist/Controller
+pt=../../DestructionCrew/Warriors/attacker_copies_worker
+java -jar server-v1.2.8.jar --first-team=$pt --second-team=$client
