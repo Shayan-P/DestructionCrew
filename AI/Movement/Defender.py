@@ -18,8 +18,8 @@ class Defender(MovementStrategy):
         return self.go_to(cell)
 
     def get_random_cell_near_base(self):
-        print("\n\n", "im alive")
+        if self.grid.expected_distance(self.get_now_pos_cell(), self.get_base_cell()) > 2:
+            return self.get_base_cell()
         candidates = self.grid.get_empty_adjacents(self.get_base_cell())
-        print("\n\n", self.get_base_cell().x, self.get_base_cell().y)
         shuffle(candidates)
         return None if len(candidates) == 0 else candidates[0]

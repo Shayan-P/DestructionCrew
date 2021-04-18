@@ -42,9 +42,9 @@ class Controller:
         # try:
         self.handle_turn_message(world)
 
-        # except Exception as e:
-        #     print("Error in client:")
-        #     print(e)
+    # except Exception as e:
+    #     print("Error in client:")
+    #     print(e)
 
     def send_direction_message(self, direction):
         self.network.send({"type": 1, "info": {"direction": direction}})

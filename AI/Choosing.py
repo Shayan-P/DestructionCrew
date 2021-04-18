@@ -26,7 +26,12 @@ def max_choose(candidates):
 	for x in candidates:
 		if max_val is None or max_val < candidates[x]:
 			max_val = candidates[x]
-			max_candidates = []
-		if max_val == candidates[x]:
+	eps = 0.00001
+	for x in candidates:
+		if abs(max_val-candidates[x]) <= eps:
 			max_candidates.append(x)
+	# print("scores : ", end = '')
+	# for x in candidates:
+	# 	print(x, "->", candidates[x], end = " ")
+	# print()
 	return choice(max_candidates)

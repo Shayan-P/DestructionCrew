@@ -54,6 +54,9 @@ class Cell:
     def direction_to(self, cell):
         return get_direction_by_delta(self.delta_to(cell))
 
+    def manhattan_distance(self, cell):
+        return min(abs(cell.x - self.x), Config.map_width) + min(abs(cell.y - self.y), Config.map_height)
+
 
 DIRECTIONS = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT, Direction.CENTER]
 

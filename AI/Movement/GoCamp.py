@@ -6,9 +6,9 @@ from AI.BaseAnt import BaseAnt, Config
 from AI import Choosing
 
 
-class GrabAndReturn(MovementStrategy):
+class GoCamp(MovementStrategy):
     def __init__(self, base_ant):
-        super(GrabAndReturn, self).__init__(base_ant)
+        super(GoCamp, self).__init__(base_ant)
         self.best_cell = None
 
     def get_direction(self):
@@ -16,7 +16,6 @@ class GrabAndReturn(MovementStrategy):
         # shayad bad nabashe ye vaghta tama kone bishtar biare
         if Cell(self.base_ant.game.baseX, self.base_ant.game.baseY) == self.base_ant.get_now_pos_cell():
             self.best_cell = None
-
 
         if self.base_ant.game.ant.currentResource.value > 0.5 * Config.ant_max_rec_amount:
             return self.go_to_base()
@@ -32,17 +31,11 @@ class GrabAndReturn(MovementStrategy):
                 continue
             if self.grid.is_unknown(cell):
                 continue
-            if self.grid.get_cell_resource_value(cell) <= 0:
-                continue
-            score = 0
-            my_resource = self.base_ant.game.ant.currentResource
-            if (my_resource.value == 0 or my_resource.type == ResourceType.GRASS.value) and \
-                    self.grid.get_cell_resource_type(cell) == ResourceType.GRASS.value:
-                score = min(Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.grass_importance()
-            if (my_resource.value == 0 or my_resource.type == ResourceType.BREAD.value) and \
-                    self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
-                score = min(Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.bread_importance()
-            score -= self.grid.expected_distance(current_position, cell)  # need to change this
+            x = cell.x
+            y = cell.y
+
+            score = self.grid.fight[x][y]
+            score += 0.25 * self.grid.expected_distance(current_position, cell)  # need to change  this
             # boro be samti ke expected score et max she todo
             # ba in taabee momken nist dore khodemoon bekharkhim?
             candidates[cell] = score
@@ -66,8 +59,7 @@ class GrabAndReturn(MovementStrategy):
         return False
 
     def get_best_cell(self):
-
-        if (self.best_cell is not None) and (self.grid.get_cell_resource_value(self.best_cell) > 0):
+        if self.best_cell is not None:
             return self.best_cell
         candidates = self.get_scores()
         # print("Candidates are :", candidates)
@@ -82,8 +74,8 @@ class GrabAndReturn(MovementStrategy):
         # print("base cell is ", self.get_base_cell())
         return self.go_to(self.get_base_cell())
 
-    def grass_importance(self):
-        return 2
+    def need_grass(self):
+        return 1
 
-    def bread_importance(self):
-        return 2
+    def need_bread(self):
+        return 1

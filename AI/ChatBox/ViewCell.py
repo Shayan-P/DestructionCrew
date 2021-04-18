@@ -6,7 +6,7 @@ from Model import Cell as ModelCell
 
 
 class ViewCell(BaseNews):
-	huffman_prefix = "1"
+	huffman_prefix = "10"
 
 	def __init__(self, cell: ModelCell):
 		super().__init__()
