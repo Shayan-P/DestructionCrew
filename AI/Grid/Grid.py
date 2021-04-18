@@ -3,8 +3,8 @@ from typing import List
 from Model import CellType, ResourceType, Cell as ModelCell
 from .Cell import DIRECTIONS, Cell
 from AI.Algorithms import Graph
-from AI.ChatBox import BaseNews, ViewCell, ViewOppBase, ViewScorpion, ViewResource
-from .sync_information import see_cell, view_opp_base, view_scorpion, see_resource
+from AI.ChatBox import BaseNews, ViewCell, ViewOppBase, ViewScorpion, ViewResource, FightZone
+from .sync_information import see_cell, view_opp_base, view_scorpion, see_resource, view_fight
 from AI.Config import Config
 from AI.ChatBox import ChatBoxWriter, ChatBoxReader
 
@@ -26,6 +26,8 @@ class Grid:
         # this probably has some bugs. when there are plenty of things with different update time
 
         self.danger = [[0] * Config.map_height for i in range(Config.map_width)]
+        self.fight = [[0] * Config.map_height for i in range(Config.map_width)]
+
         self.known_graph = Graph()
         # self.unknown_graph = Graph()
         self.initialize_graphs()
@@ -45,7 +47,10 @@ class Grid:
             view_scorpion(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
         if type(base_news) == ViewResource:
             see_resource(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
-        # todo add other types of messages
+        if type(base_news) is FightZone:
+            view_fight(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
+
+        # add other types of messages todo
 
     def listen_to_chat_box(self):
         for news in self.chat_box_reader.get_all_news():
@@ -125,6 +130,15 @@ class Grid:
                     new_cell = start_cell.move_to(dx, dy)
                     self.danger[new_cell.x][new_cell.y] += int(starting_danger - dis * reduction_ratio)
                     self.known_graph.change_vertex_weight(new_cell, Grid.initial_vertex_weight + self.danger[new_cell.x][new_cell.y])
+                    # update graph
+
+    def add_fight(self, start_cell: Cell, starting_fight, reduction_ratio, steps): # it is linear
+        for dx in range(-steps, steps+1):
+            for dy in range(-steps, steps+1):
+                dis = abs(dx) + abs(dy)
+                if dis <= steps:
+                    new_cell = start_cell.move_to(dx, dy)
+                    self.fight[new_cell.x][new_cell.y] += int(starting_fight - dis * reduction_ratio)
                     # update graph
 
     def print_all_we_know_from_map(self):

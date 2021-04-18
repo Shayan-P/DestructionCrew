@@ -25,7 +25,7 @@ class ViewResource(BaseNews):
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
 		writer.write(self.cell.x, 6)
 		writer.write(self.cell.y, 6)
-		print("resource value -> ", self.cell.resource_value)
+		# print("resource value -> ", self.cell.resource_value)
 		# need to test carefully todo
 		self.cell.resource_value = max(0, self.cell.resource_value)
 		writer.write(self.cell.resource_type, 1)

@@ -69,6 +69,7 @@ class Graph:
         self.no_of_vertices = 0
         self.vert_dict = {}
         self.curr_source = None
+        self.changed = False
 
     # maybe the edge is repeated
     def get_vertex(self, a: Cell) -> Vertex:
@@ -79,6 +80,7 @@ class Graph:
 
     # maybe the vertex is repeated
     def add_vertex(self, a: Cell, w: int) -> Vertex:
+        self.changed = True
         if a not in self.vert_dict:
             self.vert_dict[a] = Vertex(a, w)
             self.no_of_vertices += 1
@@ -87,6 +89,7 @@ class Graph:
         return self.vert_dict[a]
 
     def add_edge(self, a: Cell, b: Cell):
+        self.changed = True
         # add_vertex(a)
         # add_vertex(b)
         self.get_vertex(a).add_neighbor(self.get_vertex(b))
@@ -94,6 +97,7 @@ class Graph:
 
     # maybe the vertex is not available right now
     def delete_vertex(self, a: Cell):
+        self.changed = True
         self.get_vertex(a).deactivate()
 
     def no_path(self, a: Cell, b: Cell) -> bool: # True if there isn't any path between a & b
@@ -105,6 +109,7 @@ class Graph:
 
     # always return None if there is no path
     def get_shortest_distance(self, start: Cell, end: Cell) -> int:
+        assert not self.changed
         if self.no_path(start, end):
             return None
         if end == self.curr_source:
@@ -114,6 +119,7 @@ class Graph:
     def get_shortest_path(self, start: Cell, end: Cell) -> List[Cell]:
         assert self.get_vertex(start) is not None
         assert self.get_vertex(end) is not None
+        assert not self.changed
 
         swap = False
         if end == self.curr_source:
@@ -140,6 +146,7 @@ class Graph:
         return ans
 
     def change_vertex_weight(self, a: Cell, w: int):
+        self.changed = True
         self.get_vertex(a).set_weight(w)
 
     def precalculate_source(self, source: Cell):
@@ -150,7 +157,7 @@ class Graph:
         # print("START PRE CALCULATION ", source)
 
         self.curr_source = source
-
+        self.changed = False
         for ver in self.vert_dict.values():
             ver.prepare()
 

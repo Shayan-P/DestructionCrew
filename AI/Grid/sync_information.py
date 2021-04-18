@@ -1,6 +1,6 @@
 from .Cell import Cell
 from Model import Cell as ModelCell
-from AI.ChatBox import ViewCell, ViewOppBase, ViewScorpion, ViewResource, AttackCell
+from AI.ChatBox import ViewCell, ViewOppBase, ViewScorpion, ViewResource, AttackCell, FightZone
 from AI.Config import Config
 
 
@@ -9,6 +9,7 @@ def see_cell(grid, news: ViewCell, is_from_chat_box, update_chat_box):
 	if new_cell is None:
 		return
 	x, y = new_cell.x, new_cell.y
+	# print("debug :", Config.map_width, Config.map_height, x, y)
 	if grid.model_cell[x][y] is None:
 		grid.model_cell[x][y] = ModelCell(x, y, new_cell.type, None, None)
 		grid.model_cell[x][y].ants = new_cell.ants
@@ -81,5 +82,9 @@ def view_scorpion(grid, news: ViewScorpion, is_from_chat_box, update_chat_box):
 	if update_chat_box:
 		grid.chat_box_writer.report(news)
 
+def view_fight(grid, news: FightZone, is_from_chat_box, update_chat_box):
+	grid.add_fight(Cell.from_model_cell(news.get_cell()), 2, 1, 1)
 
+	if(update_chat_box):
+		grid.chat_box_writer.report(news)
 # todo add attack cell

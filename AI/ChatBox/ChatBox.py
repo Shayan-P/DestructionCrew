@@ -9,6 +9,7 @@ from .ViewCell import ViewCell
 from .ViewScorpion import ViewScorpion
 from .ViewOppBase import ViewOppBase
 from .ViewResource import ViewResource
+from .FightZone import FightZone
 
 all_message_types: [BaseNews] = BaseNews.__subclasses__()
 
@@ -48,9 +49,16 @@ class ChatBoxReader:
 	def __init__(self, box: ChatBox):
 		self.news: [BaseNews] = []
 		self.my_turn = 1
+		# cnt = 0
 		for msg in box.allChats:
 			turn = msg.turn
 			self.my_turn = max(self.my_turn, turn + 1)
+
+		for msg in box.allChats:
+			if(msg.turn < self.my_turn - 1):
+				continue
+			# cnt += 1
+
 			reader = Reader(msg.text)
 			while not reader.EOF():
 				prefix = ""
@@ -65,11 +73,12 @@ class ChatBoxReader:
 				this_news = message_type.decode(reader)
 				this_news.turn = turn
 				self.news.append(this_news)
-		# print("testing turn : ", self.my_turn)
+		# print("???", cnt)
+	# print("testing turn : ", self.my_turn)
 
 	def get_now_turn(self):
 		return self.my_turn
-		# todo this may be wrong. there might be a case were chat box does not update. but probably it makes no problem
+	# todo this may be wrong. there might be a case were chat box does not update. but probably it makes no problem
 
 	def get_all_news(self) -> [BaseNews]:
 		return self.news
