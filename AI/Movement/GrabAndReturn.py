@@ -83,7 +83,7 @@ class GrabAndReturn(MovementStrategy):
         return self.go_to(self.get_base_cell())
 
     def grass_importance(self):
-        return 2
+        return 1 + (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)
 
     def bread_importance(self):
-        return 2
+        return 3 - (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)
