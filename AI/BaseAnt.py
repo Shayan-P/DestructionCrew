@@ -3,7 +3,8 @@ from AI.Grid import Grid
 from AI.Grid.Cell import Cell
 from Model import Cell as ModelCell
 from Model import AntTeam, AntType, CellType
-from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell, ViewResource, ViewScorpion, ViewOppBase, FightZone, InitMessage
+from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell, ViewResource, ViewScorpion, ViewOppBase, FightZone,\
+    InitMessage, SafeDangerCell
 from AI.Config import Config
 
 
@@ -14,6 +15,8 @@ class BaseAnt:
         self.start_turn = None
         self.previous_strategy = None
         self.previous_strategy_object = None
+        self.previous_health = None
+        self.previous_cell = None
 
     def get_message_and_priority(self):
         return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
@@ -26,13 +29,20 @@ class BaseAnt:
         strategy = self.choose_best_strategy()
         # print("now startegy is", strategy, "previouse strategy was", self.previous_strategy)
         if strategy is self.previous_strategy:
-            return self.previous_strategy_object.get_direction()
+            ret = self.previous_strategy_object.get_direction()
         else:
             self.previous_strategy = strategy
             self.previous_strategy_object = strategy(self)
-            return self.previous_strategy_object.get_direction()
+            ret = self.previous_strategy_object.get_direction()
+        self.after_move()
+        return ret
 
     def pre_move(self):
+        if self.previous_health is None:
+            self.previous_health = self.game.ant.health
+        if self.previous_cell is None:
+            self.previous_cell = self.get_now_pos_cell()
+
         self.grid.chat_box_reader = ChatBoxReader(self.game.chatBox)
         self.grid.chat_box_writer = ChatBoxWriter(self.grid.chat_box_reader.get_now_turn())
 
@@ -44,6 +54,10 @@ class BaseAnt:
             self.start_turn = self.grid.chat_box_reader.get_now_turn()
 
         # self.print_statistics()
+
+    def after_move(self):
+        self.previous_health = self.game.ant.health
+        self.previous_cell = self.get_now_pos_cell()
 
     def update_and_report_map(self):
         view_distance = Config.view_distance  # be nazar bugeshoon bartaraf shode
@@ -66,7 +80,15 @@ class BaseAnt:
                     if model_cell.type == CellType.BASE.value and Cell.from_model_cell(model_cell) != self.get_base_cell():
                         self.grid.update_with_news(ViewOppBase(model_cell),
                                                    update_chat_box=True, is_from_chat_box=False)
-        self.grid.chat_box_writer.report(InitMessage())
+
+        if self.grid.chat_box_reader.get_now_turn() != Config.chat_box_first_turn:
+            self.grid.chat_box_writer.report(InitMessage())
+        if self.game.ant.health < self.previous_health:
+            self.grid.update_with_news(SafeDangerCell(self.previous_cell, danger=True),
+                                       update_chat_box=True, is_from_chat_box=False)
+        else:
+            self.grid.update_with_news(SafeDangerCell(self.previous_cell, danger=False),
+                                       update_chat_box=self.game.alive_turn != 0, is_from_chat_box=False)
 
     def print_statistics(self):
         # print("I'm in", self.get_now_pos_cell())

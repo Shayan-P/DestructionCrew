@@ -4,7 +4,7 @@ from Model import ChatBox
 from .MessageHandlers import Reader, Writer
 from AI.Config import Config
 
-from .AttackCell import AttackCell
+from .SafeDangerCell import SafeDangerCell
 from .ViewCell import ViewCell
 from .ViewScorpion import ViewScorpion
 from .ViewOppBase import ViewOppBase
