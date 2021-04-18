@@ -18,7 +18,7 @@ class GrabAndReturn(MovementStrategy):
             self.best_cell = None
 
 
-        if self.base_ant.game.ant.currentResource.value > 0.5 * Config.ant_max_rec_amount:
+        if self.base_ant.game.ant.currentResource.value >= 0.5 * Config.ant_max_rec_amount:
             return self.go_to_base()
         else:
             return self.go_grab_resource()
@@ -83,7 +83,7 @@ class GrabAndReturn(MovementStrategy):
         return self.go_to(self.get_base_cell())
 
     def grass_importance(self):
-        return 1 + (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)
+        return 1.8 + (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)
 
     def bread_importance(self):
-        return 3 - (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)
+        return 2.2 - (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)
