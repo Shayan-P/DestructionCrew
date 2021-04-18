@@ -55,8 +55,8 @@ class ChatBoxReader:
 			self.my_turn = max(self.my_turn, turn + 1)
 
 		for msg in box.allChats:
-			if(msg.turn < self.my_turn - 1):
-				continue
+			# if(msg.turn < self.my_turn - 1):
+			# 	continue
 			# cnt += 1
 
 			reader = Reader(msg.text)
