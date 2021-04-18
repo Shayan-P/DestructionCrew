@@ -29,7 +29,9 @@ class FightZone(BaseNews):
 				if (self.cell is None) or (dis < min_dis):
 					min_dis = dis
 					self.cell = this_cell
-		assert min_dis <= 3
+		# print(Config.map_width, Config.map_height)
+		# print("!! (", my.x, ",", my.y,") + (", opp.x,",",opp.y,") -> (", self.cell.x, ", ", self.cell.y, ")")
+		# assert min_dis <= 3
 
 
 	def get_cell(self) -> ModelCell:
@@ -42,7 +44,7 @@ class FightZone(BaseNews):
 		return 1
 
 	def encode(self, writer: Writer):
-		print("sending", self.cell.x, self.cell.y)
+		# print("sending", self.cell.x, self.cell.y)
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
 		writer.write(self.cell.x, 6)
 		writer.write(self.cell.y, 6)
@@ -51,7 +53,7 @@ class FightZone(BaseNews):
 	def decode(reader: Reader) -> BaseNews:
 		x = reader.read(6)
 		y = reader.read(6)
-		print("receiving", x, y)
+		# print("receiving", x, y)
 		cell = ModelCell(x, y, None, None, None)
 		return FightZone(cell, None)
 

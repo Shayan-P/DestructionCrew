@@ -10,16 +10,19 @@ class Attacker(BaseAnt):
 
     def choose_best_strategy(self):
         # if there are a little unknown cells stop exploring todo
+        # return GoCamp
         if self.previous_strategy is None:
-            self.previous_strategy = GoCamp
-            self.previous_strategy_object = GoCamp(self)
-        if self.game.ant.currentResource.value > Config.ant_max_rec_amount * 0.5:
+            self.previous_strategy = Explore
+            self.previous_strategy_object = Explore(self)
+        # if self.game.ant.currentResource.value > Config.ant_max_rec_amount * 0.5:
+        #     return GoCamp
+        # # momkene ye chiz kam dastet bashe baad be khatere oon natooni chizi bardari. todo fix this
+        # if (self.previous_strategy is not GoCamp) and GoCamp(self).is_really_good():
+        #     return GoCamp
+        if self.previous_strategy is GoCamp:
             return GoCamp
-        # momkene ye chiz kam dastet bashe baad be khatere oon natooni chizi bardari. todo fix this
-        if (self.previous_strategy is not GoCamp) and GoCamp(self).is_really_good():
-            return GoCamp
-        if self.previous_strategy is GoCamp and self.previous_strategy_object.is_not_good():
+        if GoCamp(self).is_not_good():
             return Explore
-        if self.previous_strategy is Explore:
-            return Explore
+        # if self.previous_strategy is Explore:
+        #     return Explore
         return GoCamp
