@@ -9,6 +9,9 @@ from AI.Grid.Cell import Cell as GridCell
 class FightZone(BaseNews):
 	huffman_prefix = "11"
 
+	my_k = 3
+	opp_k = 1
+
 	def __init__(self, my_cell: ModelCell, opp_cell: ModelCell):
 		super().__init__()
 		self.cell: GridCell = None
@@ -25,7 +28,7 @@ class FightZone(BaseNews):
 		for dx in range(-view_range, view_range + 1):
 			for dy in range(-view_range, view_range + 1):
 				this_cell = my.move_to(dx, dy)
-				dis = max(this_cell.manhattan_distance(my), this_cell.manhattan_distance((opp)))
+				dis = max(FightZone.my_k * this_cell.manhattan_distance(my), FightZone.opp_k * this_cell.manhattan_distance((opp)))
 				if (self.cell is None) or (dis < min_dis):
 					min_dis = dis
 					self.cell = this_cell
