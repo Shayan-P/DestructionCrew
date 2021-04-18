@@ -15,7 +15,10 @@ class GrabAndReturn(MovementStrategy):
     def get_direction(self):
         # print("We are choosing direction. we have resource: ", self.base_ant.game.ant.currentResource.value)
         # shayad bad nabashe ye vaghta tama kone bishtar biare
-        if self.base_ant.game.ant.currentResource.value > 0.5 * Config.ant_max_rec_amount:
+        if Cell(self.base_ant.game.baseX, self.base_ant.game.baseY) == self.base_ant.get_now_pos_cell():
+            self.best_cell = None
+
+        if self.base_ant.game.ant.currentResource.value >= 0.5 * Config.ant_max_rec_amount:
             return self.go_to_base()
         else:
             return self.go_grab_resource()
@@ -47,7 +50,7 @@ class GrabAndReturn(MovementStrategy):
                 score = min(2 * Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.bread_importance()
             score -= self.grid.expected_distance(current_position, cell)  # need to change this
             if cell == self.best_cell:
-                score += 8
+                score += 5
                 # change this todo
             # boro be samti ke expected score et max she todo
             # ba in taabee momken nist dore khodemoon bekharkhim?
@@ -75,7 +78,7 @@ class GrabAndReturn(MovementStrategy):
         candidates = self.get_scores()
         self.best_cell = Choosing.soft_max_choose(candidates)
         self.prev_best_cell_value = self.base_ant.grid.get_cell_resource_value(self.best_cell)
-        return self.best_cell
+        return self.best_cellg
 
     def go_grab_resource(self):
         cell = self.get_best_cell()
@@ -85,8 +88,8 @@ class GrabAndReturn(MovementStrategy):
         return self.go_to(self.get_base_cell())
 
     def grass_importance(self):
-        return 1 + (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)
+        return 1.8 + (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)
 
     def bread_importance(self):
-        return 3 - (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)
+        return 2.2 - (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)
     # todo linear is not good
