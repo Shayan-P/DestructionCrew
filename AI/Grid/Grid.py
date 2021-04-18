@@ -55,7 +55,7 @@ class Grid:
 
     def listen_to_chat_box(self):
         for news in self.chat_box_reader.get_all_news():
-            self.update_with_news(news, update_chat_box=False)
+            self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
 
     def pre_calculations(self, now: Cell):
         # self.unknown_graph.precalculate_source(now)
