@@ -55,7 +55,7 @@ class Cell:
         return get_direction_by_delta(self.delta_to(cell))
 
     def manhattan_distance(self, cell):
-        x, y = self.delta_to(cell)
+        x, y = abs(cell.x - self.x), abs(cell.y - self.y)
         x = min(x, Config.map_width - x)
         y = min(y, Config.map_height - y)
         return x + y

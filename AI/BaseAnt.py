@@ -3,7 +3,7 @@ from AI.Grid import Grid
 from AI.Grid.Cell import Cell
 from Model import Cell as ModelCell
 from Model import AntTeam, AntType, CellType
-from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell, ViewResource, ViewScorpion, ViewOppBase, FightZone
+from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell, ViewResource, ViewScorpion, ViewOppBase, FightZone, InitMessage
 from AI.Config import Config
 
 
@@ -16,11 +16,7 @@ class BaseAnt:
         self.previous_strategy_object = None
 
     def get_message_and_priority(self):
-        message, priority = self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
-        if len(message) == 0 and self.grid.chat_box_reader.get_now_turn() == 1:
-            return "We Are Destruction Crew. Heh!", 1
-        return message, priority
-
+        return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
 
     def choose_best_strategy(self):
         NotImplementedError
@@ -70,6 +66,7 @@ class BaseAnt:
                     if model_cell.type == CellType.BASE.value and Cell.from_model_cell(model_cell) != self.get_base_cell():
                         self.grid.update_with_news(ViewOppBase(model_cell),
                                                    update_chat_box=True, is_from_chat_box=False)
+        self.grid.chat_box_writer.report(InitMessage())
 
     def print_statistics(self):
         # print("I'm in", self.get_now_pos_cell())

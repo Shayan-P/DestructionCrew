@@ -32,7 +32,7 @@ class Attacker(BaseAnt):
         if self.stays_in_group is None:
             if self.grid.chat_box_reader.get_now_turn() <= 10:
                 self.stays_in_group = False
-            elif randint(1, 10) <= 4:
+            elif randint(1, 10) <= 9:
                 self.stays_in_group = True
             else:
                 self.stays_in_group = False
