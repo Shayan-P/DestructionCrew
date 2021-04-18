@@ -16,7 +16,11 @@ class BaseAnt:
         self.previous_strategy_object = None
 
     def get_message_and_priority(self):
-        return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
+        message, priority = self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
+        if len(message) == 0 and self.grid.chat_box_reader.get_now_turn() == 1:
+            return "We Are Destruction Crew. Heh!", 1
+        return message, priority
+
 
     def choose_best_strategy(self):
         NotImplementedError
