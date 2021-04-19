@@ -38,6 +38,7 @@ class Grid:
         self.chat_box_writer: ChatBoxWriter = ChatBoxWriter()
         self.chat_box_reader: ChatBoxReader = ChatBoxReader()
 
+        self.saved_expected_opponent_base = None
         self.opponent_base_reports = []  # there is no function to return this. and it's type is ModelCell
 
     def update_with_news(self, base_news: BaseNews, is_from_chat_box=True, update_chat_box=False):
@@ -64,6 +65,8 @@ class Grid:
                 self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
 
     def pre_calculations(self, now: Cell):
+        self.saved_expected_opponent_base = self.calculate_expected_opponent_base()
+
         expected_base = self.expected_opponent_base()
         print("We think their base is at: ", expected_base)
         for cell in Grid.get_all_cells():
@@ -166,6 +169,9 @@ class Grid:
         return 1000  # inf # is this enough?
 
     def expected_opponent_base(self):
+        return self.saved_expected_opponent_base
+
+    def calculate_expected_opponent_base(self):
         if len(self.opponent_base_reports) > 0:
             assert len(self.opponent_base_reports) == 1
             return self.opponent_base_reports[0]
