@@ -37,7 +37,7 @@ class SafeDangerCell(BaseNews):
 		x = reader.read(6)
 		y = reader.read(6)
 		danger = bool(reader.read(1))
-		return SafeDangerCell(x, y, danger)
+		return SafeDangerCell(GridCell(x, y), danger)
 
 
 """

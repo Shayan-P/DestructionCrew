@@ -47,6 +47,7 @@ class FightZone(BaseNews):
 		return 1
 
 	def encode(self, writer: Writer):
+		print("Shaash")
 		# print("sending", self.cell.x, self.cell.y)
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
 		writer.write(self.cell.x, 6)
@@ -57,6 +58,7 @@ class FightZone(BaseNews):
 
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:
+		print("Ann")
 		x = reader.read(6)
 		y = reader.read(6)
 		# print("receiving", x, y)

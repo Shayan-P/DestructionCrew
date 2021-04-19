@@ -31,12 +31,13 @@ class Grid:
         self.known_graph = Graph()
         # self.unknown_graph = Graph()
         self.initialize_graphs()
-        self.chat_box_writer: ChatBoxWriter = None
-        self.chat_box_reader: ChatBoxReader = None
+        self.chat_box_writer: ChatBoxWriter = ChatBoxWriter()
+        self.chat_box_reader: ChatBoxReader = ChatBoxReader()
 
         self.opponent_base = []  # there is no function to return this. and it's type is ModelCell
 
     def update_with_news(self, base_news: BaseNews, is_from_chat_box=True, update_chat_box=False):
+        # print(type(base_news))
         if type(base_news) == ViewCell:
             # if update_chat_box is False:
             # print("WE SEE CELL In ChatBox", base_news.get_cell().x, base_news.get_cell().y)
@@ -54,8 +55,9 @@ class Grid:
         # add other types of messages todo
 
     def listen_to_chat_box(self):
-        for news in self.chat_box_reader.get_all_news():
-            self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
+        for _news_type in BaseNews.__subclasses__():
+            for news in self.chat_box_reader.get_all_news(ViewCell):
+                self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
 
     def pre_calculations(self, now: Cell):
         # self.unknown_graph.precalculate_source(now)
@@ -157,6 +159,17 @@ class Grid:
                     self.danger[new_cell.x][new_cell.y] //= division
                     self.known_graph.change_vertex_weight(new_cell, Grid.initial_vertex_weight + self.danger[new_cell.x][new_cell.y])
                     # update graph
+
+    def rebuild_fight(self):
+        self.fight = [[0] * Config.map_height for i in range(Config.map_width)]
+        avg_dis = (Config.map_width + Config.map_height) // 2
+        for new in self.chat_box_reader.get_all_news(FightZone):
+            turn_dif = self.chat_box_reader.get_now_turn() - new.turn
+            if(avg_dis <= turn_dif): # it was long time ago
+                continue
+
+            self.add_fight(new.cell, 20 * ((avg_dis - turn_dif) / avg_dis), 10 * ((avg_dis - turn_dif) / avg_dis), 1)
+
 
     def add_fight(self, start_cell: Cell, starting_fight, reduction_ratio, steps): # it is linear
         for dx in range(-steps, steps+1):

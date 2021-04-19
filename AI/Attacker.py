@@ -15,17 +15,18 @@ class Attacker(BaseAnt):
     def get_move(self):
         ret = super(Attacker, self).get_move()
 
-        # also you have to remove this part in order to remove stay_in_group
-
-        if not self.stays_in_group:
-            return ret
-        near_scorpions = len(list(filter(
-            lambda e: e.antTeam == Model.AntTeam.ALLIED.value and e.antType == Model.AntType.SARBAAZ.value,
-            self.grid.get_near_cell_ants(cell=self.get_now_pos_cell(), distance=2)
-        )))
-        if near_scorpions < 3:
-            return Model.Direction.CENTER
         return ret
+        # also you have to remove this part in order to remove stay_in_group
+        #
+        # if not self.stays_in_group:
+        #     return ret
+        # near_scorpions = len(list(filter(
+        #     lambda e: e.antTeam == Model.AntTeam.ALLIED.value and e.antType == Model.AntType.SARBAAZ.value,
+        #     self.grid.get_near_cell_ants(cell=self.get_now_pos_cell(), distance=2)
+        # )))
+        # if near_scorpions < 3:
+        #     return Model.Direction.CENTER
+        # return ret
 
     def choose_best_strategy(self):
         # this will probably cause some bugs!

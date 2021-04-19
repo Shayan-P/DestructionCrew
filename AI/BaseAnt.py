@@ -6,6 +6,7 @@ from Model import AntTeam, AntType, CellType
 from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell, ViewResource, ViewScorpion, ViewOppBase, FightZone,\
     InitMessage, SafeDangerCell
 from AI.Config import Config
+from AI.Grid.sync_information import read_view_fight, report_view_fight
 
 
 class BaseAnt:
@@ -43,7 +44,7 @@ class BaseAnt:
         if self.previous_cell is None:
             self.previous_cell = self.get_now_pos_cell()
 
-        self.grid.chat_box_reader = ChatBoxReader(self.game.chatBox)
+        self.grid.chat_box_reader.update(self.game.chatBox)
         self.grid.chat_box_writer = ChatBoxWriter(self.grid.chat_box_reader.get_now_turn())
 
         self.grid.listen_to_chat_box()
@@ -58,6 +59,7 @@ class BaseAnt:
     def after_move(self):
         self.previous_health = self.game.ant.health
         self.previous_cell = self.get_now_pos_cell()
+
 
     def update_and_report_map(self):
         view_distance = Config.view_distance  # be nazar bugeshoon bartaraf shode

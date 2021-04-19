@@ -51,7 +51,7 @@ def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
 			if new_cell.resource_value > 0:
 				is_new_info = True
 			grid.model_cell[x][y].resource_value = new_cell.resource_value
-		if not is_new_info:
+		if (not is_new_info):
 			return
 	grid.last_update[x][y] = news_turn
 	if update_chat_box:
@@ -97,4 +97,9 @@ def view_fight(grid, news: FightZone, is_from_chat_box, update_chat_box):
 	grid.add_fight(Cell.from_model_cell(news.get_cell()), 2, 1, 1)
 	if update_chat_box:
 		grid.chat_box_writer.report(news)
-# todo add attack cell
+
+def read_view_fight(grid, news):
+	grid.add_fight(Cell.from_model_cell(news.get_cell()), 2, 1, 1) # todo
+
+def report_view_fight(grid, news):
+	grid.chat_box_writer.report(news)

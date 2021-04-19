@@ -10,13 +10,14 @@ class GoCamp(MovementStrategy):
     def __init__(self, base_ant):
         super(GoCamp, self).__init__(base_ant)
         self.best_cell = None
-        self.hp = 0
-        self.max_hp = 7
+        self.stay = 0
+        self.max_stay = 7
 
     def get_direction(self):
+
         # print("We are choosing direction. we have resource: ", self.base_ant.game.ant.currentResource.value)
         # shayad bad nabashe ye vaghta tama kone bishtar biare
-        return self.go_grab_resource()
+        return self.go_camp()
         #
         # if Cell(self.base_ant.game.baseX, self.base_ant.game.baseY) == self.base_ant.get_now_pos_cell():
         #     self.best_cell = None
@@ -30,6 +31,9 @@ class GoCamp(MovementStrategy):
         # what if candidates are empty todo
         current_position = self.base_ant.get_now_pos_cell()
         candidates = {}
+
+        self.grid.rebuild_fight()
+        print("Gooh")
         for cell in Grid.get_all_cells():
             if self.grid.known_graph.no_path(current_position, cell):
                 continue
@@ -39,7 +43,8 @@ class GoCamp(MovementStrategy):
             y = cell.y
 
             score = self.grid.fight[x][y]
-            if(score == 0): continue
+            if(score == 0):
+                continue
             # score += 0.25 * self.grid.expected_distance(current_position, cell)  # need to change  this
             # boro be samti ke expected score et max she todo
             # ba in taabee momken nist dore khodemoon bekharkhim?
@@ -67,27 +72,27 @@ class GoCamp(MovementStrategy):
         if (self.is_not_good()):
             return self.base_ant.get_now_pos_cell()
 
-
-        if (self.best_cell is not None) and (self.hp > 0):
-            self.hp -= 1
+        if (self.best_cell is not None) and (self.stay > 0):
+            self.stay -= 1
             return self.best_cell
 
         candidates = self.get_scores()
         # print("Candidates are :", candidates)
         self.best_cell = Choosing.max_choose(candidates)
-        self.hp = self.max_hp
+        self.stay = self.max_stay
+        print("Fuck !", self.grid.fight[self.best_cell.x][self.best_cell.y])
         return self.best_cell
 
-    def go_grab_resource(self):
+    def go_camp(self):
         cell = self.get_best_cell()
         return self.go_to(cell)
 
-    def go_to_base(self):
-        # print("base cell is ", self.get_base_cell())
-        return self.go_to(self.get_base_cell())
-
-    def need_grass(self):
-        return 1
-
-    def need_bread(self):
-        return 1
+    # def go_to_base(self):
+    #     # print("base cell is ", self.get_base_cell())
+    #     return self.go_to(self.get_base_cell())
+    #
+    # def need_grass(self):
+    #     return 1
+    #
+    # def need_bread(self):
+    #     return 1

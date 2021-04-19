@@ -9,7 +9,7 @@ class InitMessage(BaseNews):
 	# felan natoonestam prefix printable barash peyda konam ke chap she!
 	huffman_prefix = "0000000000000000"
 
-	init_message = "We are Destruction Crew. Heh!"
+	init_message = "WeAreDestructionCrew.Heh!"
 
 	def __init__(self):
 		super().__init__()
