@@ -29,7 +29,7 @@ class FightZone(BaseNews):
 		for dx in range(-view_range, view_range + 1):
 			for dy in range(-view_range, view_range + 1):
 				this_cell = my.move_to(dx, dy)
-				dis = max(FightZone.my_k * this_cell.manhattan_distance(my), FightZone.opp_k * this_cell.manhattan_distance((opp)))
+				dis = max(FightZone.my_k * this_cell.manhattan_distance(my), FightZone.opp_k * this_cell.manhattan_distance((opp)) )
 				if (self.cell is None) or (dis < min_dis):
 					min_dis = dis
 					self.cell = this_cell
@@ -47,7 +47,7 @@ class FightZone(BaseNews):
 		return 1
 
 	def encode(self, writer: Writer):
-		print("Shaash")
+		# print("Shaash")
 		# print("sending", self.cell.x, self.cell.y)
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
 		writer.write(self.cell.x, 6)
@@ -55,7 +55,7 @@ class FightZone(BaseNews):
 
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:
-		print("Ann")
+		# print("Ann")
 		x = reader.read(6)
 		y = reader.read(6)
 		# print("receiving", x, y)

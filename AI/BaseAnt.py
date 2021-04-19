@@ -28,8 +28,8 @@ class BaseAnt:
     def get_move(self):
         self.pre_move()
         strategy = self.choose_best_strategy()
-        print("now startegy is", strategy, "previouse strategy was", self.previous_strategy)
-        print("now we have", self.game.ant.currentResource.type, self.game.ant.currentResource.value)
+        # print("now startegy is", strategy, "previouse strategy was", self.previous_strategy)
+        # print("now we have", self.game.ant.currentResource.type, self.game.ant.currentResource.value)
         if strategy is self.previous_strategy:
             ret = self.previous_strategy_object.get_direction()
         else:
@@ -40,8 +40,8 @@ class BaseAnt:
         return ret
 
     def pre_move(self):
-        print("expected turn is ", self.grid.chat_box_reader.get_now_turn())
-        print("alived turn is ", self.game.alive_turn)
+        # print("expected turn is ", self.grid.chat_box_reader.get_now_turn())
+        # print("alived turn is ", self.game.alive_turn)
         if self.previous_health is None:
             self.previous_health = self.game.ant.health
         if self.previous_cell is None:
