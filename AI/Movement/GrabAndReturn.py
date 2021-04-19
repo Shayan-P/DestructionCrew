@@ -25,10 +25,17 @@ class GrabAndReturn(MovementStrategy):
 
     def get_scores(self):
         # what if candidates are empty todo
-        if self.get_base_cell() == self.get_now_pos_cell():
-            self.best_cell = None
-        if self.best_cell is not None and self.base_ant.grid.get_cell_resource_value(self.best_cell) < self.prev_best_cell_value:
-            self.best_cell = None
+        if self.best_cell is not None:
+            my_resource = self.base_ant.game.ant.currentResource
+            if self.get_base_cell() == self.get_now_pos_cell():
+                self.best_cell = None
+            elif self.base_ant.grid.get_cell_resource_value(self.best_cell) < self.prev_best_cell_value:
+                self.best_cell = None
+            elif my_resource.value > 0 and my_resource.type != self.base_ant.grid.get_cell_resource_type(self.best_cell):
+                self.best_cell = None
+            elif self.best_cell == self.get_now_pos_cell():
+                self.best_cell = None
+
         # also forget it if someone has grabbed it beforehand. is it good? todo
 
         current_position = self.get_now_pos_cell()
