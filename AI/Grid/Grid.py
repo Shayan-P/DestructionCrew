@@ -20,13 +20,17 @@ class Grid:
                 res.append(Cell(x, y))
         return res
 
+    @staticmethod
+    def new_2d_array_of(val):
+        return [[val] * Config.map_height for i in range(Config.map_width)]
+
     def __init__(self):
-        self.model_cell = [[None] * Config.map_height for i in range(Config.map_width)]
-        self.last_update = [[-1] * Config.map_height for i in range(Config.map_width)]
+        self.model_cell = Grid.new_2d_array_of(None)
+        self.last_update = Grid.new_2d_array_of(-1)
         # this probably has some bugs. when there are plenty of things with different update time
 
-        self.danger = [[0] * Config.map_height for i in range(Config.map_width)]
-        self.fight = [[0] * Config.map_height for i in range(Config.map_width)]
+        self.danger = Grid.new_2d_array_of(0)
+        self.fight = Grid.new_2d_array_of(0)
 
         self.known_graph = Graph()
         # self.unknown_graph = Graph()
@@ -34,7 +38,7 @@ class Grid:
         self.chat_box_writer: ChatBoxWriter = ChatBoxWriter()
         self.chat_box_reader: ChatBoxReader = ChatBoxReader()
 
-        self.opponent_base = []  # there is no function to return this. and it's type is ModelCell
+        self.opponent_base_reports = []  # there is no function to return this. and it's type is ModelCell
 
     def update_with_news(self, base_news: BaseNews, is_from_chat_box=True, update_chat_box=False):
         # print(type(base_news))
@@ -60,9 +64,17 @@ class Grid:
                 self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
 
     def pre_calculations(self, now: Cell):
+        expected_base = self.expected_opponent_base()
+        print("We think their base is at: ", expected_base)
         for cell in Grid.get_all_cells():
-            self.known_graph.change_vertex_weight(cell, Grid.initial_vertex_weight + self.danger[cell.x][cell.y])
-
+            my_danger = Grid.initial_vertex_weight + self.danger[cell.x][cell.y]
+            dis = expected_base.manhattan_distance(cell)
+            if dis <= Config.base_range + 2:
+                my_danger += 120 - dis * 8
+                # change this todo
+            elif dis <= Config.base_range + 5:
+                my_danger += 88 - dis * 8
+            self.known_graph.change_vertex_weight(cell, my_danger)
         # self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
 
@@ -131,7 +143,7 @@ class Grid:
     def get_empty_adjacents(self, cell: Cell):
         result = []
         for direction in DIRECTIONS:
-            if self.is_wall(cell.go_to(direction)) is False:
+            if not self.is_wall(cell.go_to(direction)):
                 result.append(cell.go_to(direction))
         return result
 
@@ -142,6 +154,48 @@ class Grid:
         # if not self.unknown_graph.no_path(cell_start, cell_end):
         #    return int(self.unknown_graph.get_shortest_distance(cell_start, cell_end) * 1.5) + 5  # what the hell?!
         return 1000  # inf # is this enough?
+
+    def expected_opponent_base(self):
+        if len(self.opponent_base_reports) > 0:
+            assert len(self.opponent_base_reports) == 1
+            return self.opponent_base_reports[0]
+        dp = Grid.new_2d_array_of(False)
+        all_cells = Grid.get_all_cells()
+        for cell in all_cells:
+            dp[cell.x][cell.y] = self.is_unknown(cell)
+        while True:
+            store = dp
+            dp = Grid.new_2d_array_of(False)
+            candid = None
+            for cell in all_cells:
+                dp[cell.x][cell.y] = True
+                for direction in DIRECTIONS:
+                    new_cell = cell.go_to(direction)
+                    dp[cell.x][cell.y] = dp[cell.x][cell.y] and store[new_cell.x][new_cell.y]
+                if dp[cell.x][cell.y]:
+                    candid = cell
+            if candid is None:
+                dp = store
+                break
+        best_candid = None
+
+        def our_base_distance(_cell: Cell):
+            return _cell.manhattan_distance(Cell(Config.base_x, Config.base_y))
+
+        for cell in all_cells:
+            if dp[cell.x][cell.y]:
+                if best_candid is None or our_base_distance(cell) > our_base_distance(best_candid):
+                    best_candid = cell
+
+        return best_candid
+        # this is stupid now. we don't consider base reports and also we may have several candidates.
+        # taking average doesnt work here. fix this todo
+
+    def report_opponent_base(self, cell: Cell):
+        if cell in self.opponent_base_reports:
+            return
+        assert len(self.opponent_base_reports) == 1
+        self.opponent_base_reports.append(cell)
 
     def add_danger(self, start_cell: Cell, starting_danger, reduction_ratio, steps): # it is linear
         for dx in range(-steps, steps+1):
@@ -168,7 +222,6 @@ class Grid:
                 continue
 
             self.add_fight(new.cell, 20 * ((avg_dis - turn_dif) / avg_dis), 10 * ((avg_dis - turn_dif) / avg_dis), 1)
-
 
     def add_fight(self, start_cell: Cell, starting_fight, reduction_ratio, steps): # it is linear
         for dx in range(-steps, steps+1):

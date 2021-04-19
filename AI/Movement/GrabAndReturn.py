@@ -18,15 +18,16 @@ class GrabAndReturn(MovementStrategy):
         if Cell(self.base_ant.game.baseX, self.base_ant.game.baseY) == self.base_ant.get_now_pos_cell():
             self.best_cell = None
 
-        if self.base_ant.game.ant.currentResource.value >= 0.5 * Config.ant_max_rec_amount:
+        if self.base_ant.game.ant.currentResource.value >= Config.ant_max_rec_amount:
             return self.go_to_base()
-        else:
-            return self.go_grab_resource()
+        if self.base_ant.game.ant.currentResource.value >= 0.5 * Config.ant_max_rec_amount and not self.is_really_good():
+            return self.go_to_base()
+        return self.go_grab_resource()
 
     def get_scores(self):
         # what if candidates are empty todo
+        my_resource = self.base_ant.game.ant.currentResource
         if self.best_cell is not None:
-            my_resource = self.base_ant.game.ant.currentResource
             if self.get_base_cell() == self.get_now_pos_cell():
                 self.best_cell = None
             elif self.base_ant.grid.get_cell_resource_value(self.best_cell) < self.prev_best_cell_value:
@@ -47,12 +48,13 @@ class GrabAndReturn(MovementStrategy):
                 continue
             if self.grid.get_cell_resource_value(cell) <= 0:
                 continue
+            if my_resource.value > 0 and my_resource.type != self.grid.get_cell_resource_type(cell):
+                continue
             score = 0
-            my_resource = self.base_ant.game.ant.currentResource
-            if (my_resource.value == 0 or my_resource.type == ResourceType.GRASS.value) and \
+            if (my_resource.value <= 0 or my_resource.type == ResourceType.GRASS.value) and \
                     self.grid.get_cell_resource_type(cell) == ResourceType.GRASS.value:
                 score = min(2 * Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.grass_importance()
-            if (my_resource.value == 0 or my_resource.type == ResourceType.BREAD.value) and \
+            if (my_resource.value <= 0 or my_resource.type == ResourceType.BREAD.value) and \
                     self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
                 score = min(2 * Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.bread_importance()
             score -= self.grid.expected_distance(current_position, cell)  # need to change this
@@ -66,6 +68,7 @@ class GrabAndReturn(MovementStrategy):
 
     def is_not_good(self):
         candidates = self.get_scores()
+        print("there is not any resource near here so we are changing strategy!")
         if len(candidates) == 0:
             return True
         # other stuff todo
@@ -83,6 +86,7 @@ class GrabAndReturn(MovementStrategy):
 
     def get_best_cell(self):
         candidates = self.get_scores()
+        print("candids for grabbing are: ", "\n".join([f"{x}: {candidates[x]}" for x in candidates]))
         self.best_cell = Choosing.soft_max_choose(candidates)
         self.prev_best_cell_value = self.base_ant.grid.get_cell_resource_value(self.best_cell)
         return self.best_cell

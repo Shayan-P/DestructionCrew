@@ -40,6 +40,8 @@ class BaseAnt:
         return ret
 
     def pre_move(self):
+        print("expected turn is ", self.grid.chat_box_reader.get_now_turn())
+        print("alived turn is ", self.game.alive_turn)
         if self.previous_health is None:
             self.previous_health = self.game.ant.health
         if self.previous_cell is None:
@@ -50,6 +52,7 @@ class BaseAnt:
 
         self.grid.listen_to_chat_box()
         self.update_and_report_map()
+        # to pre calculations after all information grabbing
         self.grid.pre_calculations(self.get_now_pos_cell())
 
         if self.start_turn is None:

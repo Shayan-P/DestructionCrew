@@ -1,7 +1,7 @@
 import Model
 
 from .BaseAnt import BaseAnt
-from .Movement import Explore, Follower, Defender, GrabAndReturn, GoCamp
+from .Movement import Explore, Follower, Defender, GrabAndReturn, GoCamp, FuckOpponentBase
 from random import randint
 from AI.Config import Config
 
@@ -28,6 +28,12 @@ class Attacker(BaseAnt):
         #     return Model.Direction.CENTER
         # return ret
 
+    def near_scorpions(self, distance):
+        return list(filter(
+             lambda e: e.antTeam == Model.AntTeam.ALLIED.value and e.antType == Model.AntType.SARBAAZ.value,
+             self.grid.get_near_cell_ants(cell=self.get_now_pos_cell(), distance=distance)
+        ))
+
     def choose_best_strategy(self):
         # this will probably cause some bugs!
         if self.stays_in_group is None:
@@ -37,6 +43,11 @@ class Attacker(BaseAnt):
                 self.stays_in_group = True
             else:
                 self.stays_in_group = False
+
+        if len(self.near_scorpions(3)) >= 5: # change this todo
+            return FuckOpponentBase
+        if self.previous_strategy is FuckOpponentBase:
+            return FuckOpponentBase
 
         # if there are a little unknown cells stop exploring todo
         # return GoCamp
