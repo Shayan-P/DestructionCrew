@@ -4,6 +4,9 @@ from Model import ChatBox
 from .MessageHandlers import Reader, Writer
 from AI.Config import Config
 
+from typing import List, Dict, Type
+
+
 from .AttackCell import AttackCell
 from .ViewCell import ViewCell
 from .ViewScorpion import ViewScorpion
@@ -11,7 +14,7 @@ from .ViewOppBase import ViewOppBase
 from .ViewResource import ViewResource
 from .FightZone import FightZone
 
-all_message_types: [BaseNews] = BaseNews.__subclasses__()
+all_message_types: List[Type[BaseNews]] = BaseNews.__subclasses__()
 
 
 class ChatBoxWriter:
@@ -46,14 +49,17 @@ class ChatBoxWriter:
 
 
 class ChatBoxReader:
-	def __init__(self, box: ChatBox):
-		self.news: [BaseNews] = []
-		self.my_turn = 1
-		for msg in box.allChats:
-			turn = msg.turn
-			self.my_turn = max(self.my_turn, turn + 1)
+	def __init__(self):
+		self.last_check = 0
+		self.news: Dict[ Type[BaseNews] , List[BaseNews] ] = {}
+		for news_type in all_message_types:
+			self.news[news_type] = []
 
+	def update(self, box: ChatBox):
 		for msg in box.allChats:
+			if(msg.turn < self.last_check): # Already Added
+				continue
+
 			reader = Reader(msg.text)
 			while not reader.EOF():
 				prefix = ""
@@ -65,16 +71,19 @@ class ChatBoxReader:
 				for new_type in all_message_types:
 					if prefix == new_type.huffman_prefix:
 						message_type = new_type
+
 				this_news = message_type.decode(reader)
-				this_news.turn = turn
-				self.news.append(this_news)
+				this_news.turn = msg.turn
+				self.news[message_type].append(this_news)
+
+		for msg in box.allChats:
+			self.last_check = max(self.last_check, msg.turn)
 
 	def get_now_turn(self):
-		return self.my_turn
-	# todo this may be wrong. there might be a case were chat box does not update. but probably it makes no problem
+		return self.last_check + 1
 
-	def get_all_news(self) -> [BaseNews]:
-		return self.news
+	def get_all_news(self, news_type: Type[BaseNews]) -> [BaseNews]:
+		return self.news[news_type]
 
 
 """
@@ -86,7 +95,7 @@ and use ChatBoxWriter.get_priority() to get priority of message
 
 ChatBoxReader:
 
-ATTENTION: Build EVERY fucking turn !
+ATTENTION: Build ONCE, update EVERY fucking turn !
 
 you should pass game.chatBox to constructor
 use ChatBoxReader.get_(name of news you need)_news() to get list of news of that type

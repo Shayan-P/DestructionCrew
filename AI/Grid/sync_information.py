@@ -51,7 +51,7 @@ def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
 			if new_cell.resource_value > 0:
 				is_new_info = True
 			grid.model_cell[x][y].resource_value = new_cell.resource_value
-		if not is_new_info:
+		if (not is_new_info):
 			return
 	grid.last_update[x][y] = news_turn
 	if update_chat_box:

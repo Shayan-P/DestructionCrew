@@ -31,12 +31,13 @@ class Grid:
         self.known_graph = Graph()
         # self.unknown_graph = Graph()
         self.initialize_graphs()
-        self.chat_box_writer: ChatBoxWriter = None
-        self.chat_box_reader: ChatBoxReader = None
+        self.chat_box_writer: ChatBoxWriter = ChatBoxWriter()
+        self.chat_box_reader: ChatBoxReader = ChatBoxReader()
 
         self.opponent_base = None  # there is no function to return this. and it's type is ModelCell
 
     def update_with_news(self, base_news: BaseNews, is_from_chat_box=True, update_chat_box=False):
+        # print(type(base_news))
         if type(base_news) == ViewCell:
             # if update_chat_box is False:
             # print("WE SEE CELL In ChatBox", base_news.get_cell().x, base_news.get_cell().y)
@@ -53,8 +54,9 @@ class Grid:
         # add other types of messages todo
 
     def listen_to_chat_box(self):
-        for news in self.chat_box_reader.get_all_news():
-            self.update_with_news(news, update_chat_box=False)
+        for _news_type in BaseNews.__subclasses__():
+            for news in self.chat_box_reader.get_all_news(ViewCell):
+                self.update_with_news(news, update_chat_box=False)
 
     def pre_calculations(self, now: Cell):
         # self.unknown_graph.precalculate_source(now)

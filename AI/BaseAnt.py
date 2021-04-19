@@ -33,7 +33,7 @@ class BaseAnt:
             return self.previous_strategy_object.get_direction()
 
     def pre_move(self):
-        self.grid.chat_box_reader = ChatBoxReader(self.game.chatBox)
+        self.grid.chat_box_reader.update(self.game.chatBox)
         self.grid.chat_box_writer = ChatBoxWriter(self.grid.chat_box_reader.get_now_turn())
 
         self.grid.listen_to_chat_box()
