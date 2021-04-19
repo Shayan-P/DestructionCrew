@@ -14,15 +14,15 @@ class Attacker(BaseAnt):
 
     def get_move(self):
         ret = super(Attacker, self).get_move()
+
+        # also you have to remove this part in order to remove stay_in_group
+
         if not self.stays_in_group:
             return ret
-        near_scorpions = 0
-        for dx in range(-2, 3):
-            for dy in range(-2, 3):
-                cell = self.get_now_pos_cell().move_to(dx, dy)
-                for ant in self.grid.get_cell_ants(cell):
-                    if ant.antTeam == Model.AntTeam.ALLIED.value and ant.antType == Model.AntType.SARBAAZ.value:
-                        near_scorpions += 1
+        near_scorpions = len(list(filter(
+            lambda e: e.antTeam == Model.AntTeam.ALLIED.value and e.antType == Model.AntType.SARBAAZ.value,
+            self.grid.get_near_cell_ants(cell=self.get_now_pos_cell(), distance=2)
+        )))
         if near_scorpions < 3:
             return Model.Direction.CENTER
         return ret
@@ -32,7 +32,7 @@ class Attacker(BaseAnt):
         if self.stays_in_group is None:
             if self.grid.chat_box_reader.get_now_turn() <= 10:
                 self.stays_in_group = False
-            elif randint(1, 10) <= 9:
+            elif randint(1, 10) <= 6:
                 self.stays_in_group = True
             else:
                 self.stays_in_group = False

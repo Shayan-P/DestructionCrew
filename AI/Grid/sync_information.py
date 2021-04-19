@@ -1,6 +1,6 @@
 from .Cell import Cell
 from Model import Cell as ModelCell
-from AI.ChatBox import ViewCell, ViewOppBase, ViewScorpion, ViewResource, AttackCell, FightZone
+from AI.ChatBox import ViewCell, ViewOppBase, ViewScorpion, ViewResource, SafeDangerCell, FightZone
 from AI.Config import Config
 
 
@@ -59,7 +59,7 @@ def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
 
 
 def view_opp_base(grid, news: ViewOppBase, is_from_chat_box, update_chat_box):
-	grid.opponent_base = Cell.from_model_cell(news.get_cell())
+	grid.opponent_base_candids.append(Cell.from_model_cell(news.get_cell()))
 	grid.add_danger(
 		start_cell=Cell.from_model_cell(news.get_cell()),
 		starting_danger=Config.base_range * 10 + 10,
@@ -70,12 +70,22 @@ def view_opp_base(grid, news: ViewOppBase, is_from_chat_box, update_chat_box):
 		grid.chat_box_writer.report(news)
 
 
+def view_safe_danger_cell(grid, news: SafeDangerCell, is_from_chat_box, update_chat_box):
+	# not handled danger == True case. todo
+	if not news.danger:
+		grid.divide_danger(
+			start_cell=Cell(news.get_x(), news.get_y()),
+			steps=Config.view_distance // 2,
+			division=2
+		)
+
+
 def view_scorpion(grid, news: ViewScorpion, is_from_chat_box, update_chat_box):
 	# todo handle delete scorpion
 	# when a scorpion dies we should go and gather resource!
 	grid.add_danger(
 		start_cell=Cell.from_model_cell(news.get_cell()),
-		starting_danger=Config.base_range * 5 + 5,
+		starting_danger=Config.attacker_range * 5 + 5,
 		reduction_ratio=5,
 		steps=Config.attacker_range
 	)

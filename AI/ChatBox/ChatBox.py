@@ -6,15 +6,23 @@ from AI.Config import Config
 
 from typing import List, Dict, Type
 
-
-from .AttackCell import AttackCell
+from .SafeDangerCell import SafeDangerCell
 from .ViewCell import ViewCell
 from .ViewScorpion import ViewScorpion
 from .ViewOppBase import ViewOppBase
 from .ViewResource import ViewResource
 from .FightZone import FightZone
+from .InitMessage import InitMessage
+
 
 all_message_types: List[Type[BaseNews]] = BaseNews.__subclasses__()
+
+for t1 in all_message_types:
+	for t2 in all_message_types:
+		if t1 is t2:
+			continue
+		ln = min(len(t1.huffman_prefix), len(t2.huffman_prefix))
+		assert t1.huffman_prefix[:ln] != t2.huffman_prefix[:ln]
 
 
 class ChatBoxWriter:
@@ -49,11 +57,22 @@ class ChatBoxWriter:
 
 
 class ChatBoxReader:
+<<<<<<< HEAD
 	def __init__(self):
 		self.last_check = 0
 		self.news: Dict[ Type[BaseNews] , List[BaseNews] ] = {}
 		for news_type in all_message_types:
 			self.news[news_type] = []
+=======
+	all_previous_messages = set()
+
+	def __init__(self, box: ChatBox):
+		self.news: [BaseNews] = []
+		self.my_turn = 1
+		for msg in box.allChats:
+			turn = msg.turn
+			self.my_turn = max(self.my_turn, turn + 1)
+>>>>>>> 2ed6e376e6ee6069039e5172712cad88265d522e
 
 	def update(self, box: ChatBox):
 		for msg in box.allChats:
@@ -73,11 +92,20 @@ class ChatBoxReader:
 						message_type = new_type
 
 				this_news = message_type.decode(reader)
+<<<<<<< HEAD
 				this_news.turn = msg.turn
 				self.news[message_type].append(this_news)
 
 		for msg in box.allChats:
 			self.last_check = max(self.last_check, msg.turn)
+=======
+				this_news.turn = turn
+
+				if this_news not in ChatBoxReader.all_previous_messages:
+					self.news.append(this_news)
+				ChatBoxReader.all_previous_messages.add(this_news)
+
+>>>>>>> 2ed6e376e6ee6069039e5172712cad88265d522e
 
 	def get_now_turn(self):
 		return self.last_check + 1

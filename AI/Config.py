@@ -14,6 +14,7 @@ class Config:
 	now_x = -1
 	now_y = -1
 
+	chat_box_first_turn = 1
 	# this is static one
 	ants_view = 4
 	ants_reg_rate = 0.8

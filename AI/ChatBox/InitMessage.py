@@ -6,6 +6,7 @@ from AI.Grid.Cell import Cell as GridCell
 
 
 class InitMessage(BaseNews):
+	# felan natoonestam prefix printable barash peyda konam ke chap she!
 	huffman_prefix = "0000000000000000"
 
 	init_message = "WeAreDestructionCrew.Heh!"
@@ -23,6 +24,9 @@ class InitMessage(BaseNews):
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
 		for c in InitMessage.init_message:
 			writer.write(ord(c), 8)
+
+	def __hash__(self):
+		return hash(InitMessage.huffman_prefix, self.turn)
 
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:
