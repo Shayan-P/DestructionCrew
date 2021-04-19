@@ -1,0 +1,2 @@
+rm submit.zip
+zip submit AI/ Controller.py Model.py Network.py settings/ Utils/
