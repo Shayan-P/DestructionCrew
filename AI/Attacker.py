@@ -44,9 +44,12 @@ class Attacker(BaseAnt):
             else:
                 self.stays_in_group = False
 
-        if len(self.near_scorpions(3)) >= 5: # change this todo
-            return FuckOpponentBase
+        if self.grid.chat_box_reader.get_now_turn() >= 50: # change this if. to something like if map is partially known... todo
+            if len(self.near_scorpions(4)) >= 5: # change this todo
+                return FuckOpponentBase
         if self.previous_strategy is FuckOpponentBase:
+            return FuckOpponentBase
+        if self.grid.chat_box_reader.get_now_turn() >= 80:  # change this! todo
             return FuckOpponentBase
 
         # if there are a little unknown cells stop exploring todo
