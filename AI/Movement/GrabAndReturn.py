@@ -101,7 +101,7 @@ class GrabAndReturn(MovementStrategy):
         distance = self.grid.expected_distance(now_cell, best_cell)
         resource_type = self.grid.get_cell_resource_type(best_cell)
         self.grid.deactivate(1 - resource_type)
-        self.grid.pre_calculations(now_cell)
+        self.grid.known_graph.precalculate_source(now_cell)
         if self.grid.expected_distance(now_cell, best_cell) <= distance:
             next_cell = self.go_to(best_cell)
         self.grid.activate(1 - resource_type)
