@@ -57,22 +57,11 @@ class ChatBoxWriter:
 
 
 class ChatBoxReader:
-<<<<<<< HEAD
 	def __init__(self):
 		self.last_check = 0
 		self.news: Dict[ Type[BaseNews] , List[BaseNews] ] = {}
 		for news_type in all_message_types:
 			self.news[news_type] = []
-=======
-	all_previous_messages = set()
-
-	def __init__(self, box: ChatBox):
-		self.news: [BaseNews] = []
-		self.my_turn = 1
-		for msg in box.allChats:
-			turn = msg.turn
-			self.my_turn = max(self.my_turn, turn + 1)
->>>>>>> 2ed6e376e6ee6069039e5172712cad88265d522e
 
 	def update(self, box: ChatBox):
 		for msg in box.allChats:
@@ -92,20 +81,11 @@ class ChatBoxReader:
 						message_type = new_type
 
 				this_news = message_type.decode(reader)
-<<<<<<< HEAD
 				this_news.turn = msg.turn
 				self.news[message_type].append(this_news)
 
 		for msg in box.allChats:
 			self.last_check = max(self.last_check, msg.turn)
-=======
-				this_news.turn = turn
-
-				if this_news not in ChatBoxReader.all_previous_messages:
-					self.news.append(this_news)
-				ChatBoxReader.all_previous_messages.add(this_news)
-
->>>>>>> 2ed6e376e6ee6069039e5172712cad88265d522e
 
 	def get_now_turn(self):
 		return self.last_check + 1
