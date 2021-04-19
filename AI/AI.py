@@ -1,8 +1,12 @@
+import time
+
 from Model import *
 from .Attacker import Attacker
 from .Worker import Worker
 from AI.Config import Config
-# from Utils import logger
+from Utils import logger
+from settings import DEBUG
+
 # just remove this and everything will be printed in console
 
 
@@ -35,6 +39,12 @@ class AI:
 		self.direction = ant.get_move()
 		self.message, self.value = ant.get_message_and_priority()
 		# print("turn ", self.message, self.value, self.direction)
+
+
+		# this is for server failiure in fast games!
+		if DEBUG:
+			time.sleep(0.01)
+
 		return self.message, self.value, self.direction.value
 
 

@@ -30,7 +30,7 @@ class MovementStrategy:
         path = self.get_best_path(self.get_now_pos_cell(), destination)
         # print("now we are in ", self.get_now_pos_cell(), "we want to go to ", destination, "path is", path)
         # what if path is None?
-        # print("going to ", destination, "path is ", *path)
+        print("going to ", destination, "path is ", *path)
         return self.get_first_step_direction(path)
 
     def get_first_step_direction(self, path):
