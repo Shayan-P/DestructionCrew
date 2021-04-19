@@ -105,7 +105,6 @@ class GrabAndReturn(MovementStrategy):
         if self.grid.expected_distance(now_cell, best_cell) <= distance:
             next_cell = self.go_to(best_cell)
         self.grid.activate(1 - resource_type)
-        self.grid.pre_calculations(now_cell)
         return next_cell
 
     def go_to_base(self):
