@@ -122,7 +122,8 @@ class Grid:
     def get_cell_resource_type(self, cell: Cell):
         remembered: ModelCell = self.model_cell[cell.x][cell.y]
         if remembered is not None:
-            if remembered.resource_type is None:
+            if remembered.resource_type is None \
+                    or remembered.resource_value is None or remembered.resource_value <= 0:
                 return -1
             return remembered.resource_type
         return -1
