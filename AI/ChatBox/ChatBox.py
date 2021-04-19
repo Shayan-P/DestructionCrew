@@ -65,7 +65,7 @@ class ChatBoxReader:
 
 	def update(self, box: ChatBox):
 		for msg in box.allChats:
-			if(msg.turn < self.last_check): # Already Added
+			if(msg.turn <= self.last_check): # Already Added
 				continue
 
 			reader = Reader(msg.text)

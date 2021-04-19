@@ -29,9 +29,6 @@ class SafeDangerCell(BaseNews):
 		writer.write(self.cell.y, 6)
 		writer.write(int(self.danger), 1)
 
-	def __hash__(self):
-		return hash((SafeDangerCell.huffman_prefix, self.turn, self.cell.x, self.cell.y, self.danger))
-
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:
 		x = reader.read(6)

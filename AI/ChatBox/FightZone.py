@@ -53,9 +53,6 @@ class FightZone(BaseNews):
 		writer.write(self.cell.x, 6)
 		writer.write(self.cell.y, 6)
 
-	def __hash__(self):
-		return hash((FightZone.huffman_prefix, self.turn, self.cell.x, self.cell.y))
-
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:
 		print("Ann")

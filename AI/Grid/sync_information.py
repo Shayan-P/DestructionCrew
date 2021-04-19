@@ -59,7 +59,7 @@ def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
 
 
 def view_opp_base(grid, news: ViewOppBase, is_from_chat_box, update_chat_box):
-	grid.opponent_base_candids.append(Cell.from_model_cell(news.get_cell()))
+	grid.report_opponent_base(Cell.from_model_cell(news.get_cell()))
 	grid.add_danger(
 		start_cell=Cell.from_model_cell(news.get_cell()),
 		starting_danger=Config.base_range * 10 + 10,
@@ -98,8 +98,10 @@ def view_fight(grid, news: FightZone, is_from_chat_box, update_chat_box):
 	if update_chat_box:
 		grid.chat_box_writer.report(news)
 
+
 def read_view_fight(grid, news):
 	grid.add_fight(Cell.from_model_cell(news.get_cell()), 2, 1, 1) # todo
+
 
 def report_view_fight(grid, news):
 	grid.chat_box_writer.report(news)
