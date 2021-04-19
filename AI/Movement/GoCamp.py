@@ -31,6 +31,9 @@ class GoCamp(MovementStrategy):
         # what if candidates are empty todo
         current_position = self.base_ant.get_now_pos_cell()
         candidates = {}
+
+        self.grid.rebuild_fight()
+        print("Gooh")
         for cell in Grid.get_all_cells():
             if self.grid.known_graph.no_path(current_position, cell):
                 continue
@@ -40,7 +43,8 @@ class GoCamp(MovementStrategy):
             y = cell.y
 
             score = self.grid.fight[x][y]
-            if(score == 0): continue
+            if(score == 0):
+                continue
             # score += 0.25 * self.grid.expected_distance(current_position, cell)  # need to change  this
             # boro be samti ke expected score et max she todo
             # ba in taabee momken nist dore khodemoon bekharkhim?
@@ -68,15 +72,15 @@ class GoCamp(MovementStrategy):
         if (self.is_not_good()):
             return self.base_ant.get_now_pos_cell()
 
-
-        if (self.best_cell is not None) and (self.hp > 0):
+        if (self.best_cell is not None) and (self.stay > 0):
             self.stay -= 1
             return self.best_cell
 
         candidates = self.get_scores()
         # print("Candidates are :", candidates)
         self.best_cell = Choosing.max_choose(candidates)
-        self.hp = self.max_stay
+        self.stay = self.max_stay
+        print("Fuck !", self.grid.fight[self.best_cell.x][self.best_cell.y])
         return self.best_cell
 
     def go_camp(self):

@@ -160,6 +160,17 @@ class Grid:
                     self.known_graph.change_vertex_weight(new_cell, Grid.initial_vertex_weight + self.danger[new_cell.x][new_cell.y])
                     # update graph
 
+    def rebuild_fight(self):
+        self.fight = [[0] * Config.map_height for i in range(Config.map_width)]
+        avg_dis = (Config.map_width + Config.map_height) // 2
+        for new in self.chat_box_reader.get_all_news(FightZone):
+            turn_dif = self.chat_box_reader.get_now_turn() - new.turn
+            if(avg_dis <= turn_dif): # it was long time ago
+                continue
+
+            self.add_fight(new.cell, 20 * ((avg_dis - turn_dif) / avg_dis), 10 * ((avg_dis - turn_dif) / avg_dis), 1)
+
+
     def add_fight(self, start_cell: Cell, starting_fight, reduction_ratio, steps): # it is linear
         for dx in range(-steps, steps+1):
             for dy in range(-steps, steps+1):

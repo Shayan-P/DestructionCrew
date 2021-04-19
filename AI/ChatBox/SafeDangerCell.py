@@ -1,14 +1,15 @@
 from .BaseNews import BaseNews
 from .MessageHandlers import Reader, Writer
+from AI.Grid.Cell import Cell
 
 
 class SafeDangerCell(BaseNews):
 	huffman_prefix = "010"
 
-	def __init__(self, x=None, y=None, danger=False):
+	def __init__(self, cell, danger=False):
 		super().__init__()
-		self.x = x
-		self.y = y
+		self.x = cell.x
+		self.y = cell.y
 		self.danger = danger
 
 	def get_x(self):
@@ -40,7 +41,7 @@ class SafeDangerCell(BaseNews):
 		x = reader.read(6)
 		y = reader.read(6)
 		danger = bool(reader.read(1))
-		return SafeDangerCell(x, y, danger)
+		return SafeDangerCell(Cell(x, y), danger)
 
 
 """
