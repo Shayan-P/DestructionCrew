@@ -132,6 +132,16 @@ class Grid:
                 result.append(cell.go_to(direction))
         return result
 
+    def activate(self, resource_type):
+        for cell in self.get_all_cells():
+            if self.get_cell_resource_type(cell) == resource_type:
+                self.known_graph.get_vertex(cell).activate()
+
+    def deactivate(self, resource_type):
+        for cell in self.get_all_cells():
+            if self.get_cell_resource_type(cell) == resource_type:
+                self.known_graph.get_vertex(cell).deactivate()
+
     # probably we want to change this function so that it does not include danger!
     def expected_distance(self, cell_start: Cell, cell_end: Cell):
         if not self.known_graph.no_path(cell_start, cell_end):

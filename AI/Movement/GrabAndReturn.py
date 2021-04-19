@@ -79,10 +79,22 @@ class GrabAndReturn(MovementStrategy):
         self.best_cell = Choosing.soft_max_choose(candidates)
         self.prev_best_cell_value = self.base_ant.grid.get_cell_resource_value(self.best_cell)
         return self.best_cell
-
+    
     def go_grab_resource(self):
-        cell = self.get_best_cell()
-        return self.go_to(cell)
+        best_cell: Cell = self.get_best_cell()
+        next_cell = self.go_to(best_cell)
+        if self.grid.get_cell_resource_value(best_cell) <= 0:
+            return next_cell
+
+        distance = self.grid.expected_distance(best_cell)
+        resource_type = self.grid.get_cell_resource_type(best_cell)
+        self.grid.deactivate(1 - resource_type)
+        self.grid.pre_calculations(self.get_now_pos_cell())
+        if self.grid.expected_distance(best_cell) <= distance:
+            next_cell = self.go_to(best_cell)
+        self.grid.activate(1 - resource_type)
+        self.grid.pre_calculations(self.get_now_pos_cell())
+        return next_cell
 
     def go_to_base(self):
         return self.go_to(self.get_base_cell())
