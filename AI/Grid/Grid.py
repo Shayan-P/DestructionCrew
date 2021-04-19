@@ -60,6 +60,9 @@ class Grid:
                 self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
 
     def pre_calculations(self, now: Cell):
+        for cell in Grid.get_all_cells():
+            self.known_graph.change_vertex_weight(cell, Grid.initial_vertex_weight + self.danger[cell.x][cell.y])
+
         # self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
 
@@ -147,8 +150,6 @@ class Grid:
                 if dis <= steps:
                     new_cell = start_cell.move_to(dx, dy)
                     self.danger[new_cell.x][new_cell.y] += int(starting_danger - dis * reduction_ratio)
-                    self.known_graph.change_vertex_weight(new_cell, Grid.initial_vertex_weight + self.danger[new_cell.x][new_cell.y])
-                    # update graph
 
     def divide_danger(self, start_cell: Cell, division, steps):
         for dx in range(-steps, steps+1):
@@ -157,8 +158,6 @@ class Grid:
                 if dis <= steps:
                     new_cell = start_cell.move_to(dx, dy)
                     self.danger[new_cell.x][new_cell.y] //= division
-                    self.known_graph.change_vertex_weight(new_cell, Grid.initial_vertex_weight + self.danger[new_cell.x][new_cell.y])
-                    # update graph
 
     def rebuild_fight(self):
         self.fight = [[0] * Config.map_height for i in range(Config.map_width)]
