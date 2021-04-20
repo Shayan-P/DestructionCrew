@@ -219,7 +219,7 @@ class Grid:
     def report_opponent_base(self, cell: Cell):
         if cell in self.opponent_base_reports:
             return
-        assert len(self.opponent_base_reports) == 1
+        assert len(self.opponent_base_reports) == 0
         self.opponent_base_reports.append(cell)
 
     def add_danger(self, start_cell: Cell, starting_danger, reduction_ratio, steps): # it is linear
