@@ -2,7 +2,7 @@ import os
 import json
 import sys
 
-from settings import LOG_PATH, DEBUG
+DEBUG = False
 
 class Logger:
     def __init__(self, filename):
@@ -18,6 +18,7 @@ class Logger:
         self.console.flush()
         self.file.flush()
 
+from settings import LOG_PATH, DEBUG
 
 def set_config(config):
     with open(os.path.join(LOG_PATH, 'config.json'), 'w') as f:

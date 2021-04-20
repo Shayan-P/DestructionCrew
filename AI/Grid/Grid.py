@@ -68,7 +68,7 @@ class Grid:
         self.saved_expected_opponent_base = self.calculate_expected_opponent_base()
 
         expected_base = self.expected_opponent_base()
-        print("We think their base is at: ", expected_base)
+        # print("We think their base is at: ", expected_base)
         for cell in Grid.get_all_cells():
             my_danger = Grid.initial_vertex_weight + self.danger[cell.x][cell.y]
             dis = expected_base.manhattan_distance(cell)
@@ -237,8 +237,8 @@ class Grid:
             turn_dif = self.chat_box_reader.get_now_turn() - new.turn
             if(avg_dis <= turn_dif): # it was long time ago
                 continue
-
-            self.add_fight(new.cell, 20 * ((avg_dis - turn_dif) / avg_dis), 10 * ((avg_dis - turn_dif) / avg_dis), 1)
+            self.add_fight(new.cell, 20, 10, 1)
+            # self.add_fight(new.cell, 20 * ((avg_dis - turn_dif) / avg_dis), 10 * ((avg_dis - turn_dif) / avg_dis), 1)
 
     def add_fight(self, start_cell: Cell, starting_fight, reduction_ratio, steps): # it is linear
         for dx in range(-steps, steps+1):
@@ -276,15 +276,15 @@ class Grid:
             return colorful_print("E", OKCYAN)
 
         # you should rotate and then print
-        print("map: ")
+        # print("map: ")
         for j in range(Config.map_height):
             arr = [colorful_cell(Cell(i, j)) for i in range(Config.map_width)]
-            print(*arr)
-        print("danger: ")
+            # print(*arr)
+        # print("danger: ")
         for j in range(Config.map_height):
             arr = [self.danger[i][j] for i in range(Config.map_width)]
-            print(*arr)
-        print("fight zone: ")
+            # print(*arr)
+        # print("fight zone: ")
         for j in range(Config.map_height):
             arr = [self.fight[i][j] for i in range(Config.map_width)]
-            print(*arr)
+            # print(*arr)

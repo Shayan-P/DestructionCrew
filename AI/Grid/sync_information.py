@@ -78,7 +78,8 @@ def view_safe_danger_cell(grid, news: SafeDangerCell, is_from_chat_box, update_c
 			steps=Config.view_distance // 2,
 			division=2
 		)
-
+	if update_chat_box:
+		grid.chat_box_writer.report(news)
 
 def view_scorpion(grid, news: ViewScorpion, is_from_chat_box, update_chat_box):
 	# todo handle delete scorpion

@@ -4,8 +4,8 @@ from Model import *
 from .Attacker import Attacker
 from .Worker import Worker
 from AI.Config import Config
-from Utils import logger
-from settings import DEBUG
+# from Utils import logger
+# from settings import DEBUG
 
 # just remove this and everything will be printed in console
 
@@ -42,8 +42,8 @@ class AI:
 
 
 		# this is for server failiure in fast games!
-		if DEBUG:
-			time.sleep(0.01)
+		# if DEBUG:
+		# 	time.sleep(0.01)
 
 		return self.message, self.value, self.direction.value
 

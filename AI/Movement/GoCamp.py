@@ -11,7 +11,7 @@ class GoCamp(MovementStrategy):
         super(GoCamp, self).__init__(base_ant)
         self.best_cell = None
         self.stay = 0
-        self.max_stay = 7
+        self.max_stay = 8
 
     def get_direction(self):
 
@@ -33,7 +33,7 @@ class GoCamp(MovementStrategy):
         candidates = {}
 
         self.grid.rebuild_fight()
-        print("Gooh")
+        # print("Gooh")
         for cell in Grid.get_all_cells():
             if self.grid.known_graph.no_path(current_position, cell):
                 continue
@@ -58,15 +58,15 @@ class GoCamp(MovementStrategy):
         # other stuff todo
         return False
 
-    def is_really_good(self):
-        # print("RUNNING IS REALLY GOOD")
-        candidates = self.get_scores()
-        if len(candidates) == 0:
-            return False
-        # print("VAL IS ", Choosing.max_choose(candidates))
-        if self.grid.expected_distance(self.base_ant.get_now_pos_cell(), Choosing.max_choose(candidates)) <= 4: # change this todo
-            return True
-        return False
+    # def is_really_good(self):
+    #     # print("RUNNING IS REALLY GOOD")
+    #     candidates = self.get_scores()
+    #     if len(candidates) == 0:
+    #         return False
+    #     # print("VAL IS ", Choosing.max_choose(candidates))
+    #     if self.grid.expected_distance(self.base_ant.get_now_pos_cell(), Choosing.max_choose(candidates)) <= 4: # change this todo
+    #         return True
+    #     return False
 
     def get_best_cell(self):
         if (self.is_not_good()):
@@ -80,7 +80,7 @@ class GoCamp(MovementStrategy):
         # print("Candidates are :", candidates)
         self.best_cell = Choosing.max_choose(candidates)
         self.stay = self.max_stay
-        print("Fuck !", self.grid.fight[self.best_cell.x][self.best_cell.y])
+        # print("Fuck !", self.grid.fight[self.best_cell.x][self.best_cell.y])
         return self.best_cell
 
     def go_camp(self):
