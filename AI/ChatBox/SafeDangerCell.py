@@ -1,6 +1,6 @@
 from .BaseNews import BaseNews
 from .MessageHandlers import Reader, Writer
-from AI.Grid import Cell as GridCell
+from AI.Grid.Cell import Cell as GridCell
 
 
 class SafeDangerCell(BaseNews):
