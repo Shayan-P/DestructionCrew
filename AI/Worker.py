@@ -11,7 +11,7 @@ class Worker(BaseAnt):
         self.movement = GrabAndReturn(self)
 
     def choose_best_strategy(self):
-        if self.grid.chat_box_reader.get_now_turn() >= 30 and self.game.alive_turn <= 3 and random.random() <= 0.15:
+        if self.grid.chat_box_reader.get_now_turn() >= 40 and self.game.alive_turn <= 3 and random.random() <= 0.15:
             return FuckOpponentBase  # go get fucked and save the team!
         if self.previous_strategy is FuckOpponentBase:
             return FuckOpponentBase
