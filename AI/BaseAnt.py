@@ -2,7 +2,7 @@ import Model
 from AI.Grid import Grid
 from AI.Grid.Cell import Cell
 from Model import Cell as ModelCell
-from Model import AntTeam, AntType, CellType
+from Model import AntTeam, AntType, CellType, ResourceType
 from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell, ViewResource, ViewScorpion, ViewOppBase, FightZone,\
     InitMessage, SafeDangerCell
 from AI.Config import Config
@@ -18,6 +18,9 @@ class BaseAnt:
         self.previous_strategy_object = None
         self.previous_health = None
         self.previous_cell = None
+        self.previous_resource_value = 0
+        self.total_bread_picked = 0
+        self.total_grass_picked = 0
 
     def get_message_and_priority(self):
         return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
@@ -61,8 +64,17 @@ class BaseAnt:
         self.print_statistics()
 
     def after_move(self):
+        self.update_resource_history()
         self.previous_health = self.game.ant.health
         self.previous_cell = self.get_now_pos_cell()
+
+    def update_resource_history(self):
+        if self.game.ant.currentResource.value > self.previous_resource_value:
+            if self.game.ant.currentResource.type == ResourceType.BREAD.value:
+                self.total_bread_picked += self.game.ant.currentResource.value - self.previous_resource_value
+            elif self.game.ant.currentResource.type == ResourceType.GRASS.value:
+                self.total_grass_picked += self.game.ant.currentResource.value - self.previous_resource_value
+        self.previous_resource_value = self.game.ant.currentResource.value
 
     def update_and_report_map(self):
         view_distance = Config.view_distance  # be nazar bugeshoon bartaraf shode

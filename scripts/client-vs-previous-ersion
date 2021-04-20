@@ -7,5 +7,5 @@ cd ..
 cd AIC21-Game
 cd server
 client=../../DestructionCrew/dist/Controller
-pt=../../DestructionCrew/Warriors/attacker_copies_worker
-java -jar server-v1.2.8.jar --first-team=$pt --second-team=$client
+pt=../../DestructionCrew/Warriors/version1-3
+time java -jar server-v1.2.8.jar --first-team=$client --second-team=$pt

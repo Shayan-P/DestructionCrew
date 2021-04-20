@@ -18,6 +18,7 @@ class GrabAndReturn(MovementStrategy):
         if Cell(self.base_ant.game.baseX, self.base_ant.game.baseY) == self.base_ant.get_now_pos_cell():
             self.best_cell = None
 
+        # todo: shayad hamoon 0.5 kafi bashe ke bargardim!
         if self.base_ant.game.ant.currentResource.value >= Config.ant_max_rec_amount:
             return self.go_to_base()
         if self.base_ant.game.ant.currentResource.value >= 0.5 * Config.ant_max_rec_amount and not self.is_really_good():
@@ -57,9 +58,9 @@ class GrabAndReturn(MovementStrategy):
             if (my_resource.value <= 0 or my_resource.type == ResourceType.BREAD.value) and \
                     self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
                 score = min(2 * Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.bread_importance()
-            score -= self.grid.expected_distance(current_position, cell)  # need to change this
+            score -= self.distance_importance() * self.grid.expected_distance(current_position, cell)
             if cell == self.best_cell:
-                score += 5
+                score += self.best_cell_importance()
                 # change this todo
             # boro be samti ke expected score et max she todo
             # ba in taabee momken nist dore khodemoon bekharkhim?
@@ -106,13 +107,26 @@ class GrabAndReturn(MovementStrategy):
             next_cell = self.go_to(best_cell)
         self.grid.activate(1 - resource_type)
         return next_cell
+        # after this function distances are not right anymore!
 
     def go_to_base(self):
         return self.go_to(self.get_base_cell())
 
+    def best_cell_importance(self):
+        return 5 + 10 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn
+
+    def distance_importance(self):
+        return 2 - 1 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn
+
+    def bread_grass_coefficient(self):
+        if self.grid.chat_box_reader.get_now_turn() < 30:
+            return (self.base_ant.total_bread_picked + 1) / (self.base_ant.total_grass_picked + 1) * 0.2 # todo must be optmized
+        return 1
+
     def grass_importance(self):
-        return 1.8 + (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)
+        return (1.9 + (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)) * self.bread_grass_coefficient()
 
     def bread_importance(self):
-        return 2.2 - (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)
+        return (2.1 - (2 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)) / self.bread_grass_coefficient()
+
     # todo linear is not good
