@@ -199,9 +199,17 @@ class Grid:
         def our_base_distance(_cell: Cell):
             return _cell.manhattan_distance(Cell(Config.base_x, Config.base_y))
 
+        def distance_to_mirror(_cell: Cell):
+            X = abs(mirror_of_our_base.x - _cell.x)
+            Y = abs(mirror_of_our_base.y - _cell.y)
+            return X + Y
+
+        mirror_of_our_base = Cell(Config.map_width - 1 - Config.base_x, Config.map_height - 1 - Config.base_y)
+
         for cell in all_cells:
             if dp[cell.x][cell.y]:
-                if best_candid is None or our_base_distance(cell) > our_base_distance(best_candid):
+                # I changed this
+                if best_candid is None or distance_to_mirror(cell) < distance_to_mirror(best_candid):
                     best_candid = cell
 
         return best_candid

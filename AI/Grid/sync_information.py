@@ -60,12 +60,12 @@ def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
 
 def view_opp_base(grid, news: ViewOppBase, is_from_chat_box, update_chat_box):
 	grid.report_opponent_base(Cell.from_model_cell(news.get_cell()))
-	grid.add_danger(
-		start_cell=Cell.from_model_cell(news.get_cell()),
-		starting_danger=Config.base_range * 10 + 10,
-		reduction_ratio=10,
-		steps=Config.base_range
-	)
+	# grid.add_danger(
+	# 	start_cell=Cell.from_model_cell(news.get_cell()),
+	# 	starting_danger=Config.base_range * 10 + 10,
+	# 	reduction_ratio=10,
+	# 	steps=Config.base_range
+	# )
 	if update_chat_box:
 		grid.chat_box_writer.report(news)
 
@@ -81,7 +81,9 @@ def view_safe_danger_cell(grid, news: SafeDangerCell, is_from_chat_box, update_c
 	if update_chat_box:
 		grid.chat_box_writer.report(news)
 
+
 def view_scorpion(grid, news: ViewScorpion, is_from_chat_box, update_chat_box):
+	return
 	# todo handle delete scorpion
 	# when a scorpion dies we should go and gather resource!
 	grid.add_danger(
