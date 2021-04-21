@@ -58,7 +58,8 @@ class GrabAndReturn(MovementStrategy):
             if (my_resource.value <= 0 or my_resource.type == ResourceType.BREAD.value) and \
                     self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
                 score = min(2 * Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.bread_importance()
-            score -= self.distance_importance() * self.grid.expected_distance(current_position, cell)
+            score -= self.distance_importance() * self.grid.expected_distance(current_position, cell) * \
+                        self.grid.expected_distance(self.get_base_cell())
             if cell == self.best_cell:
                 score += self.best_cell_importance()
                 # change this todo
@@ -116,7 +117,7 @@ class GrabAndReturn(MovementStrategy):
         return 5 + 10 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn
 
     def distance_importance(self):
-        return 2 - 1 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn
+        return 1.5 - 0.5 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn
 
     def bread_grass_coefficient(self):
         if self.grid.chat_box_reader.get_now_turn() < 30:
