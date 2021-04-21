@@ -117,7 +117,7 @@ class GrabAndReturn(MovementStrategy):
         return 5 + 10 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn
 
     def distance_importance(self):
-        return 1.5 - 0.5 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn
+        return 3 - 1 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn
 
     def bread_grass_coefficient(self):
         if self.grid.chat_box_reader.get_now_turn() < 30:
