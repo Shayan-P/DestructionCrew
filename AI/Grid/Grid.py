@@ -29,7 +29,7 @@ class Grid:
         self.last_update = Grid.new_2d_array_of(-1)
         # this probably has some bugs. when there are plenty of things with different update time
 
-        self.danger = Grid.new_2d_array_of(0)
+        self.scorpion_danger = Grid.new_2d_array_of(0)
         self.fight = Grid.new_2d_array_of(0)
 
         self.known_graph = Graph()
@@ -40,6 +40,25 @@ class Grid:
 
         self.saved_expected_opponent_base = None
         self.opponent_base_reports = []  # there is no function to return this. and it's type is ModelCell
+
+        self.hate_known = 0  # this will only change known graph
+        self.opponent_base_fear = 1
+        self.fight_fear = 0
+
+        # self.scorpion_fear = 1
+        # self.scorpion_fear_forgetting_rate = 0.8
+        #
+        # self.damaged_cell_fear = 1
+        # self.damaged_cell_fear_forgetting_rate = 0.6
+        # use this later on
+
+        # change this before!!! every round
+
+    def set_coffs(self, hate_known=0, opponent_base_fear=1, fight_fear=0, scorpion_fear=0):
+        self.hate_known = hate_known
+        self.opponent_base_fear = opponent_base_fear
+        self.fight_fear = fight_fear
+        self.scorpion_fear = scorpion_fear
 
     def update_with_news(self, base_news: BaseNews, is_from_chat_box=True, update_chat_box=False):
         # print(type(base_news))
@@ -68,17 +87,20 @@ class Grid:
         self.saved_expected_opponent_base = self.calculate_expected_opponent_base()
 
         expected_base = self.expected_opponent_base()
-        print("We think their base is at: ", expected_base)
         for cell in Grid.get_all_cells():
-            my_danger = Grid.initial_vertex_weight + self.danger[cell.x][cell.y]
+            base_danger = 0
             dis = expected_base.manhattan_distance(cell)
             if dis <= Config.base_range + 2:
-                my_danger += 120 - dis * 8
-                # change this todo
+                base_danger += 120 - dis * 8
             elif dis <= Config.base_range + 5:
-                my_danger += 88 - dis * 8
-            self.known_graph.change_vertex_weight(cell, my_danger)
-            self.unknown_graph.change_vertex_weight(cell, my_danger)
+                base_danger += 88 - dis * 8
+            my_danger = (self.opponent_base_fear * base_danger +
+                         self.scorpion_fear * self.scorpion_danger[cell.x][cell.y] +
+                         self.fight_fear * self.fight[cell.x][cell.y])
+            self.known_graph.change_vertex_weight(cell, Grid.initial_vertex_weight + my_danger)
+
+            hate_cof = 0 if self.is_unknown(cell) else self.hate_known
+            self.unknown_graph.change_vertex_weight(cell, my_danger + hate_cof)
         self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
 
@@ -165,11 +187,6 @@ class Grid:
     def expected_distance(self, cell_start: Cell, cell_end: Cell):
         if not self.known_graph.no_path(cell_start, cell_end):
             return self.known_graph.get_shortest_distance(cell_start, cell_end)
-        return 1000  # inf # is this enough?
-
-    def expected_unknown_distance(self, cell_start: Cell, cell_end: Cell):
-        if not self.unknown_graph.no_path(cell_start, cell_end):
-            return self.unknown_graph.get_shortest_distance(cell_start, cell_end)
         return 1000
 
     def expected_opponent_base(self):
@@ -225,13 +242,13 @@ class Grid:
         assert len(self.opponent_base_reports) == 0
         self.opponent_base_reports.append(cell)
 
-    def add_danger(self, start_cell: Cell, starting_danger, reduction_ratio, steps): # it is linear
+    def add_scorpion_danger(self, start_cell: Cell, starting_danger, reduction_ratio, steps): # it is linear
         for dx in range(-steps, steps+1):
             for dy in range(-steps, steps+1):
                 dis = abs(dx) + abs(dy)
                 if dis <= steps:
                     new_cell = start_cell.move_to(dx, dy)
-                    self.danger[new_cell.x][new_cell.y] += int(starting_danger - dis * reduction_ratio)
+                    self.scorpion_danger[new_cell.x][new_cell.y] += int(starting_danger - dis * reduction_ratio)
 
     def divide_danger(self, start_cell: Cell, division, steps):
         for dx in range(-steps, steps+1):

@@ -43,7 +43,7 @@ class GrabAndReturn(MovementStrategy):
         current_position = self.get_now_pos_cell()
         candidates = {}
         for cell in Grid.get_all_cells():
-            if self.grid.known_graph.no_path(current_position, cell):
+            if self.grid.unknown_graph.no_path(current_position, cell):
                 continue
             if self.grid.is_unknown(cell):
                 continue
@@ -58,8 +58,15 @@ class GrabAndReturn(MovementStrategy):
             if (my_resource.value <= 0 or my_resource.type == ResourceType.BREAD.value) and \
                     self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
                 score = min(2 * Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.bread_importance()
-            score -= self.distance_importance() * (self.grid.expected_distance(current_position, cell) + \
-                        self.grid.expected_distance(current_position, self.get_base_cell()))
+            if self.grid.known_graph.no_path(current_position, cell):
+                distance = self.grid.unknown_graph.get_shortest_distance(current_position, cell)
+            else:
+                distance = self.grid.known_graph.get_shortest_distance(current_position, cell)
+
+            score -= self.distance_importance() * (1.5 * distance +
+                                                   self.grid.expected_distance(current_position, self.get_base_cell()))
+            # this should be base distance! todo
+
             if cell == self.best_cell:
                 score += self.best_cell_importance()
                 # change this todo
@@ -99,7 +106,6 @@ class GrabAndReturn(MovementStrategy):
         next_cell = self.go_to(best_cell)
         if self.grid.get_cell_resource_value(best_cell) <= 0:
             return next_cell
-
         distance = self.grid.expected_distance(now_cell, best_cell)
         resource_type = self.grid.get_cell_resource_type(best_cell)
         self.grid.deactivate(1 - resource_type)
@@ -130,4 +136,5 @@ class GrabAndReturn(MovementStrategy):
     def bread_importance(self):
         return (2.04 - (1.5 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)) / self.bread_grass_coefficient()
 
-    # todo linear is not good
+    def change_grid_coffs(self):
+        self.grid.set_coffs(hate_known=3, opponent_base_fear=5)

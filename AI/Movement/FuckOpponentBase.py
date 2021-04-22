@@ -26,3 +26,6 @@ class FuckOpponentBase(MovementStrategy):
 
 	def get_direction(self):
 		return self.go_to(self.cell_near_opponent_base())
+
+	def change_grid_coffs(self):
+		self.grid.set_coffs(hate_known=10, opponent_base_fear=0, fight_fear=0)

@@ -1,7 +1,7 @@
 import random
 
 from .BaseAnt import BaseAnt
-from .Movement import GrabAndReturn, Explore, Follower, FuckOpponentBase
+from .Movement import GrabAndReturn, Explore, Follower, DeepSafeExplore
 from AI.Config import Config
 
 
@@ -11,11 +11,10 @@ class Worker(BaseAnt):
         self.movement = GrabAndReturn(self)
 
     def choose_best_strategy(self):
-        if self.grid.chat_box_reader.get_now_turn() >= 40 and self.game.alive_turn <= 3 and random.random() <= 0.15:
-            return FuckOpponentBase  # go get fucked and save the team!
-        if self.previous_strategy is FuckOpponentBase:
-            return FuckOpponentBase
-        # change this todo
+        if self.grid.chat_box_reader.get_now_turn() >= 35 and self.game.alive_turn == 0 and random.random() <= 0.15:
+            return DeepSafeExplore
+        if self.previous_strategy is DeepSafeExplore and not self.previous_strategy_object.is_not_good():
+            return DeepSafeExplore
 
         # if there are a little unknown cells stop exploring todo
         if self.previous_strategy is None:
