@@ -155,6 +155,8 @@ class Graph:
         # between the pre calculations and asking queries we will not change the graph
 
         # print("START PRE CALCULATION ", source)
+        if self.changed is False and self.curr_source == source:
+            return
 
         self.curr_source = source
         self.changed = False
