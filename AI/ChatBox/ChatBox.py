@@ -44,6 +44,7 @@ class ChatBoxWriter:
 			if ret.enough_space(new):
 				new.encode(ret)
 				self.priority += new.get_priority()
+				print("flushing message with type: ", type(new))
 
 		self.queueNews = []
 
@@ -83,7 +84,7 @@ class ChatBoxReader:
 				this_news = message_type.decode(reader)
 				this_news.turn = msg.turn
 				self.news[message_type].append(this_news)
-
+				print("getting message with type: ", type(this_news))
 		for msg in box.allChats:
 			self.last_check = max(self.last_check, msg.turn)
 

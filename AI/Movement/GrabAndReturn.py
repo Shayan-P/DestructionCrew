@@ -63,7 +63,7 @@ class GrabAndReturn(MovementStrategy):
             else:
                 distance = self.grid.known_graph.get_shortest_distance(current_position, cell)
 
-            score -= self.distance_importance() * (1.5 * distance +
+            score -= self.distance_importance() * (distance +
                                                    self.grid.expected_distance(current_position, self.get_base_cell()))
             # this should be base distance! todo
 
@@ -95,7 +95,7 @@ class GrabAndReturn(MovementStrategy):
 
     def get_best_cell(self):
         candidates = self.get_scores()
-        # print("candids for grabbing are: ", "\n".join([f"{x}: {candidates[x]}" for x in candidates]))
+        print("candids for grabbing are: ", "\n".join([f"{x}: {candidates[x]}" for x in candidates]))
         self.best_cell = Choosing.soft_max_choose(candidates)
         self.prev_best_cell_value = self.base_ant.grid.get_cell_resource_value(self.best_cell)
         return self.best_cell
@@ -138,3 +138,9 @@ class GrabAndReturn(MovementStrategy):
 
     def change_grid_coffs(self):
         self.grid.set_coffs(hate_known=3, opponent_base_fear=5)
+
+    def get_best_path(self, cell_start: Cell, cell_end: Cell):
+        # maybe this is bad. change this. when we grabbed something we need to reach base fast! todo
+        if not self.grid.unknown_graph.no_path(cell_start, cell_end):
+            return self.grid.unknown_graph.get_shortest_path(cell_start, cell_end)
+        return None

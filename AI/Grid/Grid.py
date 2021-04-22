@@ -4,6 +4,7 @@ from Model import CellType, ResourceType, Cell as ModelCell
 from .Cell import DIRECTIONS, Cell
 from AI.Algorithms import Graph
 from AI.ChatBox import BaseNews, ViewCell, ViewOppBase, ViewScorpion, ViewResource, FightZone, SafeDangerCell
+from AI.ChatBox import BaseNews, ViewCell, ViewOppBase, ViewScorpion, ViewResource, FightZone, SafeDangerCell
 from .sync_information import see_cell, view_opp_base, view_scorpion, see_resource, view_fight, view_safe_danger_cell
 from AI.Config import Config
 from AI.ChatBox import ChatBoxWriter, ChatBoxReader
@@ -80,7 +81,7 @@ class Grid:
 
     def listen_to_chat_box(self):
         for _news_type in BaseNews.__subclasses__():
-            for news in self.chat_box_reader.get_all_news(ViewCell):
+            for news in self.chat_box_reader.get_all_news(_news_type):
                 self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
 
     def pre_calculations(self, now: Cell):

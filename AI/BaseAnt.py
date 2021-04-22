@@ -94,7 +94,7 @@ class BaseAnt:
                         self.grid.update_with_news(ViewOppBase(model_cell),
                                                    update_chat_box=True, is_from_chat_box=False)
 
-        if self.grid.chat_box_reader.get_now_turn() != Config.chat_box_first_turn:
+        if self.grid.chat_box_reader.get_now_turn() == Config.chat_box_first_turn:
             self.grid.chat_box_writer.report(InitMessage())
         if self.game.ant.health < self.previous_health:
             self.grid.update_with_news(SafeDangerCell(self.previous_cell, danger=True),
