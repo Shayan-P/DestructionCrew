@@ -15,6 +15,17 @@ class Attacker(BaseAnt):
     def get_move(self):
         ret = super(Attacker, self).get_move()
 
+        us = len(self.near_scorpions(0))
+        for dx in range(-1, 2):
+            for dy in range(-1, 2):
+                if abs(dx) + abs(dy) == 1:
+                    adj_cell = self.get_now_pos_cell().move_to(dx, dy)
+                    cnt = 0
+                    for ant in self.grid.get_near_cell_ants(adj_cell, 0):
+                        if (ant.antTeam == Model.AntTeam.ALLIED.value) and (ant.antType == Model.AntType.SARBAAZ.value):
+                            cnt += 1
+                    if (cnt > us) or ((cnt == us) and (min(dx, dy) == -1) ):
+                        return self.get_now_pos_cell().direction_to(adj_cell)
         return ret
         # also you have to remove this part in order to remove stay_in_group
         #
