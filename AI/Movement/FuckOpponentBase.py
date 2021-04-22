@@ -13,13 +13,16 @@ class FuckOpponentBase(MovementStrategy):
 		opponent_base = self.base_ant.grid.expected_opponent_base()
 		candid = None
 		for cell in Grid.get_all_cells():
-			if self.grid.known_graph.no_path(self.get_now_pos_cell(), cell):
+			if self.grid.unknown_graph.no_path(self.get_now_pos_cell(), cell):  # changed to unknown graph
 				continue
 			if candid is None or opponent_base.manhattan_distance(cell) < opponent_base.manhattan_distance(candid):
 				candid = cell
 		return candid
-		# this has some problems. maybe we get trapped! if we cannot get closer to base this way todo
+
+	def get_best_path(self, cell_start: Cell, cell_end: Cell):
+		if not self.grid.unknown_graph.no_path(cell_start, cell_end):
+			return self.grid.unknown_graph.get_shortest_path(cell_start, cell_end)
+		return None
 
 	def get_direction(self):
-		# momken nist becharkhim dor khodemoon? behtare ke fix bashe koja mirim. na inke taghir kone todo
 		return self.go_to(self.cell_near_opponent_base())

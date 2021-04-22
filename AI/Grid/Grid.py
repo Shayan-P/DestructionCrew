@@ -33,7 +33,7 @@ class Grid:
         self.fight = Grid.new_2d_array_of(0)
 
         self.known_graph = Graph()
-        # self.unknown_graph = Graph()
+        self.unknown_graph = Graph()
         self.initialize_graphs()
         self.chat_box_writer: ChatBoxWriter = ChatBoxWriter()
         self.chat_box_reader: ChatBoxReader = ChatBoxReader()
@@ -68,7 +68,7 @@ class Grid:
         self.saved_expected_opponent_base = self.calculate_expected_opponent_base()
 
         expected_base = self.expected_opponent_base()
-        # print("We think their base is at: ", expected_base)
+        print("We think their base is at: ", expected_base)
         for cell in Grid.get_all_cells():
             my_danger = Grid.initial_vertex_weight + self.danger[cell.x][cell.y]
             dis = expected_base.manhattan_distance(cell)
@@ -78,13 +78,14 @@ class Grid:
             elif dis <= Config.base_range + 5:
                 my_danger += 88 - dis * 8
             self.known_graph.change_vertex_weight(cell, my_danger)
-        # self.unknown_graph.precalculate_source(now)
+            self.unknown_graph.change_vertex_weight(cell, my_danger)
+        self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
 
     def update_vertex_in_graph(self, cell):
         if self.is_wall(cell):
             self.known_graph.delete_vertex(cell)
-            # self.unknown_graph.delete_vertex(cell)
+            self.unknown_graph.delete_vertex(cell)
             return
         for direction in DIRECTIONS:
             self.update_edge_in_graph(cell, cell.go_to(direction))
@@ -97,13 +98,10 @@ class Grid:
     def initialize_graphs(self):
         for cell in Grid.get_all_cells():
             self.known_graph.add_vertex(cell, Grid.initial_vertex_weight)
-            # self.unknown_graph.add_vertex(cell, Grid.initial_vertex_weight)
-        """
+            self.unknown_graph.add_vertex(cell, Grid.initial_vertex_weight)
         for cell in Grid.get_all_cells():
-            cell = Cell(i, j)
             for direction in DIRECTIONS:
                 self.unknown_graph.add_edge(cell, cell.go_to(direction))
-        """
 
     # todo is there a case were cell is not None but .type is None?
     def is_wall(self, cell: Cell):
@@ -155,19 +153,24 @@ class Grid:
         for cell in self.get_all_cells():
             if self.get_cell_resource_type(cell) == resource_type:
                 self.known_graph.get_vertex(cell).activate()
+                self.unknown_graph.get_vertex(cell).activate()
 
     def deactivate(self, resource_type):
         for cell in self.get_all_cells():
             if self.get_cell_resource_type(cell) == resource_type:
                 self.known_graph.get_vertex(cell).deactivate()
+                self.unknown_graph.get_vertex(cell).deactivate()
 
     # probably we want to change this function so that it does not include danger!
     def expected_distance(self, cell_start: Cell, cell_end: Cell):
         if not self.known_graph.no_path(cell_start, cell_end):
             return self.known_graph.get_shortest_distance(cell_start, cell_end)
-        # if not self.unknown_graph.no_path(cell_start, cell_end):
-        #    return int(self.unknown_graph.get_shortest_distance(cell_start, cell_end) * 1.5) + 5  # what the hell?!
         return 1000  # inf # is this enough?
+
+    def expected_unknown_distance(self, cell_start: Cell, cell_end: Cell):
+        if not self.unknown_graph.no_path(cell_start, cell_end):
+            return self.unknown_graph.get_shortest_distance(cell_start, cell_end)
+        return 1000
 
     def expected_opponent_base(self):
         return self.saved_expected_opponent_base
