@@ -4,7 +4,7 @@ from Model import *
 from .Attacker import Attacker
 from .Worker import Worker
 from AI.Config import Config
-# from Utils import logger
+from Utils import logger
 # from settings import DEBUG
 
 # just remove this and everything will be printed in console

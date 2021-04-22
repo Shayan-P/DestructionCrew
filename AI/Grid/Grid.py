@@ -279,20 +279,19 @@ class Grid:
                     return colorful_print("G", OKGREEN)
                 if self.get_cell_resource_type(cell) == ResourceType.BREAD.value:
                     return colorful_print("B", OKGREEN)
-                # print(colorful_print(FAIL, "SHIT SHIT SHIT SHIT ANOTHER TYPE"), self.get_cell_resource_value(cell), self.get_cell_resource_type(cell), ResourceType.GRASS, ResourceType.BREAD)
                 assert False
             return colorful_print("E", OKCYAN)
 
         # you should rotate and then print
-        # print("map: ")
+        print("map: ")
         for j in range(Config.map_height):
             arr = [colorful_cell(Cell(i, j)) for i in range(Config.map_width)]
-            # print(*arr)
-        # print("danger: ")
+            print(*arr)
+        print("danger: ")
         for j in range(Config.map_height):
             arr = [self.danger[i][j] for i in range(Config.map_width)]
-            # print(*arr)
-        # print("fight zone: ")
+            print(*arr)
+        print("fight zone: ")
         for j in range(Config.map_height):
             arr = [self.fight[i][j] for i in range(Config.map_width)]
-            # print(*arr)
+            print(*arr)

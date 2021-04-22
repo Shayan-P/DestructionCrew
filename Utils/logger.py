@@ -2,7 +2,8 @@ import os
 import json
 import sys
 
-DEBUG = False
+from settings import LOG_PATH, DEBUG
+
 
 class Logger:
     def __init__(self, filename):
@@ -18,7 +19,6 @@ class Logger:
         self.console.flush()
         self.file.flush()
 
-from settings import LOG_PATH, DEBUG
 
 def set_config(config):
     with open(os.path.join(LOG_PATH, 'config.json'), 'w') as f:
@@ -39,16 +39,5 @@ if DEBUG:
     sys.stderr = logger
 
 else:
-    class DummyLogger:
-        def __init__(self):
-            pass
-
-        def write(self, message):
-            pass
-
-        def flush(self):
-            pass
-    dummy_logger = DummyLogger()
-    sys.stdout = dummy_logger
-    sys.stderr = dummy_logger
-
+    import builtins
+    builtins.print = lambda *p: None

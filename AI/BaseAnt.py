@@ -31,8 +31,6 @@ class BaseAnt:
     def get_move(self):
         self.pre_move()
         strategy = self.choose_best_strategy()
-        # print("now startegy is", strategy, "previouse strategy was", self.previous_strategy)
-        # print("now we have", self.game.ant.currentResource.type, self.game.ant.currentResource.value)
         if strategy is self.previous_strategy:
             ret = self.previous_strategy_object.get_direction()
         else:
@@ -43,8 +41,6 @@ class BaseAnt:
         return ret
 
     def pre_move(self):
-        # print("expected turn is ", self.grid.chat_box_reader.get_now_turn())
-        # print("alived turn is ", self.game.alive_turn)
         if self.previous_health is None:
             self.previous_health = self.game.ant.health
         if self.previous_cell is None:
@@ -108,8 +104,10 @@ class BaseAnt:
                                        update_chat_box=self.game.alive_turn != 0, is_from_chat_box=False)
 
     def print_statistics(self):
-        # print("I'm in", self.get_now_pos_cell())
-        # print(f"I have yummy of type {self.game.ant.currentResource.type} with value {self.game.ant.currentResource.value}", self.game.ant.currentResource)
+        print("expected turn is ", self.grid.chat_box_reader.get_now_turn())
+        print("alived turn is ", self.game.alive_turn)
+        print("prev startegy was", self.previous_strategy)
+        print("now we have", self.game.ant.currentResource.type, self.game.ant.currentResource.value)
         self.grid.print_all_we_know_from_map()
 
     def get_now_pos_cell(self):
