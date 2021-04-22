@@ -30,7 +30,7 @@ class DeepSafeExplore(MovementStrategy):
         return candid
 
     def get_direction(self):
-        return self.go_to(self.get_one_of_near_unknowns())
+        return self.go_to(self.get_center_of_unknowns())
 
     def is_not_good(self):
         return self.reached_destination or \

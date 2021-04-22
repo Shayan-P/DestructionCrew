@@ -250,13 +250,13 @@ class Grid:
                     new_cell = start_cell.move_to(dx, dy)
                     self.scorpion_danger[new_cell.x][new_cell.y] += int(starting_danger - dis * reduction_ratio)
 
-    def divide_danger(self, start_cell: Cell, division, steps):
+    def divide_scorpion_danger(self, start_cell: Cell, division, steps):
         for dx in range(-steps, steps+1):
             for dy in range(-steps, steps+1):
                 dis = abs(dx) + abs(dy)
                 if dis <= steps:
                     new_cell = start_cell.move_to(dx, dy)
-                    self.danger[new_cell.x][new_cell.y] //= division
+                    self.scorpion_danger[new_cell.x][new_cell.y] //= division
 
     def rebuild_fight(self):
         self.fight = [[0] * Config.map_height for i in range(Config.map_width)]
@@ -309,7 +309,7 @@ class Grid:
             print(*arr)
         print("danger: ")
         for j in range(Config.map_height):
-            arr = [self.danger[i][j] for i in range(Config.map_width)]
+            arr = [self.scorpion_danger[i][j] for i in range(Config.map_width)]
             print(*arr)
         print("fight zone: ")
         for j in range(Config.map_height):
