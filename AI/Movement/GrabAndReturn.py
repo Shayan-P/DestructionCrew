@@ -129,7 +129,7 @@ class GrabAndReturn(MovementStrategy):
         if self.grid.chat_box_reader.get_now_turn() < 30:
             return max(1, (self.base_ant.total_bread_picked + 1) / (self.base_ant.total_grass_picked + 1) * 0.2) # todo must be optmized
         return 1
-
+    
     def grass_importance(self):
         return (1.96 + (1.5 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)) * self.bread_grass_coefficient()
 

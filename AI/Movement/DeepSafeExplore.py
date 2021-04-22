@@ -36,7 +36,7 @@ class DeepSafeExplore(MovementStrategy):
         return self.go_to(self.get_center_of_unknowns())
 
     def is_not_good(self):
-        if self.previous_purpose is None and self.reached_destination:
+        if self.reached_destination:
             return True
         if self.previous_purpose is not None:
             return not self.grid.is_unknown(self.previous_purpose) or \
