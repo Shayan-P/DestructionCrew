@@ -1,6 +1,6 @@
 from AI.Movement import *
 from .MovementStrategy import MovementStrategy
-from AI.Grid import Grid
+from AI.Grid import Grid, Cell
 
 
 class DeepSafeExplore(MovementStrategy):
@@ -38,3 +38,8 @@ class DeepSafeExplore(MovementStrategy):
 
     def change_grid_coffs(self):
         self.grid.set_coffs(hate_known=10, opponent_base_fear=5, fight_fear=1, scorpion_fear=1)
+
+    def get_best_path(self, cell_start: Cell, cell_end: Cell):
+        if not self.grid.unknown_graph.no_path(cell_start, cell_end):
+            return self.grid.unknown_graph.get_shortest_path(cell_start, cell_end)
+        return None
