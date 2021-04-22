@@ -15,6 +15,8 @@ class DeepSafeExplore(MovementStrategy):
             if not self.grid.is_unknown(self.previous_purpose):
                 self.previous_purpose = None
                 self.reached_destination = True
+            elif self.grid.unknown_graph.no_path(self.get_now_pos_cell(), self.previous_purpose):
+                self.previous_purpose = None
             # and some other condition
         if self.previous_purpose is not None:
             return self.previous_purpose
@@ -30,11 +32,16 @@ class DeepSafeExplore(MovementStrategy):
         return candid
 
     def get_direction(self):
+        print("center of unknowns is ", self.get_center_of_unknowns(), "and my prev turn is ", self.previous_purpose, "there is a path?", self.grid.unknown_graph.no_path(self.get_now_pos_cell(), self.get_center_of_unknowns()))
         return self.go_to(self.get_center_of_unknowns())
 
     def is_not_good(self):
-        return self.reached_destination or \
-               (self.previous_purpose is not None and not self.grid.is_unknown(self.previous_purpose))
+        if self.previous_purpose is None and self.reached_destination:
+            return True
+        if self.previous_purpose is not None:
+            return not self.grid.is_unknown(self.previous_purpose) or \
+                   self.grid.unknown_graph.no_path(self.get_now_pos_cell(), self.previous_purpose)
+        return False
 
     def change_grid_coffs(self):
         self.grid.set_coffs(hate_known=10, opponent_base_fear=5, fight_fear=1, scorpion_fear=1)

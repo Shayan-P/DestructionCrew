@@ -108,6 +108,7 @@ class BaseAnt:
         print("alived turn is ", self.game.alive_turn)
         print("prev startegy was", self.previous_strategy)
         print("now we have", self.game.ant.currentResource.type, self.game.ant.currentResource.value)
+        print("we think opponent's base is in ", self.grid.expected_opponent_base())
         self.grid.print_all_we_know_from_map()
 
     def get_now_pos_cell(self):
