@@ -20,18 +20,21 @@ class Attacker(BaseAnt):
         max_scorpions = 0
         for dx in range(-2, 3):
             for dy in range(-2, 3):
+                if dx == 0 and dy == 0:
+                    continue
                 if abs(dx) + abs(dy) <= 2:
                     adj_cell = self.get_now_pos_cell().move_to(dx, dy)
-                    cnt = list(filter(
+                    cnt = len(list(filter(
                         lambda e: e.antTeam == Model.AntTeam.ALLIED.value and e.antType == Model.AntType.SARBAAZ.value,
-                        self.grid.get_near_cell_ants(cell=self.get_now_pos_cell(), distance=0)
-                    ))
+                        self.grid.get_near_cell_ants(cell=adj_cell, distance=0)
+                    )))
                     if (cnt > us) or ((cnt == us) and (dx > 0 or (dx == 0 and dy > 0))):
                         if cell_full_of_scorpion is None or cnt > max_scorpions:
                             max_scorpions = cnt
                             cell_full_of_scorpion = adj_cell
         if cell_full_of_scorpion is not None:
-            return self.get_now_pos_cell().direction_to(cell_full_of_scorpion)
+            path = self.grid.known_graph.get_shortest_path(self.get_now_pos_cell(), cell_full_of_scorpion)
+            return path[0].direction_to(path[1])
 
         return ret
         # also you have to remove this part in order to remove stay_in_group

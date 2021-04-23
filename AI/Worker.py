@@ -29,7 +29,7 @@ class Worker(BaseAnt):
         if GrabAndReturn(self).is_really_good():
             return GrabAndReturn
 
-        if self.previous_strategy is not GrabAndReturn:
+        if self.previous_strategy is GrabAndReturn:
             rnd = random.random()
             if rnd <= 0.3:
                 return AloneSpy
