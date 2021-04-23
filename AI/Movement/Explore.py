@@ -22,11 +22,11 @@ class Explore(MovementStrategy):
                 distance = self.grid.expected_distance(current_position, cell)
                 if cell not in candidates:
                     candidates[cell] = 0
-                candidates[cell] = -distance
+                candidates[cell] += -distance
                 for dx in range(-3, 4):
                     for dy in range(-3, 4):
                         if self.grid.get_cell_resource_value(cell.move_to(dx, dy)) > 0:
-                            candidates[cell] += 5 - (abs(dx) + abs(dy)) * 0.3  # change this todo
+                            candidates[cell] += (5 - abs(dx) + abs(dy)) * 0.3  # change this todo
         self.previous_purpose = soft_max_choose(candidates)
         return self.previous_purpose
 
