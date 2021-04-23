@@ -109,7 +109,15 @@ class BaseAnt:
         print("prev startegy was", self.previous_strategy)
         print("now we have", self.game.ant.currentResource.type, self.game.ant.currentResource.value)
         print("we think opponent's base is in ", self.grid.expected_opponent_base())
-        self.grid.print_all_we_know_from_map()
+        print("attacks: ")
+        for attack in self.game.ant.attacks:
+            print(attack.attacker_row)
+            print(attack.attacker_col)
+            print(attack.defender_row)
+            print(attack.defender_col)
+            print(attack.is_attacker_enemy)
+
+        # self.grid.print_all_we_know_from_map()
 
     def get_now_pos_cell(self):
         return Cell(Config.now_x, Config.now_y)
