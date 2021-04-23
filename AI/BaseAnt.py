@@ -102,6 +102,12 @@ class BaseAnt:
         else:
             self.grid.update_with_news(SafeDangerCell(self.previous_cell, danger=False),
                                        update_chat_box=self.game.alive_turn != 0, is_from_chat_box=False)
+        for attack in self.game.ant.attacks:
+            if attack.is_attacker_enemy:
+                a = Cell(attack.attacker_col, attack.attacker_row)
+                b = Cell(attack.defender_col, attack.defender_row)
+                if a.manhattan_distance(b) > Config.attacker_range:
+                    self.grid.update_with_news(ViewOppBase(a), update_chat_box=True, is_from_chat_box=False)
 
     def print_statistics(self):
         print("expected turn is ", self.grid.chat_box_reader.get_now_turn())
