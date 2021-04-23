@@ -13,7 +13,7 @@ class Worker(BaseAnt):
 
     def choose_best_strategy(self):
         # if there are a little unknown cells stop exploring todo
-        return AloneSpy
+        return Explore
         if self.grid.chat_box_reader.get_now_turn() >= 35 and self.game.alive_turn == 0 and random.random() <= 0.3:
             self.spy = True
         if self.spy:
