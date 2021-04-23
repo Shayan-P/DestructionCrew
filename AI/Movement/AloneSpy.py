@@ -11,9 +11,14 @@ class AloneSpy(MovementStrategy):
 		# you can remove this
 
 	def get_not_crowded_cell(self):
+		if self.previous_purpose is not None:
+			if not self.grid.is_unknown(self.previous_purpose):
+				self.previous_purpose = None
 		candidates = {}
 		for cell in Grid.get_all_cells():
 			if self.grid.known_graph.no_path(self.get_now_pos_cell(), cell):
+				continue
+			if not self.grid.is_unknown(cell):
 				continue
 			score = 0
 			for dx in range(-5, 6):
@@ -23,7 +28,12 @@ class AloneSpy(MovementStrategy):
 					if dis <= 5:
 						score += (6-dis) * self.grid.get_crowded(another_cell)
 			candidates[cell] = -score
-		return soft_max_choose(candidates)
+		if self.previous_purpose is not None:
+			if self.previous_purpose not in candidates:
+				candidates[self.previous_purpose] = 0
+			candidates[self.previous_purpose] += 6
+		self.previous_purpose = soft_max_choose(candidates)
+		return self.previous_purpose
 
 	def get_direction(self):
 		return self.go_to(self.get_not_crowded_cell())
