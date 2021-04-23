@@ -323,3 +323,7 @@ class Grid:
         for j in range(Config.map_height):
             arr = [self.fight[i][j] for i in range(Config.map_width)]
             print(*arr)
+        print("crowded: ")
+        for j in range(Config.map_height):
+            arr = [self.crowded[i][j] for i in range(Config.map_width)]
+            print(*arr)
