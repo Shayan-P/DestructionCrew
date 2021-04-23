@@ -46,6 +46,7 @@ class Grid:
         self.hate_known = 0  # this will only change known graph
         self.opponent_base_fear = 1
         self.fight_fear = 0
+        self.scorpion_fear = 0
 
         # self.scorpion_fear = 1
         # self.scorpion_fear_forgetting_rate = 0.8
@@ -102,7 +103,7 @@ class Grid:
             self.known_graph.change_vertex_weight(cell, Grid.initial_vertex_weight + my_danger)
 
             hate_cof = 0 if self.is_unknown(cell) else self.hate_known
-            self.unknown_graph.change_vertex_weight(cell, my_danger + hate_cof)
+            self.unknown_graph.change_vertex_weight(cell, Grid.initial_vertex_weight + my_danger + hate_cof)
         self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
 
