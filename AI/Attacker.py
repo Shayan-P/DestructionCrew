@@ -10,7 +10,6 @@ class Attacker(BaseAnt):
     def __init__(self, game):
         super(Attacker, self).__init__(game)
         self.movement = Defender(self)
-        self.stays_in_group = None
 
     def get_move(self):
         ret = super(Attacker, self).get_move()
@@ -28,7 +27,7 @@ class Attacker(BaseAnt):
                         lambda e: e.antTeam == Model.AntTeam.ALLIED.value and e.antType == Model.AntType.SARBAAZ.value,
                         self.grid.get_near_cell_ants(cell=adj_cell, distance=0)
                     )))
-                    if (cnt > us) or ((cnt == us) and (dx > 0 or (dx == 0 and dy > 0))):
+                    if cnt > us:
                         if cell_full_of_scorpion is None or cnt > max_scorpions:
                             max_scorpions = cnt
                             cell_full_of_scorpion = adj_cell
@@ -37,17 +36,6 @@ class Attacker(BaseAnt):
             return path[0].direction_to(path[1])
 
         return ret
-        # also you have to remove this part in order to remove stay_in_group
-        #
-        # if not self.stays_in_group:
-        #     return ret
-        # near_scorpions = len(list(filter(
-        #     lambda e: e.antTeam == Model.AntTeam.ALLIED.value and e.antType == Model.AntType.SARBAAZ.value,
-        #     self.grid.get_near_cell_ants(cell=self.get_now_pos_cell(), distance=2)
-        # )))
-        # if near_scorpions < 3:
-        #     return Model.Direction.CENTER
-        # return ret
 
     def near_scorpions(self, distance):
         return list(filter(
@@ -56,21 +44,12 @@ class Attacker(BaseAnt):
         ))
 
     def choose_best_strategy(self):
-        # this will probably cause some bugs!
-        if self.stays_in_group is None:
-            if self.grid.chat_box_reader.get_now_turn() <= 10:
-                self.stays_in_group = False
-            elif randint(1, 10) <= 6:
-                self.stays_in_group = True
-            else:
-                self.stays_in_group = False
-
         if self.grid.chat_box_reader.get_now_turn() >= 63: # change this if. to something like if map is partially known... todo
             if len(self.near_scorpions(2)) >= 7: # change this todo
                 return FuckOpponentBase
         if self.previous_strategy is FuckOpponentBase:
             return FuckOpponentBase
-        if self.grid.chat_box_reader.get_now_turn() >= 82:  # change this! todo
+        if self.grid.chat_box_reader.get_now_turn() >= 81:  # change this! todo
             return FuckOpponentBase
 
         # if there are a little unknown cells stop exploring todo

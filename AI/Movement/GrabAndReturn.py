@@ -58,12 +58,12 @@ class GrabAndReturn(MovementStrategy):
             if (my_resource.value <= 0 or my_resource.type == ResourceType.BREAD.value) and \
                     self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
                 score = min(2 * Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.bread_importance()
-            distance = self.grid.unknown_graph.get_shortest_distance(current_position, cell)
+            if self.grid.known_graph.no_path(current_position, cell):
+                distance = self.grid.unknown_graph.get_shortest_distance(current_position, cell)
+            else:
+                distance = self.grid.known_graph.get_shortest_distance(current_position, cell)
             # change this todo
-            distance /= 3
-
-            score -= self.distance_importance() * (distance +
-                                                   self.grid.expected_distance(current_position, self.get_base_cell()))
+            score -= self.distance_importance() * distance
             # this should be base distance! todo
 
             if cell == self.best_cell:
@@ -87,7 +87,10 @@ class GrabAndReturn(MovementStrategy):
         candidates = self.get_scores()
         if len(candidates) == 0:
             return False
-        return True
+        best: Cell = Choosing.max_choose(candidates)
+        if best.manhattan_distance(self.get_now_pos_cell()) <= 5:
+            return True
+        return False
     # change this todo
 
     def get_best_cell(self):

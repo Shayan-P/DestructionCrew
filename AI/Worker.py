@@ -12,27 +12,28 @@ class Worker(BaseAnt):
         self.spy = False
 
     def choose_best_strategy(self):
-        return DeepSafeExplore
         # if there are a little unknown cells stop exploring todo
-        if self.grid.chat_box_reader.get_now_turn() >= 35 and self.game.alive_turn == 0 and random.random() <= 0.3:
-            self.spy = True
-        if self.spy:
-            return AloneSpy
-
         if self.previous_strategy is None:
-            self.previous_strategy = GrabAndReturn
-            self.previous_strategy_object = GrabAndReturn(self)
+            self.previous_strategy = Explore
+            self.previous_strategy_object = Explore(self)
         if self.game.ant.currentResource.value > Config.ant_max_rec_amount * 0.5:
+            self.spy = False
             return GrabAndReturn
         # momkene ye chiz kam dastet bashe baad be khatere oon natooni chizi bardari. todo fix this
         if GrabAndReturn(self).is_really_good():
+            self.spy = False
             return GrabAndReturn
 
-        if self.previous_strategy is GrabAndReturn:
-            rnd = random.random()
-            if rnd <= 0.3:
-                return AloneSpy
-            if rnd <= 0.5:
+        if self.grid.chat_box_reader.get_now_turn() >= 30 and self.game.alive_turn == 0 and random.random() <= 0.3:
+            self.spy = True
+            if random.random() <= 0.5:
                 return DeepSafeExplore
+            else:
+                return AloneSpy
+        if self.spy:
+            return self.previous_strategy
+
+        if self.previous_strategy is GrabAndReturn:
+            self.spy = False
             return Explore
         return self.previous_strategy
