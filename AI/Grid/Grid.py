@@ -82,7 +82,7 @@ class Grid:
 
     def listen_to_chat_box(self):
         for _news_type in BaseNews.__subclasses__():
-            for news in self.chat_box_reader.get_all_news(_news_type):
+            for news in self.chat_box_reader.get_latest_news(_news_type):
                 self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
 
     def pre_calculations(self, now: Cell):

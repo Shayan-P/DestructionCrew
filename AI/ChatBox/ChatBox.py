@@ -61,10 +61,13 @@ class ChatBoxReader:
 	def __init__(self):
 		self.last_check = 0
 		self.news: Dict[ Type[BaseNews] , List[BaseNews] ] = {}
+		self.latest_news: Dict[ Type[BaseNews] , List[BaseNews] ] = {}
 		for news_type in all_message_types:
 			self.news[news_type] = []
 
 	def update(self, box: ChatBox):
+		for news_type in all_message_types:
+			self.latest_news[news_type] = []
 		for msg in box.allChats:
 			if(msg.turn <= self.last_check): # Already Added
 				continue
@@ -84,6 +87,7 @@ class ChatBoxReader:
 				this_news = message_type.decode(reader)
 				this_news.turn = msg.turn
 				self.news[message_type].append(this_news)
+				self.latest_news[message_type].append(this_news)
 				print("getting message with type: ", type(this_news))
 		for msg in box.allChats:
 			self.last_check = max(self.last_check, msg.turn)
@@ -94,6 +98,8 @@ class ChatBoxReader:
 	def get_all_news(self, news_type: Type[BaseNews]) -> [BaseNews]:
 		return self.news[news_type]
 
+	def get_latest_news(self, news_type: Type[BaseNews]) -> [BaseNews]:
+		return self.latest_news[news_type]
 
 """
 ChatBoxWriter:
