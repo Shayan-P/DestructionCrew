@@ -23,13 +23,13 @@ class Config:
 	base_health = 10
 	max_com_per_turn = 5
 	max_com_length = 32
-	max_turn = 250
+	max_turn = 200
 	worker_health = 3
 	attacker_health = 5
 	attacker_range = 4
 	attacker_damage = 1
 	worker_price = 10
-	attacker_price = 20
+	attacker_price = 15
 	ant_max_rec_amount = 10
 	start_worker = 4
 	start_attacker = 0

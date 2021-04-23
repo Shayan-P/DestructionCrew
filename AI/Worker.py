@@ -11,6 +11,10 @@ class Worker(BaseAnt):
         self.movement = GrabAndReturn(self)
         self.spy = False
 
+    def get_move(self):
+        ret = super(Worker, self).get_move()
+        return self.escape_from_great_danger_filter(ret)
+
     def choose_best_strategy(self):
         # if there are a little unknown cells stop exploring todo
         if self.previous_strategy is None:

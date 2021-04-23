@@ -1,6 +1,7 @@
 import Model
 
 from .BaseAnt import BaseAnt
+from .Grid import Cell, Grid
 from .Movement import Explore, Follower, Defender, GrabAndReturn, GoCamp, FuckOpponentBase
 from random import randint
 from AI.Config import Config
@@ -11,9 +12,7 @@ class Attacker(BaseAnt):
         super(Attacker, self).__init__(game)
         self.movement = Defender(self)
 
-    def get_move(self):
-        ret = super(Attacker, self).get_move()
-
+    def stay_in_group_filter(self, move):
         us = len(self.near_scorpions(0))
         cell_full_of_scorpion = None
         max_scorpions = 0
@@ -34,8 +33,14 @@ class Attacker(BaseAnt):
         if cell_full_of_scorpion is not None:
             path = self.grid.known_graph.get_shortest_path(self.get_now_pos_cell(), cell_full_of_scorpion)
             return path[0].direction_to(path[1])
+        return move
 
-        return ret
+    def get_move(self):
+        ret = super(Attacker, self).get_move()
+        if self.previous_strategy is FuckOpponentBase:
+            return ret
+        else:
+            return self.escape_from_great_danger_filter(self.stay_in_group_filter(ret))
 
     def near_scorpions(self, distance):
         return list(filter(
@@ -44,6 +49,8 @@ class Attacker(BaseAnt):
         ))
 
     def choose_best_strategy(self):
+        if self.grid.sure_opponent_base() and self.get_now_pos_cell().manhattan_distance(self.grid.expected_opponent_base()) <= Config.base_range:
+            return FuckOpponentBase
         if self.grid.chat_box_reader.get_now_turn() >= 63: # change this if. to something like if map is partially known... todo
             if len(self.near_scorpions(2)) >= 7: # change this todo
                 return FuckOpponentBase

@@ -12,6 +12,7 @@ from AI.ChatBox import ChatBoxWriter, ChatBoxReader
 
 class Grid:
     initial_vertex_weight = 1
+    infinity_danger = 100000
 
     @staticmethod
     def get_all_cells():
@@ -33,6 +34,7 @@ class Grid:
         self.scorpion_danger = Grid.new_2d_array_of(0)
         self.fight = Grid.new_2d_array_of(0)
         self.crowded = Grid.new_2d_array_of(0)
+        self.total_danger = Grid.new_2d_array_of(0)
 
         self.known_graph = Graph()
         self.unknown_graph = Graph()
@@ -93,17 +95,21 @@ class Grid:
         for cell in Grid.get_all_cells():
             base_danger = 0
             dis = expected_base.manhattan_distance(cell)
-            if dis <= Config.base_range + 2:
-                base_danger += 120 - dis * 8
-            elif dis <= Config.base_range + 5:
-                base_danger += 88 - dis * 8
-            my_danger = (self.opponent_base_fear * base_danger +
-                         self.scorpion_fear * self.scorpion_danger[cell.x][cell.y] +
-                         self.fight_fear * self.fight[cell.x][cell.y])
-            self.known_graph.change_vertex_weight(cell, Grid.initial_vertex_weight + my_danger)
+            if self.sure_opponent_base():
+                if dis <= Config.base_range:
+                    base_danger = Grid.infinity_danger
+            else:
+                if dis <= Config.base_range + 2:
+                    base_danger += 120 - dis * 8
+                elif dis <= Config.base_range + 5:
+                    base_danger += 88 - dis * 8
+            self.total_danger[cell.x][cell.y] = (self.opponent_base_fear * base_danger +
+                                                 self.scorpion_fear * self.scorpion_danger[cell.x][cell.y] +
+                                                 self.fight_fear * self.fight[cell.x][cell.y])
+            self.known_graph.change_vertex_weight(cell, Grid.initial_vertex_weight + self.total_danger[cell.x][cell.y])
 
             hate_cof = 0 if self.is_unknown(cell) else self.hate_known
-            self.unknown_graph.change_vertex_weight(cell, Grid.initial_vertex_weight + my_danger + hate_cof)
+            self.unknown_graph.change_vertex_weight(cell, Grid.initial_vertex_weight + self.total_danger[cell.x][cell.y] + hate_cof)
         self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
 
@@ -173,6 +179,9 @@ class Grid:
             if not self.is_wall(cell.go_to(direction)):
                 result.append(cell.go_to(direction))
         return result
+
+    def get_total_danger(self, cell: Cell):
+        return self.total_danger[cell.x][cell.y]
 
     def activate(self, resource_type):
         for cell in self.get_all_cells():
@@ -244,6 +253,9 @@ class Grid:
             return
         assert len(self.opponent_base_reports) == 0
         self.opponent_base_reports.append(cell)
+
+    def sure_opponent_base(self):
+        return len(self.opponent_base_reports) == 1
 
     def add_scorpion_danger(self, start_cell: Cell, starting_danger, reduction_ratio, steps): # it is linear
         for dx in range(-steps, steps+1):

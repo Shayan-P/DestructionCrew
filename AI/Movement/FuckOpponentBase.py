@@ -29,3 +29,4 @@ class FuckOpponentBase(MovementStrategy):
 
 	def change_grid_coffs(self):
 		self.grid.set_coffs(hate_known=10, opponent_base_fear=0, fight_fear=0)
+		# opponent_base_fear must be 0. or we won't get close to it.
