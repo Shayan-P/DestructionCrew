@@ -67,6 +67,8 @@ def view_opp_base(grid, news: ViewOppBase, is_from_chat_box, update_chat_box):
 def view_safe_danger_cell(grid, news: SafeDangerCell, is_from_chat_box, update_chat_box):
 	# not handled danger == True case. todo
 	# in chize agar ye edde ziadi yek ja hatta zir attack sangin bashan kharab mishe
+	grid.report_crowded(news.get_cell())
+
 	if not news.danger:
 		grid.divide_scorpion_danger(
 			start_cell=news.get_cell(),

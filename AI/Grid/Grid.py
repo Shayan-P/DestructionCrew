@@ -32,6 +32,7 @@ class Grid:
 
         self.scorpion_danger = Grid.new_2d_array_of(0)
         self.fight = Grid.new_2d_array_of(0)
+        self.crowded = Grid.new_2d_array_of(0)
 
         self.known_graph = Graph()
         self.unknown_graph = Graph()
@@ -260,7 +261,7 @@ class Grid:
                     self.scorpion_danger[new_cell.x][new_cell.y] //= division
 
     def rebuild_fight(self):
-        self.fight = [[0] * Config.map_height for i in range(Config.map_width)]
+        self.fight = Grid.new_2d_array_of(0)
         avg_dis = (Config.map_width + Config.map_height) // 2
         for new in self.chat_box_reader.get_all_news(FightZone):
             turn_dif = self.chat_box_reader.get_now_turn() - new.turn
@@ -268,6 +269,12 @@ class Grid:
                 continue
             self.add_fight(new.cell, 20, 10, 1)
             # self.add_fight(new.cell, 20 * ((avg_dis - turn_dif) / avg_dis), 10 * ((avg_dis - turn_dif) / avg_dis), 1)
+
+    def report_crowded(self, cell: Cell):
+        self.crowded[cell.x][cell.y] += 1
+
+    def get_crowded(self, cell: Cell):
+        return self.crowded[cell.x][cell.y]
 
     def add_fight(self, start_cell: Cell, starting_fight, reduction_ratio, steps): # it is linear
         for dx in range(-steps, steps+1):

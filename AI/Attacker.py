@@ -20,7 +20,7 @@ class Attacker(BaseAnt):
         max_scorpions = 0
         for dx in range(-2, 3):
             for dy in range(-2, 3):
-                if abs(dx) + abs(dy) == 2:
+                if abs(dx) + abs(dy) <= 2:
                     adj_cell = self.get_now_pos_cell().move_to(dx, dy)
                     cnt = list(filter(
                         lambda e: e.antTeam == Model.AntTeam.ALLIED.value and e.antType == Model.AntType.SARBAAZ.value,

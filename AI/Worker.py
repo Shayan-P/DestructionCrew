@@ -1,7 +1,7 @@
 import random
 
 from .BaseAnt import BaseAnt
-from .Movement import GrabAndReturn, Explore, Follower, DeepSafeExplore
+from .Movement import GrabAndReturn, Explore, Follower, DeepSafeExplore, AloneSpy
 from AI.Config import Config
 
 
@@ -28,4 +28,12 @@ class Worker(BaseAnt):
         # momkene ye chiz kam dastet bashe baad be khatere oon natooni chizi bardari. todo fix this
         if GrabAndReturn(self).is_really_good():
             return GrabAndReturn
-        return DeepSafeExplore
+
+        if self.previous_strategy is not GrabAndReturn:
+            rnd = random.random()
+            if rnd <= 0.3:
+                return AloneSpy
+            if rnd <= 0.5:
+                return DeepSafeExplore
+            return Explore
+        return self.previous_strategy
