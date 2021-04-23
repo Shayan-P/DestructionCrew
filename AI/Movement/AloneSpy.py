@@ -22,7 +22,7 @@ class AloneSpy(MovementStrategy):
 					dis = abs(dx) + abs(dy)
 					if dis <= 5:
 						score += (6-dis) * self.grid.get_crowded(another_cell)
-			candidates[cell] = score
+			candidates[cell] = -score
 		return soft_max_choose(candidates)
 
 	def get_direction(self):
