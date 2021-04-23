@@ -16,16 +16,23 @@ class Attacker(BaseAnt):
         ret = super(Attacker, self).get_move()
 
         us = len(self.near_scorpions(0))
-        for dx in range(-1, 2):
-            for dy in range(-1, 2):
-                if abs(dx) + abs(dy) == 1:
+        cell_full_of_scorpion = None
+        max_scorpions = 0
+        for dx in range(-2, 3):
+            for dy in range(-2, 3):
+                if abs(dx) + abs(dy) == 2:
                     adj_cell = self.get_now_pos_cell().move_to(dx, dy)
-                    cnt = 0
-                    for ant in self.grid.get_near_cell_ants(adj_cell, 0):
-                        if (ant.antTeam == Model.AntTeam.ALLIED.value) and (ant.antType == Model.AntType.SARBAAZ.value):
-                            cnt += 1
-                    if (cnt > us) or ((cnt == us) and (min(dx, dy) == -1) ):
-                        return self.get_now_pos_cell().direction_to(adj_cell)
+                    cnt = list(filter(
+                        lambda e: e.antTeam == Model.AntTeam.ALLIED.value and e.antType == Model.AntType.SARBAAZ.value,
+                        self.grid.get_near_cell_ants(cell=self.get_now_pos_cell(), distance=0)
+                    ))
+                    if (cnt > us) or ((cnt == us) and (dx > 0 or (dx == 0 and dy > 0))):
+                        if cell_full_of_scorpion is None or cnt > max_scorpions:
+                            max_scorpions = cnt
+                            cell_full_of_scorpion = adj_cell
+        if cell_full_of_scorpion is not None:
+            return self.get_now_pos_cell().direction_to(cell_full_of_scorpion)
+
         return ret
         # also you have to remove this part in order to remove stay_in_group
         #
