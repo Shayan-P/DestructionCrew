@@ -113,19 +113,22 @@ class BaseAnt:
         destination = self.get_now_pos_cell().go_to(move)
         if self.grid.get_total_danger(destination) >= Grid.infinity_danger:
             min_danger_cell: Cell = None
-            for dx in range(-1, 2):
-                for dy in range(-1, 2):
-                    if abs(dx) + abs(dy) == 1:
+            for dx in range(-2, 3):  # should be 2
+                for dy in range(-2, 3):
+                    if abs(dx) + abs(dy) <= 2 and abs(dx) + abs(dy) != 0:
                         next_cell = self.get_now_pos_cell().move_to(dx, dy)
                         if not self.grid.is_wall(next_cell):
                             if min_danger_cell is None or self.grid.get_total_danger(min_danger_cell) > self.grid.get_total_danger(next_cell):
                                 min_danger_cell = next_cell
             if min_danger_cell is None:
                 return move
-            return self.get_now_pos_cell().direction_to(min_danger_cell)
+            path = self.grid.known_graph.get_shortest_path(self.get_now_pos_cell(), min_danger_cell)
+            return path[0].direction_to(path[1])
+
         return move
 
     def print_statistics(self):
+        print("I'm in ", self.get_now_pos_cell())
         print("expected turn is ", self.grid.chat_box_reader.get_now_turn())
         print("alived turn is ", self.game.alive_turn)
         print("prev startegy was", self.previous_strategy)

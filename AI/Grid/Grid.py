@@ -330,7 +330,7 @@ class Grid:
             print(*arr)
         print("danger: ")
         for j in range(Config.map_height):
-            arr = [self.scorpion_danger[i][j] for i in range(Config.map_width)]
+            arr = [self.total_danger[i][j] for i in range(Config.map_width)]
             print(*arr)
         print("fight zone: ")
         for j in range(Config.map_height):
