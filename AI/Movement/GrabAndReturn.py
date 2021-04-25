@@ -54,10 +54,12 @@ class GrabAndReturn(MovementStrategy):
             score = 0
             if (my_resource.value <= 0 or my_resource.type == ResourceType.GRASS.value) and \
                     self.grid.get_cell_resource_type(cell) == ResourceType.GRASS.value:
-                score = min(2 * Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.grass_importance()
+                score = min(self.expected_workers() * Config.ant_max_rec_amount,
+                            self.grid.get_cell_resource_value(cell)) * self.grass_importance()
             if (my_resource.value <= 0 or my_resource.type == ResourceType.BREAD.value) and \
                     self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
-                score = min(2 * Config.ant_max_rec_amount, self.grid.get_cell_resource_value(cell)) * self.bread_importance()
+                score = min(self.expected_workers() * Config.ant_max_rec_amount,
+                            self.grid.get_cell_resource_value(cell)) * self.bread_importance()
             if self.grid.known_graph.no_path(current_position, cell):
                 distance = self.grid.unknown_graph.get_shortest_distance(current_position, cell)
             else:
@@ -119,22 +121,38 @@ class GrabAndReturn(MovementStrategy):
     def go_to_base(self):
         return self.go_to(self.get_base_cell())
 
+    def expected_workers(self):
+        # increasing this untill it's not too much will help. I set this for small maps so work positive in others\
+        # todo: but it can be more optimized
+
+        x = self.grid.chat_box_reader.get_now_turn()
+        if x <= 10:
+            return Config.start_worker
+        elif x <= 20:
+            return Config.start_worker * (1 + (x - 10) / 10)
+        elif x <= 50:
+            return Config.start_worker * (2 + (x - 20) / 30)
+        else:
+            return Config.start_worker * 3
+
     def best_cell_importance(self):
-        return 5 + 10 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn
+        return 10
 
     def distance_importance(self):
-        return (3 - 1 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)
+        return 20
 
     def bread_grass_coefficient(self):
-        if self.grid.chat_box_reader.get_now_turn() < 30:
-            return max(1, (self.base_ant.total_bread_picked + 1) / (self.base_ant.total_grass_picked + 1) * 0.2) # todo must be optmized
-        return 1
+        #if self.grid.chat_box_reader.get_now_turn() < 30:
+        #return 1
+        _MAX = 1.5
+        return max(min(_MAX, (self.base_ant.total_bread_picked + 1) / (self.base_ant.total_grass_picked + 1) * 0.05), 1 / _MAX)
+        # todo must be optmized
 
     def grass_importance(self):
-        return (1.96 + (1.5 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)) * self.bread_grass_coefficient()
+        return (1.95 + (2.5 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)) * self.bread_grass_coefficient()
 
     def bread_importance(self):
-        return (2.04 - (1.5 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)) / self.bread_grass_coefficient()
+        return (2.05 - (2.5 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)) / self.bread_grass_coefficient()
 
     def change_grid_coffs(self):
         self.grid.set_coffs(hate_known=3, opponent_base_fear=5)
