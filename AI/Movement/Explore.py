@@ -1,6 +1,10 @@
+import random
+
+import Model
 from AI.Movement import *
 from .MovementStrategy import MovementStrategy
 from AI.Grid import Grid, Cell
+from AI.Grid.Cell import get_random_directions
 from AI.Choosing import soft_max_choose
 from AI.Config import Config
 
@@ -27,8 +31,14 @@ class Explore(MovementStrategy):
                     for dy in range(-3, 4):
                         if self.grid.get_cell_resource_value(cell.move_to(dx, dy)) > 0:
                             candidates[cell] += (5 - abs(dx) + abs(dy)) * 0.3  # change this todo
+        if len(candidates) == 0:
+            return None
         self.previous_purpose = soft_max_choose(candidates)
         return self.previous_purpose
 
     def get_direction(self):
+        # fix this every where todo
+        X = self.get_one_of_near_unknowns()
+        if X is None:
+            return random.choice(get_random_directions())
         return self.go_to(self.get_one_of_near_unknowns())

@@ -1,0 +1,32 @@
+<html>
+    <style>
+      body {
+          background-color: grey;
+          margin: 0;
+      }
+      button {
+        padding: 16px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+        background-color: lightgreen;
+        color: black;
+        border: 2px solid #4CAF50;
+      }
+
+      button:hover {
+        background-color: #4CAF50;
+        color: white;
+      }
+    </style>
+    <body>
+        <button onclick="exportBoard()">create map</button>
+        <canvas id="canvas" width="500" height="500" style="border:1px solid #000000;">
+        </canvas>
+        <script src="drawer.js"></script>
+    </body>
+</html>
