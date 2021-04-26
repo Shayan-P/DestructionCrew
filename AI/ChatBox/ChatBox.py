@@ -14,7 +14,6 @@ from .ViewResource import ViewResource
 from .FightZone import FightZone
 from .InitMessage import InitMessage
 
-
 all_message_types: List[Type[BaseNews]] = BaseNews.__subclasses__()
 
 for t1 in all_message_types:
@@ -26,7 +25,7 @@ for t1 in all_message_types:
 
 
 class ChatBoxWriter:
-	def __init__(self, turn = 1):
+	def __init__(self, turn=1):
 		self.queueNews: [BaseNews] = []
 		self.limit = Config.max_com_length
 		self.priority = 0
@@ -44,8 +43,8 @@ class ChatBoxWriter:
 			if ret.enough_space(new):
 				new.encode(ret)
 				self.priority += new.get_priority()
-				print("flushing message with type: ", type(new))
-
+			else:
+				print("cant report news: ", new)
 		self.queueNews = []
 
 		# todo
@@ -100,6 +99,26 @@ class ChatBoxReader:
 
 	def get_latest_news(self, news_type: Type[BaseNews]) -> [BaseNews]:
 		return self.latest_news[news_type]
+
+
+def message_text_translator(text):
+	reader = Reader(text)
+	ret = ""
+	while not reader.EOF():
+		prefix = ""
+		while (not reader.EOF()) and (prefix not in [new_type.huffman_prefix for new_type in all_message_types]):
+			prefix += reader.read_bit()
+		if prefix not in [new_type.huffman_prefix for new_type in all_message_types]:
+			continue
+		message_type = None
+		for new_type in all_message_types:
+			if prefix == new_type.huffman_prefix:
+				message_type = new_type
+
+		this_news = message_type.decode(reader)
+		ret += str(this_news) + " * "
+	return ret
+
 
 """
 ChatBoxWriter:

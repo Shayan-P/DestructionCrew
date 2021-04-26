@@ -37,6 +37,9 @@ class FightZone(BaseNews):
 		# print("!! (", my.x, ",", my.y,") + (", opp.x,",",opp.y,") -> (", self.cell.x, ", ", self.cell.y, ")")
 		# assert min_dis <= 3
 
+	def __str__(self):
+		return f"FT{self.cell.x},{self.cell.y}"
+
 	def get_cell(self) -> ModelCell:
 		return ModelCell(self.cell.x, self.cell.y, None, None, None)
 

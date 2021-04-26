@@ -2,7 +2,7 @@ let canvas = document.getElementById("canvas");
 let context = canvas.getContext("2d");
 let w = 0, h = 0
 let bw = 0, bh = 0
-let cw = 40
+let cw
 const p = 0
 
 windowW = window.innerWidth
@@ -17,7 +17,7 @@ function drawBoard(_w, _h) {
     context.clearRect(0, 0, canvas.width, canvas.height)
     w = _w
     h = _h
-    cw = Math.min(canvas.width/w, canvas.height/h)-3
+    cw = Math.floor(Math.min(canvas.width/w, canvas.height/h)-3)
     bh = h * cw
     bw = w * cw
     for (let x = 0; x <= bw; x += cw) {
@@ -33,11 +33,13 @@ function drawBoard(_w, _h) {
     context.strokeStyle = "black";
     context.stroke();
 
+    setEmpty()
+
     board = []
-    for (let x = 0; x < w; x++){
+    for (let x = 1; x <= w; x++){
         board.push([])
-        for (let y = 0; y < h; y++){
-            board[x].push(undefined)
+        for (let y = 1; y <= h; y++){
+            board[x-1].push(get_default_cell(x-1, y-1))
             putCell(x, y)
         }
     }
@@ -47,8 +49,8 @@ function getCursorPosition(canvas, event, cw) {
     const rect = canvas.getBoundingClientRect()
     const x = event.clientX - rect.left
     const y = event.clientY - rect.top
-    const cy = (y + (cw - y % cw)) / cw
-    const cx = (x + (cw - x % cw)) / cw
+    const cy = Math.floor((y + (cw - y % cw)) / cw)
+    const cx = Math.floor((x + (cw - x % cw)) / cw)
     return [cx, cy]
 }
 
@@ -59,12 +61,12 @@ let defaultResource = -1
 function setBread(value){
     defaultCellType = 2
     defaultCellValue = value
-    defaultResource = 1
+    defaultResource = 2
 }
 function setGrass(value){
     defaultCellType = 2
     defaultCellValue = value
-    defaultResource = 2
+    defaultResource = 1
 }
 function setEmpty(value){
     defaultCellType = 2
@@ -104,7 +106,7 @@ function get_default_cell(x, y){
     return ret
 }
 function putCell(x, y){
-    if(x >= bw || y >= bh)
+    if(x >= w || y >= h)
         return
 
     if(defaultCellType === 0){
@@ -114,10 +116,10 @@ function putCell(x, y){
         putColor(x, y, "blue")
     }
     if(defaultCellType === 2){
-        if(defaultResource === 1){
+        if(defaultResource === 2){
             putColor(x, y, "yellow", defaultCellValue)
         }
-        else if(defaultResource === 2){
+        else if(defaultResource === 1){
             putColor(x, y, "green", defaultCellValue)
         }
         else{
@@ -127,7 +129,7 @@ function putCell(x, y){
     if(defaultCellType === 3){
         putColor(x, y, "black")
     }
-    board[x][y] = get_default_cell(x, y)
+    board[x-1][y-1] = get_default_cell(x-1, y-1)
 }
 
 
@@ -152,7 +154,7 @@ function exportBoard(){
 
 
 function putColor(x, y, color, text){
-    if(x >= bw || y >= bh)
+    if(x >= w || y >= h)
         return
     let context2 = canvas.getContext("2d");
     context2.clearRect((x-1) * cw + 1, (y-1) * cw + 1, cw-2, cw-2)
@@ -169,7 +171,6 @@ function putColor(x, y, color, text){
 
 canvas.addEventListener('mousedown', function (e) {
     let [x, y] = getCursorPosition(canvas, e, cw)
+    console.log(x, y, board)
     putCell(x, y)
 })
-
-setEmpty()

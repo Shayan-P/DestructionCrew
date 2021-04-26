@@ -1,12 +1,45 @@
 # from .BaseNews import BaseNews
+from settings import READABLE_CHAT_BOX
+
+
+def printable_ord(c):
+	if ord('a') <= ord(c) <= ord('z'):
+		return ord(c) - ord('a')
+	if ord('A') <= ord(c) <= ord('Z'):
+		return 26 + ord(c) - ord('A')
+	if ord('0') <= ord(c) <= ord('9'):
+		return 52 + ord(c) - ord('0')
+	if c == '_':
+		return 62
+	if c == '!':
+		return 63
+
+
+def printable_chr(ind):
+	if 0 <= ind < 26:
+		return chr(ord('a') + ind)
+	if 26 <= ind < 52:
+		return chr(ord('A') + ind - 26)
+	if 52 <= ind < 62:
+		return chr(ord('0') + ind - 52)
+	if ind == 62:
+		return '_'
+	if ind == 63:
+		return '!'
 
 
 def str_to_bin(char):
 	res = ""
-	asci = ord(char)
-	for i in range(8):
-		res = str(asci % 2) + res
-		asci //= 2
+	if READABLE_CHAT_BOX:
+		asci = printable_ord(char)
+		for i in range(6):
+			res = str(asci % 2) + res
+			asci //= 2
+	else:
+		asci = ord(char)
+		for i in range(8):
+			res = str(asci % 2) + res
+			asci //= 2
 	return res
 
 
@@ -37,7 +70,8 @@ class Writer:
 		self.limit = limit
 
 	def enough_space(self, new) -> bool:
-		return len(self.message) + new.message_size() <= 8 * self.limit
+		BYTE_SIZE = 6 if READABLE_CHAT_BOX else 8
+		return len(self.message) + new.message_size() <= BYTE_SIZE * self.limit
 
 	def write(self, mes, bits):
 		res = ""
@@ -48,11 +82,16 @@ class Writer:
 
 	def get_message(self) -> str:
 		res = ""
-		while len(self.message) % 8 != 0:
-			self.message += "0"
-
-		for i in range(0, len(self.message), 8):
-			res += chr(int(self.message[i: i + 8], 2))
+		if READABLE_CHAT_BOX:
+			while len(self.message) % 6 != 0:
+				self.message += "0"
+			for i in range(0, len(self.message), 6):
+				res += printable_chr(int(self.message[i: i + 6], 2))
+		else:
+			while len(self.message) % 8 != 0:
+				self.message += "0"
+			for i in range(0, len(self.message), 8):
+				res += chr(int(self.message[i: i + 8], 2))
 		return res
 
 
