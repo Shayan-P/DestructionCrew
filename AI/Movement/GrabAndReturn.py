@@ -89,10 +89,7 @@ class GrabAndReturn(MovementStrategy):
         candidates = self.get_scores()
         if len(candidates) == 0:
             return False
-        best: Cell = Choosing.max_choose(candidates)
-        if best.manhattan_distance(self.get_now_pos_cell()) <= 5:
-            return True
-        return False
+        return True
     # change this todo
 
     def get_best_cell(self):
