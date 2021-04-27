@@ -50,7 +50,8 @@ class BaseAnt:
             self.previous_cell = self.get_now_pos_cell()
 
         self.grid.chat_box_reader.update(self.game.chatBox)
-        self.grid.chat_box_writer = ChatBoxWriter(self.grid.chat_box_reader.get_now_turn())
+        self.grid.chat_box_writer.update(self.grid.chat_box_reader.get_now_turn(),
+                                         self.grid.chat_box_reader.get_latest_news_all_types())
 
         self.grid.listen_to_chat_box()
         self.update_and_report_map()
