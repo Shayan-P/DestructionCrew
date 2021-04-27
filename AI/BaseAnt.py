@@ -63,7 +63,7 @@ class BaseAnt:
         if self.start_turn is None:
             self.start_turn = self.grid.chat_box_reader.get_now_turn()
 
-        # self.print_statistics()
+        self.print_statistics()
 
     def after_move(self):
         self.update_resource_history()
@@ -176,13 +176,15 @@ class BaseAnt:
         print("prev startegy was", self.previous_strategy)
         print("now we have", self.game.ant.currentResource.type, self.game.ant.currentResource.value)
         print("we think opponent's base is in ", self.grid.expected_opponent_base())
-        print("attacks: ")
-        for attack in self.game.ant.attacks:
-            print(attack.attacker_row)
-            print(attack.attacker_col)
-            print(attack.defender_row)
-            print(attack.defender_col)
-            print(attack.is_attacker_enemy)
+        print("Alive workers: ", self.grid.alive_worker_count())
+        print("Alive attackers: ", self.grid.alive_attacker_count())
+        # print("attacks: ")
+        # for attack in self.game.ant.attacks:
+        #     print(attack.attacker_row)
+        #     print(attack.attacker_col)
+        #     print(attack.defender_row)
+        #     print(attack.defender_col)
+        #     print(attack.is_attacker_enemy)
 
         # self.grid.print_all_we_know_from_map()
 
