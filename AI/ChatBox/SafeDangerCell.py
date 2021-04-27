@@ -11,6 +11,12 @@ class SafeDangerCell(BaseNews):
 		self.cell = cell
 		self.danger = danger
 
+	def __str__(self):
+		if self.danger:
+			return f"Danger{str(self.cell)}"
+		else:
+			return f"Safe{str(self.cell)}"
+
 	def get_cell(self):
 		return self.cell
 

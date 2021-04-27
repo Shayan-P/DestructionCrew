@@ -16,6 +16,7 @@ class Config:
 
 	chat_box_first_turn = 1
 	# this is static one
+	# update this one
 	ants_view = 4
 	ants_reg_rate = 0.8
 	base_range = 6

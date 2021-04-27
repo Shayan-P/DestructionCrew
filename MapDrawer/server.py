@@ -49,7 +49,15 @@ def get_resource(path):  # pragma: no cover
 
 @app.route("/write_map", methods=['POST'])
 def write_map():
-    with open("map.json", "w") as f:
+    if "manual_maps" in os.listdir():
+        os.chdir("manual_maps")
+    cnt = 1
+    file_name = f"map{cnt}.json"
+    while file_name in os.listdir():
+        cnt += 1
+        file_name = f"map{cnt}.json"
+    print(file_name)
+    with open(file_name, "w") as f:
         f.write(json.dumps(json.loads(request.get_data())))
     return Response("ok")
 

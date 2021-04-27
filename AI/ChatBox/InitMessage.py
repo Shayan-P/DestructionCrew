@@ -7,12 +7,15 @@ from AI.Grid.Cell import Cell as GridCell
 
 class InitMessage(BaseNews):
 	# felan natoonestam prefix printable barash peyda konam ke chap she!
-	huffman_prefix = "0000000000000000"
+	huffman_prefix = "00000000"
 
-	init_message = "WeAreDestructionCrew.Heh!"
+	init_message = "Heh!"
 
 	def __init__(self):
 		super().__init__()
+
+	def __str__(self):
+		return InitMessage.init_message
 
 	def get_priority(self):
 		return 0

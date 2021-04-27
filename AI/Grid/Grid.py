@@ -4,9 +4,8 @@ from math import log2
 from Model import CellType, ResourceType, Cell as ModelCell
 from .Cell import DIRECTIONS, Cell
 from AI.Algorithms import Graph
-from AI.ChatBox import BaseNews, ViewCell, ViewOppBase, ViewScorpion, ViewResource, FightZone, SafeDangerCell
-from AI.ChatBox import BaseNews, ViewCell, ViewOppBase, ViewScorpion, ViewResource, FightZone, SafeDangerCell
-from .sync_information import see_cell, view_opp_base, view_scorpion, see_resource, view_fight, view_safe_danger_cell
+from AI.ChatBox import BaseNews, ViewCell, ViewOppBase, ViewScorpion, ViewResource, FightZone, SafeDangerCell, InitMessage
+from .sync_information import see_cell, view_opp_base, view_scorpion, see_resource, view_fight, view_safe_danger_cell, see_init_message
 from AI.Config import Config
 from AI.ChatBox import ChatBoxWriter, ChatBoxReader
 
@@ -68,6 +67,8 @@ class Grid:
 
     def update_with_news(self, base_news: BaseNews, is_from_chat_box=True, update_chat_box=False):
         # print(type(base_news))
+        if type(base_news) == InitMessage:
+            see_init_message(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
         if type(base_news) == ViewCell:
             # if update_chat_box is False:
             # print("WE SEE CELL In ChatBox", base_news.get_cell().x, base_news.get_cell().y)

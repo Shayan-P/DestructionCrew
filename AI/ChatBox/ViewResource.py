@@ -12,6 +12,9 @@ class ViewResource(BaseNews):
 		super().__init__()
 		self.cell: ModelCell = deepcopy(cell)
 
+	def __str__(self):
+		return f"RS{self.cell.x},{self.cell.y}"
+
 	def get_cell(self) -> ModelCell:
 		return self.cell
 
