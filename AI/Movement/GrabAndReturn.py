@@ -21,7 +21,7 @@ class GrabAndReturn(MovementStrategy):
         # todo: shayad hamoon 0.5 kafi bashe ke bargardim!
         if self.base_ant.game.ant.currentResource.value >= Config.ant_max_rec_amount:
             return self.go_to_base()
-        if self.base_ant.game.ant.currentResource.value >= 0.5 * Config.ant_max_rec_amount and not self.is_really_good():
+        if self.base_ant.game.ant.currentResource.value and not self.has_close_resource():
             return self.go_to_base()
         return self.go_grab_resource()
 
@@ -76,7 +76,31 @@ class GrabAndReturn(MovementStrategy):
             candidates[cell] = score
         return candidates
 
+    def has_close_resource(self):
+        my_resource = self.base_ant.game.ant.currentResource
+        current_position = self.get_now_pos_cell()
+        for cell in Grid.get_all_cells():
+            if self.grid.unknown_graph.no_path(current_position, cell):
+                continue
+            if self.grid.is_unknown(cell) or self.grid.get_cell_resource_value(cell) <= 0:
+                continue
+            if my_resource.value > 0 and my_resource.type != self.grid.get_cell_resource_type(cell):
+                continue
+            if current_position.manhattan_distance(cell) > 4:
+                continue;
+
+            if (my_resource.value <= 0 or my_resource.type == ResourceType.GRASS.value) and \
+                    self.grid.get_cell_resource_type(cell) == ResourceType.GRASS.value:
+                return True
+
+            if (my_resource.value <= 0 or my_resource.type == ResourceType.BREAD.value) and \
+                    self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
+                return True
+        return False
+
     def is_not_good(self):
+        if self.base_ant.game.ant.currentResource.value > 0:
+            return False
         candidates = self.get_scores()
         # print("there is not any resource near here so we are changing strategy!")
         if len(candidates) == 0:
@@ -86,6 +110,8 @@ class GrabAndReturn(MovementStrategy):
 
     def is_really_good(self):
         # print("RUNNING IS REALLY GOOD")
+        if self.base_ant.game.ant.currentResource.value > 0:
+            return True
         candidates = self.get_scores()
         if len(candidates) == 0:
             return False
@@ -141,7 +167,7 @@ class GrabAndReturn(MovementStrategy):
     def bread_grass_coefficient(self):
         #if self.grid.chat_box_reader.get_now_turn() < 30:
         #return 1
-        _MAX = 1.5
+        _MAX = 1.7
         return max(min(_MAX, (self.base_ant.total_bread_picked + 1) / (self.base_ant.total_grass_picked + 1) * 0.05), 1 / _MAX)
         # todo must be optmized
 
