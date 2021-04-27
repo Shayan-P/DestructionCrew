@@ -6,7 +6,7 @@ from Model import Cell as ModelCell
 
 
 class ViewScorpion(BaseNews):
-	huffman_prefix = "001"
+	huffman_prefix = "0010"
 
 	def __init__(self, cell: ModelCell = None):
 		super().__init__()

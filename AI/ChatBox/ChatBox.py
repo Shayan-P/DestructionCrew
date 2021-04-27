@@ -13,7 +13,7 @@ from .ViewOppBase import ViewOppBase
 from .ViewResource import ViewResource
 from .FightZone import FightZone
 from .InitMessage import InitMessage
-
+from .Gathering import Gathering
 
 all_message_types: List[Type[BaseNews]] = BaseNews.__subclasses__()
 
@@ -44,7 +44,7 @@ class ChatBoxWriter:
 			if ret.enough_space(new):
 				new.encode(ret)
 				self.priority += new.get_priority()
-				print("flushing message with type: ", type(new))
+				# print("flushing message with type: ", type(new))
 
 		self.queueNews = []
 
@@ -88,7 +88,7 @@ class ChatBoxReader:
 				this_news.turn = msg.turn
 				self.news[message_type].append(this_news)
 				self.latest_news[message_type].append(this_news)
-				print("getting message with type: ", type(this_news))
+				# print("getting message with type: ", type(this_news))
 		for msg in box.allChats:
 			self.last_check = max(self.last_check, msg.turn)
 

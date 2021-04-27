@@ -42,8 +42,8 @@ class AI:
 
 
 		# this is for server failiure in fast games!
-		# if DEBUG:
-		# 	time.sleep(0.01)
+		if True:
+			time.sleep(0.01)
 
 		return self.message, self.value, self.direction.value
 

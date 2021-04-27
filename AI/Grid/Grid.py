@@ -1,5 +1,6 @@
 import Model
 from typing import List
+from math import log2
 from Model import CellType, ResourceType, Cell as ModelCell
 from .Cell import DIRECTIONS, Cell
 from AI.Algorithms import Graph
@@ -280,7 +281,7 @@ class Grid:
             turn_dif = self.chat_box_reader.get_now_turn() - new.turn
             if(avg_dis <= turn_dif): # it was long time ago
                 continue
-            self.add_fight(new.cell, 20, 10, 1)
+            self.add_fight(new.cell, log2(avg_dis - turn_dif), log2(avg_dis - turn_dif) / 2, 1)
             # self.add_fight(new.cell, 20 * ((avg_dis - turn_dif) / avg_dis), 10 * ((avg_dis - turn_dif) / avg_dis), 1)
 
     def report_crowded(self, cell: Cell):

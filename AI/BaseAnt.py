@@ -4,7 +4,7 @@ from AI.Grid.Cell import Cell
 from Model import Cell as ModelCell
 from Model import AntTeam, AntType, CellType, ResourceType
 from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell, ViewResource, ViewScorpion, ViewOppBase, FightZone,\
-    InitMessage, SafeDangerCell
+    InitMessage, SafeDangerCell, Gathering
 from AI.Config import Config
 from AI.Grid.sync_information import read_view_fight, report_view_fight
 
@@ -54,10 +54,12 @@ class BaseAnt:
         # to pre calculations after all information grabbing
         self.grid.pre_calculations(self.get_now_pos_cell())
 
+        self.report_gathering()
+
         if self.start_turn is None:
             self.start_turn = self.grid.chat_box_reader.get_now_turn()
 
-        self.print_statistics()
+        # self.print_statistics()
 
     def after_move(self):
         self.update_resource_history()
@@ -71,6 +73,38 @@ class BaseAnt:
             elif self.game.ant.currentResource.type == ResourceType.GRASS.value:
                 self.total_grass_picked += self.game.ant.currentResource.value - self.previous_resource_value
         self.previous_resource_value = self.game.ant.currentResource.value
+
+    def near_scorpions(self, distance):
+        return list(filter(
+            lambda e: e.antTeam == Model.AntTeam.ALLIED.value and e.antType == Model.AntType.SARBAAZ.value,
+            self.grid.get_near_cell_ants(cell=self.get_now_pos_cell(), distance=distance)
+        ))
+
+    def report_gathering(self):
+        attacked = (self.game.ant.health < self.previous_health)
+        if self.game.antType != AntType.SARBAAZ.value:
+            return
+        if (not attacked) and (self.grid.chat_box_reader.get_now_turn() % 10 != 0):
+            return
+        # handle case when we are invited somewhere else todo
+
+        us = len(self.near_scorpions(0))
+
+        all = 0
+        print("Count of US is", us)
+
+        max_dis = 0
+        for scorpion in self.near_scorpions(Config.ants_view):
+            dis = self.grid.known_graph.get_shortest_distance( self.get_now_pos_cell(), Cell(scorpion.currentX, scorpion.currentY) )
+            if dis > 4:
+                continue
+            max_dis = max(max_dis, dis)
+            all += 1
+        print("Count of ALL is", all)
+        if all == us:
+            return
+        self.grid.chat_box_writer.report(Gathering(self.get_now_pos_cell(), life_time=max_dis + 2))
+
 
     def update_and_report_map(self):
         view_distance = Config.view_distance  # be nazar bugeshoon bartaraf shode
@@ -102,12 +136,15 @@ class BaseAnt:
         else:
             self.grid.update_with_news(SafeDangerCell(self.previous_cell, danger=False),
                                        update_chat_box=self.game.alive_turn != 0, is_from_chat_box=False)
+
         for attack in self.game.ant.attacks:
             if attack.is_attacker_enemy:
                 a = Cell(attack.attacker_col, attack.attacker_row)
                 b = Cell(attack.defender_col, attack.defender_row)
                 if a.manhattan_distance(b) > Config.attacker_range:
                     self.grid.update_with_news(ViewOppBase(a), update_chat_box=True, is_from_chat_box=False)
+
+        # self.report_gathering()
 
     def escape_from_great_danger_filter(self, move):
         destination = self.get_now_pos_cell().go_to(move)

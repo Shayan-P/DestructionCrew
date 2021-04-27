@@ -6,4 +6,5 @@ from .ViewScorpion import ViewScorpion
 from .FightZone import FightZone
 from .InitMessage import InitMessage
 from .SafeDangerCell import SafeDangerCell
+from .Gathering import Gathering
 from .BaseNews import BaseNews

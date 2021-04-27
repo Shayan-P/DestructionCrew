@@ -6,7 +6,7 @@ from flask import Flask, Response, request
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['DEBUG'] = True
+app.config['DEBUG'] = False
 
 
 def root_dir():  # pragma: no cover
