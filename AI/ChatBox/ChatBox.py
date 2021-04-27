@@ -12,7 +12,7 @@ from .ViewScorpion import ViewScorpion
 from .ViewOppBase import ViewOppBase
 from .ViewResource import ViewResource
 from .FightZone import FightZone
-from .InitMessage import InitMessage
+from .ImAlive import ImAlive
 from .Gathering import Gathering
 
 all_message_types: List[Type[BaseNews]] = BaseNews.__subclasses__()

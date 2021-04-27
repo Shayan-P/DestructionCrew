@@ -4,8 +4,8 @@ from math import log2
 from Model import CellType, ResourceType, Cell as ModelCell
 from .Cell import DIRECTIONS, Cell
 from AI.Algorithms import Graph
-from AI.ChatBox import BaseNews, ViewCell, ViewOppBase, ViewScorpion, ViewResource, FightZone, SafeDangerCell, InitMessage
-from .sync_information import see_cell, view_opp_base, view_scorpion, see_resource, view_fight, view_safe_danger_cell, see_init_message
+from AI.ChatBox import BaseNews, ViewCell, ViewOppBase, ViewScorpion, ViewResource, FightZone, SafeDangerCell, ImAlive
+from .sync_information import see_cell, view_opp_base, view_scorpion, see_resource, view_fight, view_safe_danger_cell, see_alive_ant
 from AI.Config import Config
 from AI.ChatBox import ChatBoxWriter, ChatBoxReader
 
@@ -45,6 +45,9 @@ class Grid:
         self.saved_expected_opponent_base = None
         self.opponent_base_reports = []  # there is no function to return this. and it's type is ModelCell
 
+        self.alive_worker_reports = {}
+        self.alive_attacker_reports = {}
+
         self.hate_known = 0  # this will only change known graph
         self.opponent_base_fear = 1
         self.fight_fear = 0
@@ -66,9 +69,10 @@ class Grid:
         self.scorpion_fear = scorpion_fear
 
     def update_with_news(self, base_news: BaseNews, is_from_chat_box=True, update_chat_box=False):
+        base_news.turn = self.chat_box_reader.get_now_turn()
         # print(type(base_news))
-        if type(base_news) == InitMessage:
-            see_init_message(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
+        if type(base_news) == ImAlive:
+            see_alive_ant(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
         if type(base_news) == ViewCell:
             # if update_chat_box is False:
             # print("WE SEE CELL In ChatBox", base_news.get_cell().x, base_news.get_cell().y)
@@ -255,6 +259,30 @@ class Grid:
             return
         assert len(self.opponent_base_reports) == 0
         self.opponent_base_reports.append(cell)
+
+    def report_worker_alive(self, ant_id, turn):
+        assert ant_id is not None
+        assert turn is not None
+        self.alive_worker_reports[ant_id] = turn
+
+    def report_attacker_alive(self, ant_id, turn):
+        assert ant_id is not None
+        assert turn is not None
+        self.alive_attacker_reports[ant_id] = turn
+
+    def alive_worker_count(self):
+        ret = 0
+        for ant_id in self.alive_worker_reports:
+            if self.chat_box_reader.get_now_turn() - self.alive_worker_reports[ant_id] <= Config.PingRate + 4:
+                ret += 1
+        return ret
+
+    def alive_attacker_count(self):
+        ret = 0
+        for ant_id in self.alive_attacker_reports:
+            if self.chat_box_reader.get_now_turn() - self.alive_attacker_reports[ant_id] <= Config.PingRate + 4:
+                ret += 1
+        return ret
 
     def sure_opponent_base(self):
         return len(self.opponent_base_reports) == 1

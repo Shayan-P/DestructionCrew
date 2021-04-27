@@ -4,9 +4,11 @@ from AI.Grid.Cell import Cell
 from Model import Cell as ModelCell
 from Model import AntTeam, AntType, CellType, ResourceType
 from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell, ViewResource, ViewScorpion, ViewOppBase, FightZone,\
-    InitMessage, SafeDangerCell, Gathering
+    ImAlive, SafeDangerCell, Gathering
 from AI.Config import Config
 from AI.Grid.sync_information import read_view_fight, report_view_fight
+
+from random import randrange
 
 
 class BaseAnt:
@@ -21,6 +23,7 @@ class BaseAnt:
         self.previous_resource_value = 0
         self.total_bread_picked = 0
         self.total_grass_picked = 0
+        self.random_id = randrange(0, 127)
 
     def get_message_and_priority(self):
         return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
@@ -105,7 +108,6 @@ class BaseAnt:
             return
         self.grid.chat_box_writer.report(Gathering(self.get_now_pos_cell(), life_time=max_dis + 2))
 
-
     def update_and_report_map(self):
         view_distance = Config.view_distance  # be nazar bugeshoon bartaraf shode
         for dx in range(-view_distance-2, view_distance+2):
@@ -128,8 +130,10 @@ class BaseAnt:
                         self.grid.update_with_news(ViewOppBase(model_cell),
                                                    update_chat_box=True, is_from_chat_box=False)
 
-        if self.grid.chat_box_reader.get_now_turn() == Config.chat_box_first_turn:
-            self.grid.chat_box_writer.report(InitMessage())
+        if self.game.alive_turn % Config.PingRate == 0:
+            self.grid.update_with_news(ImAlive(
+                is_worker=self.game.antType == Model.AntType.KARGAR.value, ant_id=self.random_id),
+                update_chat_box=True, is_from_chat_box=False)
         if self.game.ant.health < self.previous_health:
             self.grid.update_with_news(SafeDangerCell(self.previous_cell, danger=True),
                                        update_chat_box=True, is_from_chat_box=False)

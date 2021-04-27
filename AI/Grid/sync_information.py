@@ -104,6 +104,10 @@ def report_view_fight(grid, news):
 	grid.chat_box_writer.report(news)
 
 
-def see_init_message(grid, news, is_from_chat_box, update_chat_box):
+def see_alive_ant(grid, news, is_from_chat_box, update_chat_box):
+	if news.is_worker:
+		grid.report_worker_alive(ant_id=news.ant_id, turn=news.turn)
+	else:
+		grid.report_attacker_alive(ant_id=news.ant_id, turn=news.turn)
 	if update_chat_box:
 		grid.chat_box_writer.report(news)
