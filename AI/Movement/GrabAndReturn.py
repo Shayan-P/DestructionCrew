@@ -113,8 +113,6 @@ class GrabAndReturn(MovementStrategy):
 
     def is_really_good(self):
         # print("RUNNING IS REALLY GOOD")
-        if self.base_ant.game.ant.currentResource.value > 0:
-            return True
         candidates = self.get_scores()
         if len(candidates) == 0:
             return False
