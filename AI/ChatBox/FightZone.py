@@ -47,7 +47,7 @@ class FightZone(BaseNews):
 		return len(self.huffman_prefix) + 12  # prefix (x, y) type
 
 	def get_priority(self):
-		return 1
+		return 2
 
 	def encode(self, writer: Writer):
 		# print("Shaash")

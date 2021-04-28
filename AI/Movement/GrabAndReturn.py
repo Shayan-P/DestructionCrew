@@ -170,90 +170,30 @@ class GrabAndReturn(MovementStrategy):
     @once_per_turn
     def bread_grass_coefficient(self):
         alive_workers = self.grid.alive_worker_count()
-        grasses = []
-        breads = []
+        alive_attackers = self.grid.alive_attacker_count()
+        grasses_per_turn = 0
+        breads_per_turn = 0
+        visible_grass = 0
         for cell in Grid.get_all_cells():
             if self.grid.unknown_graph.no_path(self.get_now_pos_cell(), cell):
                 continue
             dist = cell.manhattan_distance(self.get_base_cell())
             if self.grid.get_cell_resource_type(cell) == Model.ResourceType.GRASS.value:
                 val = self.grid.get_cell_resource_value(cell)
-                print("val is : ", val, dist, (val / Config.ant_max_rec_amount) * 2 * dist)
-                grasses.append([Config.ant_max_rec_amount / dist, (val / Config.ant_max_rec_amount) * 2 * dist])
+                visible_grass += val
+                grasses_per_turn += val / (2 * dist)
             elif self.grid.get_cell_resource_type(cell) == Model.ResourceType.BREAD.value:
-                val = self.grid.get_cell_resource_value(cell)
-                print("val is : ", val, dist, (val / Config.ant_max_rec_amount) * 2 * dist)
-                breads.append([Config.ant_max_rec_amount / dist, (val / Config.ant_max_rec_amount) * 2 * dist])
-        grasses.sort()
-        breads.sort()
-
-        def calculate(bread_worker_ratio):
-            score = 0
-            copy_grasses = deepcopy(grasses)
-            copy_breads = deepcopy(breads)
-            now_workers = alive_workers
-            turn_now = self.grid.chat_box_reader.get_now_turn()
-            turn_end = min(Config.max_turn, turn_now + 50)
-            for turn in range(turn_now, turn_end):
-                bread_workers = bread_worker_ratio * now_workers
-                grass_workers = (1-bread_worker_ratio) * now_workers
-                new_workers = 0
-                new_grass = 0
-                while bread_workers >= 0.1 and len(copy_breads):
-                    carry_boxes = min(bread_workers, copy_breads[-1][1])
-                    copy_breads[-1][1] -= carry_boxes
-                    bread_workers -= carry_boxes
-                    value = carry_boxes * copy_breads[-1][0]
-                    new_workers += value / Config.generate_kargar
-                    if copy_breads[-1][1] < 0.1:
-                        copy_breads.pop()
-                while grass_workers >= 0.1 and len(copy_grasses):
-                    carry_boxes = min(grass_workers, copy_grasses[-1][1])
-                    copy_grasses[-1][1] -= carry_boxes
-                    bread_workers -= carry_boxes
-                    value = carry_boxes * copy_grasses[-1][0]
-                    new_grass += value
-                    if copy_grasses[-1][1] < 0.1:
-                        copy_grasses.pop()
-                now_workers += new_workers
-                score_cof = (Config.max_turn - turn)  # changed
-                score += score_cof * new_grass
-            print("answer for query ", bread_worker_ratio, grasses, breads, alive_workers, score)
-            return score
-        # add unknowns resources?
-
-        def best_interval(l, r, k):
-            arr = []
-            now = l
-            for i in range(k+1):
-                arr.append(calculate(now))
-                now += (r-l) / k
-            mx_ind = 0
-            for i in range(k+1):
-                if arr[mx_ind] < arr[i]:
-                    mx_ind = i
-            arr2 = []
-            if mx_ind != 0:
-                arr2.append(mx_ind-1)
-            if mx_ind != len(arr)-1:
-                arr2.append(mx_ind+1)
-            if len(arr2) == 2 and arr[arr2[0]] < arr[arr2[1]]:
-                arr2 = [arr2[1], arr2[0]]
-            side1 = l + mx_ind * (r-l) / k
-            side2 = l + arr2[0] * (r-l) / k
-            if side1 > side2:
-                side1, side2 = (side2, side1)
-            return side1, side2
-
-        l = 0
-        r = 1
-        l, r = best_interval(l, r, 6)
-        l, r = best_interval(l, r, 6)
-        ret = (l+r) / 2
-
-        print("best ratio is", Config.alive_turn, "bread-grass", ret, 1-ret)
-
-        return ret, 1-ret
+                breads_per_turn += self.grid.get_cell_resource_value(cell) / (2 * dist)
+        if alive_workers * Config.ant_max_rec_amount >= visible_grass:
+            return 0.2, 0.8
+        if alive_workers >= 15:
+            return 0.2, 0.8
+        if alive_attackers >= 3 * alive_workers:
+            return 0.7, 0.3
+        if Config.alive_turn <= 8:
+            return 0.7, 0.3
+        g = (alive_workers * Config.ant_max_rec_amount) / visible_grass
+        return 1-g, g
 
     def grass_importance(self):
         return self.bread_grass_coefficient()[1] * 4.5

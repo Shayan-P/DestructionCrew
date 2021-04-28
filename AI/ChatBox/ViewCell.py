@@ -22,7 +22,7 @@ class ViewCell(BaseNews):
 		return len(self.huffman_prefix) + 12 + 3  # prefix (x, y) type
 
 	def get_priority(self):
-		return 1
+		return 5
 
 	def encode(self, writer: Writer):
 		# print("ENCODING ", self.cell.x, self.cell.y)

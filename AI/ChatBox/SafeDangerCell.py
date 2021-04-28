@@ -27,7 +27,10 @@ class SafeDangerCell(BaseNews):
 		return len(SafeDangerCell.huffman_prefix) + 12 + 1
 
 	def get_priority(self):
-		return 2
+		if self.danger is False:
+			return 0
+		else:
+			return 1
 
 	def encode(self, writer: Writer):
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
