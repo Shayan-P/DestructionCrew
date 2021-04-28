@@ -368,10 +368,6 @@ class CellType(Enum):
             return CellType.EMPTY
         if string == "WALL":
             return CellType.WALL
-        if string == "TRAP" :
-            return CellType.TRAP
-        if string == "SWAMP":
-            return CellType.SWAMP
         return None
 
 
