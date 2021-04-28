@@ -5,7 +5,7 @@ from .Attacker import Attacker
 from .Worker import Worker
 from AI.Config import Config
 from Utils import logger
-# from settings import DEBUG
+from settings import DEBUG, HAS_SLEEP
 
 # just remove this and everything will be printed in console
 
@@ -42,7 +42,7 @@ class AI:
 
 
 		# this is for server failiure in fast games!
-		if True:
+		if HAS_SLEEP:
 			time.sleep(0.01)
 
 		return self.message, self.value, self.direction.value
