@@ -29,6 +29,8 @@ class Explore(MovementStrategy):
                 candidates[cell] += -distance
                 for dx in range(-3, 4):
                     for dy in range(-3, 4):
+                        if self.grid.base_trap_graph.no_path(self.get_base_cell(), cell.move_to(dx, dy)):
+                            continue
                         if self.grid.get_cell_resource_value(cell.move_to(dx, dy)) > 0:
                             candidates[cell] += (5 - abs(dx) + abs(dy)) * 0.3  # change this todo
         if len(candidates) == 0:
