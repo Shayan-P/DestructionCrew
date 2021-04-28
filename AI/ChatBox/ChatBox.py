@@ -47,12 +47,9 @@ class ChatBoxWriter:
 		self.queue_news.append(news)
 
 	def flush(self) -> str:
-		self.queue_news.sort(key=lambda news: news.get_priority(), reverse=True)
-
 		self.stuck_news = list(filter(lambda e: type(e) is not Gathering, self.stuck_news))
-		self.stuck_news.sort(key=lambda news: news.get_priority(), reverse=True)
-
 		all_news = self.queue_news + self.stuck_news
+		all_news.sort(key=lambda news: news.get_priority(), reverse=True)
 		self.queue_news = []
 		self.stuck_news = []
 		self.last_turn_news = []
@@ -68,6 +65,7 @@ class ChatBoxWriter:
 				sum_priority += val
 				max_priority = max(max_priority, val)
 				self.last_turn_news.append(new)
+				print("sending ", new)
 			else:
 				# must
 				if(new is not Gathering):
@@ -115,7 +113,7 @@ class ChatBoxReader:
 				this_news.turn = msg.turn
 				self.news[message_type].append(this_news)
 				self.latest_news[message_type].append(this_news)
-				# print("getting message with type: ", type(this_news))
+				print("getting message: ", this_news)
 		for msg in box.allChats:
 			self.last_check = max(self.last_check, msg.turn)
 
