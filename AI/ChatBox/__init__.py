@@ -4,7 +4,7 @@ from .ViewResource import ViewResource
 from .ViewOppBase import ViewOppBase
 from .ViewScorpion import ViewScorpion
 from .FightZone import FightZone
-from .InitMessage import InitMessage
+from .ImAlive import ImAlive
 from .SafeDangerCell import SafeDangerCell
 from .Gathering import Gathering
 from .BaseNews import BaseNews

@@ -4,9 +4,11 @@ from AI.Grid.Cell import Cell
 from Model import Cell as ModelCell
 from Model import AntTeam, AntType, CellType, ResourceType
 from AI.ChatBox import ChatBoxWriter, ChatBoxReader, ViewCell, ViewResource, ViewScorpion, ViewOppBase, FightZone,\
-    InitMessage, SafeDangerCell, Gathering
+    ImAlive, SafeDangerCell, Gathering
 from AI.Config import Config
 from AI.Grid.sync_information import read_view_fight, report_view_fight
+
+from random import randrange
 
 
 class BaseAnt:
@@ -21,6 +23,7 @@ class BaseAnt:
         self.previous_resource_value = 0
         self.total_bread_picked = 0
         self.total_grass_picked = 0
+        self.random_id = randrange(0, 127)
 
     def get_message_and_priority(self):
         return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
@@ -47,7 +50,8 @@ class BaseAnt:
             self.previous_cell = self.get_now_pos_cell()
 
         self.grid.chat_box_reader.update(self.game.chatBox)
-        self.grid.chat_box_writer = ChatBoxWriter(self.grid.chat_box_reader.get_now_turn())
+        self.grid.chat_box_writer.update(self.grid.chat_box_reader.get_now_turn(),
+                                         self.grid.chat_box_reader.get_latest_news_all_types())
 
         self.grid.listen_to_chat_box()
         self.update_and_report_map()
@@ -59,7 +63,7 @@ class BaseAnt:
         if self.start_turn is None:
             self.start_turn = self.grid.chat_box_reader.get_now_turn()
 
-        # self.print_statistics()
+        self.print_statistics()
 
     def after_move(self):
         self.update_resource_history()
@@ -131,7 +135,6 @@ class BaseAnt:
                 best_cell = cell
         self.grid.chat_box_writer.report(Gathering(best_cell, life_time=best + 2))
 
-
     def update_and_report_map(self):
         view_distance = Config.view_distance  # be nazar bugeshoon bartaraf shode
         for dx in range(-view_distance-2, view_distance+2):
@@ -154,8 +157,10 @@ class BaseAnt:
                         self.grid.update_with_news(ViewOppBase(model_cell),
                                                    update_chat_box=True, is_from_chat_box=False)
 
-        if self.grid.chat_box_reader.get_now_turn() == Config.chat_box_first_turn:
-            self.grid.chat_box_writer.report(InitMessage())
+        if self.game.alive_turn % Config.PingRate == 0:
+            self.grid.update_with_news(ImAlive(
+                is_worker=self.game.antType == Model.AntType.KARGAR.value, ant_id=self.random_id),
+                update_chat_box=True, is_from_chat_box=False)
         if self.game.ant.health < self.previous_health:
             self.grid.update_with_news(SafeDangerCell(self.previous_cell, danger=True),
                                        update_chat_box=True, is_from_chat_box=False)
@@ -197,13 +202,15 @@ class BaseAnt:
         print("prev startegy was", self.previous_strategy)
         print("now we have", self.game.ant.currentResource.type, self.game.ant.currentResource.value)
         print("we think opponent's base is in ", self.grid.expected_opponent_base())
-        print("attacks: ")
-        for attack in self.game.ant.attacks:
-            print(attack.attacker_row)
-            print(attack.attacker_col)
-            print(attack.defender_row)
-            print(attack.defender_col)
-            print(attack.is_attacker_enemy)
+        print("Alive workers: ", self.grid.alive_worker_count())
+        print("Alive attackers: ", self.grid.alive_attacker_count())
+        # print("attacks: ")
+        # for attack in self.game.ant.attacks:
+        #     print(attack.attacker_row)
+        #     print(attack.attacker_col)
+        #     print(attack.defender_row)
+        #     print(attack.defender_col)
+        #     print(attack.is_attacker_enemy)
 
         # self.grid.print_all_we_know_from_map()
 

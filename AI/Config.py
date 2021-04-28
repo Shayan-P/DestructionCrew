@@ -45,3 +45,6 @@ class Config:
 	# todo check konam mellat faghat az ina estefade konan
 	# todo delete get_now_pos from BaseAnt
 	# todo update Client Repository
+
+	# this is our constants
+	PingRate = 10

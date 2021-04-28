@@ -12,7 +12,7 @@ from .ViewScorpion import ViewScorpion
 from .ViewOppBase import ViewOppBase
 from .ViewResource import ViewResource
 from .FightZone import FightZone
-from .InitMessage import InitMessage
+from .ImAlive import ImAlive
 from .Gathering import Gathering
 
 all_message_types: List[Type[BaseNews]] = BaseNews.__subclasses__()
@@ -26,26 +26,45 @@ for t1 in all_message_types:
 
 
 class ChatBoxWriter:
-	def __init__(self, turn=1):
-		self.queueNews: [BaseNews] = []
+	def __init__(self):
+		self.queue_news: [BaseNews] = []
+		self.stuck_news: [BaseNews] = []
+		self.last_turn_news: [BaseNews] = []
 		self.limit = Config.max_com_length
 		self.priority = 0
+		self.turn = 1
+
+	def update(self, turn, previous_news_in_chat_box: [BaseNews]):
 		self.turn = turn
+		last_turn_sent_news = set()
+		for news in previous_news_in_chat_box:
+			last_turn_sent_news.add(get_encoded_message(news))
+		for news in self.last_turn_news:
+			if get_encoded_message(news) not in last_turn_sent_news:
+				self.stuck_news.append(news)
 
 	def report(self, news: BaseNews):
-		self.queueNews.append(news)
+		self.queue_news.append(news)
 
 	def flush(self) -> str:
-		self.queueNews.sort(key=lambda news: news.get_priority(), reverse=True)
+		self.queue_news.sort(key=lambda news: news.get_priority(), reverse=True)
+		self.stuck_news.sort(key=lambda news: news.get_priority(), reverse=True)
+		all_news = self.queue_news + self.stuck_news
+		self.queue_news = []
+		self.stuck_news = []
+		self.last_turn_news = []
 		# need to obtain from map configs
 		self.priority = 0
 		ret = Writer(self.limit)
-		for new in self.queueNews:
+		for new in all_news:
 			if ret.enough_space(new):
 				new.encode(ret)
 				self.priority += new.get_priority()
+				self.last_turn_news.append(new)
+			else:
+				# must
+				self.stuck_news.append(new)
 				print("cant report news: ", new)
-		self.queueNews = []
 
 		# todo
 		# store the messages that ignored because of not enough space
@@ -99,6 +118,18 @@ class ChatBoxReader:
 
 	def get_latest_news(self, news_type: Type[BaseNews]) -> [BaseNews]:
 		return self.latest_news[news_type]
+
+	def get_latest_news_all_types(self):
+		ret = []
+		for t in self.latest_news:
+			ret += self.latest_news[t]
+		return ret
+
+
+def get_encoded_message(news: BaseNews):
+	writer = Writer(Config.max_com_length)
+	news.encode(writer=writer)
+	return writer.get_message()
 
 
 def message_text_translator(text):
