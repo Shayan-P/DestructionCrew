@@ -123,7 +123,7 @@ class GrabAndReturn(MovementStrategy):
 
     def get_best_cell(self):
         candidates = self.get_scores()
-        print("candids for grabbing are: ", "\n".join([f"{x}: {candidates[x]}" for x in candidates]))
+        print("candids for grabbing are: \n", "\n".join([f"{x}: {candidates[x]}" for x in candidates]))
         self.best_cell = Choosing.soft_max_choose(candidates)
         self.prev_best_cell_value = self.base_ant.grid.get_cell_resource_value(self.best_cell)
         return self.best_cell
