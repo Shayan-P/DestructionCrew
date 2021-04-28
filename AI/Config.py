@@ -47,4 +47,5 @@ class Config:
 	# todo update Client Repository
 
 	# this is our constants
-	PingRate = 10
+	PingRate = 35
+	alive_turn = -1

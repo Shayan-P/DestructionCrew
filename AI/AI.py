@@ -30,7 +30,7 @@ class AI:
 		global turn_count
 
 		update_config(self.game)
-		self.game.alive_turn = turn_count
+		Config.alive_turn = turn_count
 		if turn_count == 0:
 			init(self.game)
 		turn_count += 1  # store the turns

@@ -148,9 +148,9 @@ class BaseAnt:
                 model_cell: ModelCell = self.game.ant.getMapRelativeCell(dx, dy)
                 if model_cell is not None:
                     self.grid.update_with_news(ViewCell(model_cell),
-                                               update_chat_box=self.game.alive_turn != 0, is_from_chat_box=False)
+                                               update_chat_box=Config.alive_turn != 0, is_from_chat_box=False)
                     self.grid.update_with_news(ViewResource(model_cell),
-                                               update_chat_box=self.game.alive_turn != 0, is_from_chat_box=False)
+                                               update_chat_box=Config.alive_turn != 0, is_from_chat_box=False)
                     for ant in model_cell.ants:
                         if ant.antTeam == AntTeam.ENEMY.value and ant.antType == AntType.SARBAAZ.value:
                             self.grid.update_with_news(ViewScorpion(model_cell),
@@ -163,7 +163,7 @@ class BaseAnt:
                         self.grid.update_with_news(ViewOppBase(model_cell),
                                                    update_chat_box=True, is_from_chat_box=False)
 
-        if self.game.alive_turn % Config.PingRate == 0:
+        if Config.alive_turn % Config.PingRate == 0:
             self.grid.update_with_news(ImAlive(
                 is_worker=self.game.antType == Model.AntType.KARGAR.value, ant_id=self.random_id),
                 update_chat_box=True, is_from_chat_box=False)
@@ -172,7 +172,7 @@ class BaseAnt:
                                        update_chat_box=True, is_from_chat_box=False)
         else:
             self.grid.update_with_news(SafeDangerCell(self.previous_cell, danger=False),
-                                       update_chat_box=self.game.alive_turn != 0, is_from_chat_box=False)
+                                       update_chat_box=Config.alive_turn != 0, is_from_chat_box=False)
 
         for attack in self.game.ant.attacks:
             if attack.is_attacker_enemy:
@@ -204,7 +204,7 @@ class BaseAnt:
     def print_statistics(self):
         print("I'm in ", self.get_now_pos_cell())
         print("expected turn is ", self.grid.chat_box_reader.get_now_turn())
-        print("alived turn is ", self.game.alive_turn)
+        print("alived turn is ", Config.alive_turn)
         print("prev startegy was", self.previous_strategy)
         print("now we have", self.game.ant.currentResource.type, self.game.ant.currentResource.value)
         print("we think opponent's base is in ", self.grid.expected_opponent_base())

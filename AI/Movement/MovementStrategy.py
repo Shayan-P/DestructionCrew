@@ -43,4 +43,3 @@ class MovementStrategy:
 
     def change_grid_coffs(self):
         self.grid.set_coffs(hate_known=0, opponent_base_fear=1)
-

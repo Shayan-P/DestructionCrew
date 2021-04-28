@@ -28,7 +28,7 @@ class Worker(BaseAnt):
             self.spy = False
             return GrabAndReturn
 
-        if self.grid.chat_box_reader.get_now_turn() >= 30 and self.game.alive_turn == 0 and random.random() <= 0.3:
+        if self.grid.chat_box_reader.get_now_turn() >= 30 and Config.alive_turn == 0 and random.random() <= 0.3:
             self.spy = True
             if random.random() <= 0.5:
                 return DeepSafeExplore
