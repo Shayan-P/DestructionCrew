@@ -149,7 +149,7 @@ class Grid:
             self.known_graph.add_vertex(cell, Grid.initial_vertex_weight)
             self.unknown_graph.add_vertex(cell, Grid.initial_vertex_weight)
             self.trap_graph.add_vertex(cell, Grid.initial_vertex_weight)
-            self.trap_graph.add_vertex(cell, Grid.initial_vertex_weight)
+            self.simple_graph.add_vertex(cell, Grid.initial_vertex_weight)
         for cell in Grid.get_all_cells():
             for direction in DIRECTIONS:
                 self.unknown_graph.add_edge(cell, cell.go_to(direction))
