@@ -20,7 +20,7 @@ class Worker(BaseAnt):
         if self.previous_strategy is None:
             self.previous_strategy = Explore
             self.previous_strategy_object = Explore(self)
-        if self.game.ant.currentResource.value > Config.ant_max_rec_amount * 0.5:
+        if self.game.ant.currentResource.value >= Config.ant_max_rec_amount * 0.5:
             self.spy = False
             return GrabAndReturn
         # momkene ye chiz kam dastet bashe baad be khatere oon natooni chizi bardari. todo fix this

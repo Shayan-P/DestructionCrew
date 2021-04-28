@@ -39,6 +39,7 @@ class Grid:
         self.unknown_graph = Graph()
         self.simple_graph = Graph()
         self.trap_graph = Graph()
+        self.base_trap_graph = Graph()
 
         self.initialize_graphs()
         self.chat_box_writer: ChatBoxWriter = ChatBoxWriter()
@@ -123,11 +124,13 @@ class Grid:
             self.prepare_graph_vertex(self.unknown_graph, cell, extra_add=hate_cof)
             self.prepare_graph_vertex(self.simple_graph, cell, danger_cof=0)
             self.prepare_graph_vertex(self.trap_graph, cell, extra_add=Config.map_width + Config.map_height)
+            self.prepare_graph_vertex(self.base_trap_graph, cell, extra_add=0)
             # bias this dangers todo
         self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
         self.simple_graph.precalculate_source(now)
         self.trap_graph.precalculate_source(now)
+        self.base_trap_graph.precalculate_source(Cell(Config.base_x, Config.base_y))
 
     def update_vertex_in_graph(self, cell):
         if self.is_wall(cell):
@@ -135,7 +138,10 @@ class Grid:
             self.unknown_graph.delete_vertex(cell)
             self.simple_graph.delete_vertex(cell)
             self.trap_graph.delete_vertex(cell)
+            self.base_trap_graph.delete_vertex(cell)
             return
+        if self.is_trap(cell):
+            self.base_trap_graph.delete_vertex(cell)
         for direction in DIRECTIONS:
             self.update_edge_in_graph(cell, cell.go_to(direction))
 
@@ -150,11 +156,13 @@ class Grid:
             self.unknown_graph.add_vertex(cell, Grid.initial_vertex_weight)
             self.trap_graph.add_vertex(cell, Grid.initial_vertex_weight)
             self.simple_graph.add_vertex(cell, Grid.initial_vertex_weight)
+            self.base_trap_graph.add_vertex(cell, Grid.initial_vertex_weight)
         for cell in Grid.get_all_cells():
             for direction in DIRECTIONS:
                 self.unknown_graph.add_edge(cell, cell.go_to(direction))
                 self.trap_graph.add_edge(cell, cell.go_to(direction))
                 self.simple_graph.add_edge(cell, cell.go_to(direction))
+                self.base_trap_graph.add_edge(cell, cell.go_to(direction))
 
     def is_wall(self, cell: Cell):
         remembered: ModelCell = self.model_cell[cell.x][cell.y]

@@ -48,6 +48,8 @@ class GrabAndReturn(MovementStrategy):
         for cell in Grid.get_all_cells():
             if self.grid.unknown_graph.no_path(current_position, cell):
                 continue
+            if self.grid.base_trap_graph.no_path(current_position, cell):
+                continue
             if self.grid.is_unknown(cell):
                 continue
             if self.grid.get_cell_resource_value(cell) <= 0:
@@ -84,6 +86,8 @@ class GrabAndReturn(MovementStrategy):
         current_position = self.get_now_pos_cell()
         for cell in Grid.get_all_cells():
             if self.grid.unknown_graph.no_path(current_position, cell):
+                continue
+            if self.grid.base_trap_graph.no_path(current_position, cell):
                 continue
             if self.grid.is_unknown(cell) or self.grid.get_cell_resource_value(cell) <= 0:
                 continue

@@ -139,7 +139,7 @@ class BaseAnt:
         #     if max_dis < best:
         #         best = max_dis
         #         best_cell = cell
-        self.grid.chat_box_writer.report(Gathering(best_cell, life_time=best + 2, priority=self.game.alive_turn))
+        self.grid.chat_box_writer.report(Gathering(best_cell, life_time=best + 2, priority=Config.alive_turn))
 
     def update_and_report_map(self):
         view_distance = Config.view_distance  # be nazar bugeshoon bartaraf shode
