@@ -19,6 +19,9 @@ class Gathering(BaseNews):
 	def get_cell(self) -> ModelCell:
 		return self.cell
 
+	def __str__(self):
+		return f"meet({self.cell.x}, {self.cell.y})"
+
 	def message_size(self) -> int:
 		return len(self.huffman_prefix) + 12 + Gathering.priority_size + 4  # prefix (x, y) priority expired
 

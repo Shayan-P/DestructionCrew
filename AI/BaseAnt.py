@@ -96,14 +96,40 @@ class BaseAnt:
         max_dis = 0
         for scorpion in self.near_scorpions(Config.ants_view):
             dis = self.grid.known_graph.get_shortest_distance( self.get_now_pos_cell(), Cell(scorpion.currentX, scorpion.currentY) )
+
+            if dis is None:
+                continue
             if dis > 4:
                 continue
+
             max_dis = max(max_dis, dis)
             all += 1
         print("Count of ALL is", all)
         if all == us:
             return
-        self.grid.chat_box_writer.report(Gathering(self.get_now_pos_cell(), life_time=max_dis + 2))
+
+        best = max_dis
+        best_cell = self.get_now_pos_cell()
+        for cell in self.grid.get_all_cells():
+            dis = self.grid.known_graph.get_shortest_distance(self.get_now_pos_cell(), cell)
+            if (dis is None) or (dis > 4):
+                continue
+            max_dis = dis
+            for scorpion in self.near_scorpions(Config.ants_view):
+                dis = self.grid.known_graph.get_shortest_distance(self.get_now_pos_cell(),
+                                                                  Cell(scorpion.currentX, scorpion.currentY))
+
+                if dis is None:
+                    continue
+                if dis > 4:
+                    continue
+
+                dis = cell.manhattan_distance( Cell(scorpion.currentX, scorpion.currentY) )
+                max_dis = max( max_dis, dis)
+            if max_dis < best:
+                best = max_dis
+                best_cell = cell
+        self.grid.chat_box_writer.report(Gathering(best_cell, life_time=best + 2))
 
 
     def update_and_report_map(self):
