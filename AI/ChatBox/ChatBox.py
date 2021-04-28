@@ -58,11 +58,15 @@ class ChatBoxWriter:
 		self.last_turn_news = []
 		# need to obtain from map configs
 		self.priority = 0
+		sum_priority = 0
+		max_priority = 0
 		ret = Writer(self.limit)
 		for new in all_news:
 			if ret.enough_space(new):
 				new.encode(ret)
-				self.priority += new.get_priority()
+				val = new.get_priority()
+				sum_priority += val
+				max_priority = max(max_priority, val)
 				self.last_turn_news.append(new)
 			else:
 				# must
@@ -70,6 +74,7 @@ class ChatBoxWriter:
 					self.stuck_news.append(new)
 				print("cant report news: ", new)
 
+		self.priority = 100 * max_priority + sum_priority
 		# todo
 		# store the messages that ignored because of not enough space
 		# return ""

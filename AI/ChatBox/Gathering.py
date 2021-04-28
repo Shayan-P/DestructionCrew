@@ -5,6 +5,7 @@ from .MessageHandlers import Reader, Writer
 from Model import Cell as ModelCell
 from random import randint
 
+
 class Gathering(BaseNews):
 	huffman_prefix = "0011"
 
