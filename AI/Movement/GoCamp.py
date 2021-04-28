@@ -105,12 +105,12 @@ class GoCamp(MovementStrategy):
     def report_gathering(self):
         attacked = (self.base_ant.game.ant.health < self.base_ant.previous_health)
 
-        if self.base_ant.game.alive_turn == 3:
+        if Config.alive_turn == 3:
             path = self.get_destination_path()
 
             idx = max(0, len(path) - 3)
             self.grid.chat_box_writer.report(
-                Gathering(path[idx], life_time=idx + 4, priority=self.base_ant.game.alive_turn))
+                Gathering(path[idx], life_time=idx + 4, priority=Config.alive_turn))
             self.meeting_cool_down = MovementStrategy.meet_default_cool_down
             return
 
@@ -160,5 +160,5 @@ class GoCamp(MovementStrategy):
         #     if max_dis < best:
         #         best = max_dis
         #         best_cell = cell
-        self.grid.chat_box_writer.report(Gathering(best_cell, life_time=best + 2, priority=self.base_ant.game.alive_turn))
+        self.grid.chat_box_writer.report(Gathering(best_cell, life_time=best + 2, priority=Config.alive_turn))
 
