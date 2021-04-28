@@ -123,7 +123,10 @@ class Grid:
             hate_cof = 0 if self.is_unknown(cell) else self.hate_known
             self.prepare_graph_vertex(self.unknown_graph, cell, extra_add=hate_cof)
             self.prepare_graph_vertex(self.simple_graph, cell, danger_cof=0)
-            self.prepare_graph_vertex(self.trap_graph, cell, extra_add=Config.map_width + Config.map_height)
+            if self.is_trap(cell):
+                self.prepare_graph_vertex(self.trap_graph, cell, extra_add=Config.map_width + Config.map_height)
+            else:
+                self.prepare_graph_vertex(self.trap_graph, cell, extra_add=0)
             self.prepare_graph_vertex(self.base_trap_graph, cell, extra_add=0)
             # bias this dangers todo
         self.unknown_graph.precalculate_source(now)
