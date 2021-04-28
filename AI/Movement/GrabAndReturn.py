@@ -128,24 +128,34 @@ class GrabAndReturn(MovementStrategy):
         self.prev_best_cell_value = self.base_ant.grid.get_cell_resource_value(self.best_cell)
         return self.best_cell
 
+    def activate_resource(self, resource_type):
+        for cell in Grid.get_all_cells():
+            if self.grid.get_cell_resource_type(cell) == resource_type:
+                self.grid.unknown_graph.get_vertex(cell).activate()
+
+    def deactivate_resource(self, resource_type):
+        for cell in Grid.get_all_cells():
+            if self.grid.get_cell_resource_type(cell) == resource_type:
+                self.grid.unknown_graph.get_vertex(cell).deactivate()
+
     def go_grab_resource(self):
         now_cell = self.get_now_pos_cell()
         best_cell: Cell = self.get_best_cell()
-        next_cell = self.go_to(best_cell)
+        next_cell = self.go_to(best_cell, graph=self.grid.unknown_graph)
         if self.grid.get_cell_resource_value(best_cell) <= 0:
             return next_cell
-        distance = self.grid.expected_distance(now_cell, best_cell)
+        distance = self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell)
         resource_type = self.grid.get_cell_resource_type(best_cell)
-        self.grid.deactivate(1 - resource_type)
+        self.deactivate_resource(1 - resource_type)
         self.grid.known_graph.precalculate_source(now_cell)
-        if self.grid.expected_distance(now_cell, best_cell) <= distance:
-            next_cell = self.go_to(best_cell)
-        self.grid.activate(1 - resource_type)
+        if self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell) <= distance:
+            next_cell = self.go_to(best_cell, graph=self.grid.unknown_graph)
+        self.activate_resource(1 - resource_type)
         return next_cell
         # after this function distances are not right anymore!
 
     def go_to_base(self):
-        return self.go_to(self.get_base_cell())
+        return self.go_to(self.get_base_cell(), graph=self.grid.known_graph)
 
     def expected_workers(self):
         # increasing this untill it's not too much will help. I set this for small maps so work positive in others\
@@ -204,9 +214,3 @@ class GrabAndReturn(MovementStrategy):
 
     def change_grid_coffs(self):
         self.grid.set_coffs(hate_known=3, opponent_base_fear=5)
-
-    def get_best_path(self, cell_start: Cell, cell_end: Cell):
-        # maybe this is bad. change this. when we grabbed something we need to reach base fast! todo
-        if not self.grid.unknown_graph.no_path(cell_start, cell_end):
-            return self.grid.unknown_graph.get_shortest_path(cell_start, cell_end)
-        return None

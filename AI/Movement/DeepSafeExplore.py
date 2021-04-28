@@ -33,7 +33,7 @@ class DeepSafeExplore(MovementStrategy):
 
     def get_direction(self):
         print("center of unknowns is ", self.get_center_of_unknowns(), "and my prev turn is ", self.previous_purpose, "there is a path?", self.grid.unknown_graph.no_path(self.get_now_pos_cell(), self.get_center_of_unknowns()))
-        return self.go_to(self.get_center_of_unknowns())
+        return self.go_to(self.get_center_of_unknowns(), graph=self.grid.unknown_graph)
 
     def is_not_good(self):
         if self.reached_destination:
@@ -45,8 +45,3 @@ class DeepSafeExplore(MovementStrategy):
 
     def change_grid_coffs(self):
         self.grid.set_coffs(hate_known=10, opponent_base_fear=5, fight_fear=1, scorpion_fear=1)
-
-    def get_best_path(self, cell_start: Cell, cell_end: Cell):
-        if not self.grid.unknown_graph.no_path(cell_start, cell_end):
-            return self.grid.unknown_graph.get_shortest_path(cell_start, cell_end)
-        return None

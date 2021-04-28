@@ -19,13 +19,8 @@ class FuckOpponentBase(MovementStrategy):
 				candid = cell
 		return candid
 
-	def get_best_path(self, cell_start: Cell, cell_end: Cell):
-		if not self.grid.unknown_graph.no_path(cell_start, cell_end):
-			return self.grid.unknown_graph.get_shortest_path(cell_start, cell_end)
-		return None
-
 	def get_direction(self):
-		return self.go_to(self.cell_near_opponent_base())
+		return self.go_to(self.cell_near_opponent_base(), graph=self.grid.unknown_graph)
 
 	def change_grid_coffs(self):
 		self.grid.set_coffs(hate_known=10, opponent_base_fear=0, fight_fear=0)
