@@ -162,6 +162,10 @@ class GrabAndReturn(MovementStrategy):
         # after this function distances are not right anymore!
 
     def go_to_base(self):
+        PATH = self.grid.trap_graph.get_shortest_path(self.get_now_pos_cell(), self.get_base_cell())
+        print("we want to go back to base. path is: ")
+        for cell in PATH:
+            print(cell, self.grid.trap_graph.get_vertex(cell).get_weight())
         return self.go_to(self.get_base_cell(), graph=self.grid.trap_graph)
 
     def expected_workers(self):
