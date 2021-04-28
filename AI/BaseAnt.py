@@ -11,7 +11,10 @@ from AI.Grid.sync_information import read_view_fight, report_view_fight
 from random import randrange
 
 
+
 class BaseAnt:
+    meet_default_cool_down = 10
+
     def __init__(self, game):
         self.game: Model.Game = game
         self.grid = Grid()
@@ -24,6 +27,7 @@ class BaseAnt:
         self.total_bread_picked = 0
         self.total_grass_picked = 0
         self.random_id = randrange(0, 127)
+        self.meeting_cool_down = BaseAnt.meet_default_cool_down
 
     def get_message_and_priority(self):
         return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
@@ -88,7 +92,9 @@ class BaseAnt:
         attacked = (self.game.ant.health < self.previous_health)
         if self.game.antType != AntType.SARBAAZ.value:
             return
-        if (not attacked) and (self.grid.chat_box_reader.get_now_turn() % 10 != 0):
+        
+        self.meeting_cool_down -= 1
+        if (not attacked) and (self.meeting_cool_down > 0):
             return
         # handle case when we are invited somewhere else todo
 

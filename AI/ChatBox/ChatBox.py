@@ -48,7 +48,10 @@ class ChatBoxWriter:
 
 	def flush(self) -> str:
 		self.queue_news.sort(key=lambda news: news.get_priority(), reverse=True)
+
+		self.stuck_news = list(filter(lambda e: type(e) is not Gathering, self.stuck_news))
 		self.stuck_news.sort(key=lambda news: news.get_priority(), reverse=True)
+
 		all_news = self.queue_news + self.stuck_news
 		self.queue_news = []
 		self.stuck_news = []
@@ -63,7 +66,8 @@ class ChatBoxWriter:
 				self.last_turn_news.append(new)
 			else:
 				# must
-				self.stuck_news.append(new)
+				if(new is not Gathering):
+					self.stuck_news.append(new)
 				print("cant report news: ", new)
 
 		# todo

@@ -34,6 +34,9 @@ class Attacker(BaseAnt):
         print("at turn", self.grid.chat_box_reader.get_now_turn())
         print("we meet at (", gathering_best_new.get_cell().x,",", gathering_best_new.get_cell().y, ")")
         path = self.grid.known_graph.get_shortest_path(self.get_now_pos_cell(), Cell.from_model_cell(gathering_best_new.get_cell()))
+
+        self.meeting_cool_down = BaseAnt.meet_default_cool_down
+
         if len(path) == 1:
             return path[0].direction_to(path[0])
         return path[0].direction_to(path[1])
