@@ -9,58 +9,28 @@ def see_cell(grid, news: ViewCell, is_from_chat_box, update_chat_box):
 	if new_cell is None:
 		return
 	x, y = new_cell.x, new_cell.y
-	# print("debug :", Config.map_width, Config.map_height, x, y)
 	if grid.model_cell[x][y] is None:
-		grid.model_cell[x][y] = ModelCell(x, y, new_cell.type, None, None)
-		grid.model_cell[x][y].ants = new_cell.ants
+		grid.model_cell[x][y] = ModelCell(x, y, new_cell.type, 0, 2)
+		grid.update_vertex_in_graph(Cell(x, y))
 	else:
-		if not is_from_chat_box:
-			grid.model_cell[x][y].ants = new_cell.ants
-			# it is not new info because we dont report it to chat_box
-		is_new_info = False
-		if new_cell.type is not None and new_cell.type != grid.model_cell[x][y].type:
-			grid.model_cell[x][y].type = new_cell.type
-			is_new_info = True
-		if not is_new_info:
-			return
-	grid.update_vertex_in_graph(Cell(x, y))  # it is not model cell
+		update_chat_box = False
+	if not is_from_chat_box:
+		grid.model_cell[x][y].ants = new_cell.ants
 	if update_chat_box:
-		grid.chat_box_writer.report(ViewCell(grid.model_cell[x][y]))  # or only pass new information we saw?
+		grid.chat_box_writer.report(ViewCell(grid.model_cell[x][y]))
 
 
 def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
-	news_turn = min(news.turn, grid.chat_box_reader.get_now_turn())
 	new_cell = news.get_cell()
 	if new_cell is None:
 		return
 	x, y = new_cell.x, new_cell.y
-
-
-	if grid.model_cell[x][y] is None:
-		grid.model_cell[x][y] = ModelCell(x, y, None, new_cell.resource_value, new_cell.resource_type)
-		grid.model_cell[x][y].ants = new_cell.ants
+	assert grid.model_cell[x][y] is not None
+	if grid.model_cell[x][y].resource_type != new_cell.resource_type or grid.model_cell[x][y].resource_value != new_cell.resource_value:
+		grid.model_cell[x][y].resource_type = new_cell.resource_type
+		grid.model_cell[x][y].resource_value = new_cell.resource_value
 	else:
-		if not is_from_chat_box:
-			grid.model_cell[x][y].ants = new_cell.ants
-		is_new_info = False
-		if (new_cell.resource_type is None) or (new_cell.resource_value is None) or (grid.last_update[x][y] > news_turn):
-			return
-
-		if new_cell.resource_type != grid.model_cell[x][y].resource_type:
-			if (grid.model_cell[x][y].resource_type is not None) and (new_cell.resource_type != grid.model_cell[x][y].resource_type):
-				is_new_info = True
-			grid.model_cell[x][y].resource_type = new_cell.resource_type
-			grid.model_cell[x][y].resource_value = new_cell.resource_value
-		elif new_cell.resource_value != grid.model_cell[x][y].resource_value:
-			if grid.model_cell[x][y].resource_value is not None:
-				is_new_info = True
-			if new_cell.resource_value > 0:
-				is_new_info = True
-			grid.model_cell[x][y].resource_value = new_cell.resource_value
-		if (not is_new_info):
-			return
-
-	grid.last_update[x][y] = news_turn
+		update_chat_box = False
 	if update_chat_box:
 		grid.chat_box_writer.report(ViewResource(grid.model_cell[x][y]))
 

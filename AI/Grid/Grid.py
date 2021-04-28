@@ -28,7 +28,6 @@ class Grid:
 
     def __init__(self):
         self.model_cell = Grid.new_2d_array_of(None)
-        self.last_update = Grid.new_2d_array_of(-1)
         # this probably has some bugs. when there are plenty of things with different update time
 
         self.scorpion_danger = Grid.new_2d_array_of(0)
