@@ -16,7 +16,7 @@ def see_cell(grid, news: ViewCell, is_from_chat_box, update_chat_box):
 	else:
 		if not is_from_chat_box:
 			grid.model_cell[x][y].ants = new_cell.ants
-			# it is not new info because we dont report it to chat_box
+			# it is not new info because we don't report it to chat_box
 		is_new_info = False
 		if new_cell.type is not None and new_cell.type != grid.model_cell[x][y].type:
 			grid.model_cell[x][y].type = new_cell.type
@@ -34,7 +34,6 @@ def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
 	if new_cell is None:
 		return
 	x, y = new_cell.x, new_cell.y
-
 
 	if grid.model_cell[x][y] is None:
 		grid.model_cell[x][y] = ModelCell(x, y, None, new_cell.resource_value, new_cell.resource_type)

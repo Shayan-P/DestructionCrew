@@ -10,8 +10,8 @@ from AI.Grid.Cell import Cell as GridCell
 class FightZone(BaseNews):
 	huffman_prefix = "11"
 
-	my_k = 3
-	opp_k = 1
+	my_k = 4
+	opp_k = 2
 
 	def __init__(self, my_cell: ModelCell, opp_cell: ModelCell):
 		super().__init__()
