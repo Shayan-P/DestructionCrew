@@ -49,3 +49,4 @@ class Config:
 	# this is our constants
 	PingRate = 35
 	alive_turn = -1
+	swamp_stay = 3

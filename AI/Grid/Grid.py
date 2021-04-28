@@ -37,6 +37,9 @@ class Grid:
 
         self.known_graph = Graph()
         self.unknown_graph = Graph()
+        self.simple_graph = Graph()
+        self.trap_graph = Graph()
+
         self.initialize_graphs()
         self.chat_box_writer: ChatBoxWriter = ChatBoxWriter()
         self.chat_box_reader: ChatBoxReader = ChatBoxReader()
@@ -93,6 +96,10 @@ class Grid:
             for news in self.chat_box_reader.get_latest_news(_news_type):
                 self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
 
+    def prepare_graph_vertex(self, graph, cell, extra_add=0, danger_cof=1):
+        swamp_cof = Config.swamp_stay if self.is_swamp(cell) else 1
+        graph.change_vertex_weight(cell, (Grid.initial_vertex_weight + danger_cof * self.total_danger[cell.x][cell.y] + extra_add) * swamp_cof)
+
     def pre_calculations(self, now: Cell):
         self.saved_expected_opponent_base = self.calculate_expected_opponent_base()
 
@@ -111,17 +118,23 @@ class Grid:
             self.total_danger[cell.x][cell.y] = (self.opponent_base_fear * base_danger +
                                                  self.scorpion_fear * self.scorpion_danger[cell.x][cell.y] +
                                                  self.fight_fear * self.fight[cell.x][cell.y])
-            self.known_graph.change_vertex_weight(cell, Grid.initial_vertex_weight + self.total_danger[cell.x][cell.y])
-
+            self.prepare_graph_vertex(self.known_graph, cell)
             hate_cof = 0 if self.is_unknown(cell) else self.hate_known
-            self.unknown_graph.change_vertex_weight(cell, Grid.initial_vertex_weight + self.total_danger[cell.x][cell.y] + hate_cof)
+            self.prepare_graph_vertex(self.unknown_graph, cell, extra_add=hate_cof)
+            self.prepare_graph_vertex(self.simple_graph, cell, danger_cof=0)
+            self.prepare_graph_vertex(self.trap_graph, cell, extra_add=Config.map_width + Config.map_height)
+            # bias this dangers todo
         self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
+        self.simple_graph.precalculate_source(now)
+        self.trap_graph.precalculate_source(now)
 
     def update_vertex_in_graph(self, cell):
         if self.is_wall(cell):
             self.known_graph.delete_vertex(cell)
             self.unknown_graph.delete_vertex(cell)
+            self.simple_graph.delete_vertex(cell)
+            self.trap_graph.delete_vertex(cell)
             return
         for direction in DIRECTIONS:
             self.update_edge_in_graph(cell, cell.go_to(direction))
@@ -135,15 +148,28 @@ class Grid:
         for cell in Grid.get_all_cells():
             self.known_graph.add_vertex(cell, Grid.initial_vertex_weight)
             self.unknown_graph.add_vertex(cell, Grid.initial_vertex_weight)
+            self.trap_graph.add_vertex(cell, Grid.initial_vertex_weight)
+            self.trap_graph.add_vertex(cell, Grid.initial_vertex_weight)
         for cell in Grid.get_all_cells():
             for direction in DIRECTIONS:
                 self.unknown_graph.add_edge(cell, cell.go_to(direction))
+                self.trap_graph.add_edge(cell, cell.go_to(direction))
+                self.simple_graph.add_edge(cell, cell.go_to(direction))
 
-    # todo is there a case were cell is not None but .type is None?
     def is_wall(self, cell: Cell):
         remembered: ModelCell = self.model_cell[cell.x][cell.y]
         if remembered is not None:
             return remembered.type == CellType.WALL.value
+
+    def is_swamp(self, cell: Cell):
+        remembered: ModelCell = self.model_cell[cell.x][cell.y]
+        if remembered is not None:
+            return remembered.type == CellType.SWAMP.value
+
+    def is_trap(self, cell: Cell):
+        remembered: ModelCell = self.model_cell[cell.x][cell.y]
+        if remembered is not None:
+            return remembered.type == CellType.TRAP.value
 
     def is_unknown(self, cell: Cell):
         return self.model_cell[cell.x][cell.y] is None

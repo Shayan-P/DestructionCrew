@@ -155,7 +155,7 @@ class GrabAndReturn(MovementStrategy):
         # after this function distances are not right anymore!
 
     def go_to_base(self):
-        return self.go_to(self.get_base_cell(), graph=self.grid.known_graph)
+        return self.go_to(self.get_base_cell(), graph=self.grid.trap_graph)
 
     def expected_workers(self):
         # increasing this untill it's not too much will help. I set this for small maps so work positive in others\
