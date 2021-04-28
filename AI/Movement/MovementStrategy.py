@@ -5,6 +5,8 @@ from AI.Config import Config
 
 
 class MovementStrategy:
+    meet_default_cool_down = 10
+
     def __init__(self, base_ant: BaseAnt):
         self.base_ant: BaseAnt = base_ant
         self.grid: Grid = base_ant.grid
@@ -44,3 +46,5 @@ class MovementStrategy:
     def change_grid_coffs(self):
         self.grid.set_coffs(hate_known=0, opponent_base_fear=1)
 
+    def report_gathering(self):
+        pass

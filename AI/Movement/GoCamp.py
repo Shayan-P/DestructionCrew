@@ -4,7 +4,7 @@ from Model import CellType, ResourceType
 from AI.Grid import Grid, Cell
 from AI.BaseAnt import BaseAnt, Config
 from AI import Choosing
-
+from AI.ChatBox import Gathering
 
 class GoCamp(MovementStrategy):
     def __init__(self, base_ant):
@@ -12,6 +12,7 @@ class GoCamp(MovementStrategy):
         self.best_cell = None
         self.stay = 0
         self.max_stay = 8
+        self.meeting_cool_down = MovementStrategy.meet_default_cool_down
 
     def get_direction(self):
 
@@ -87,6 +88,9 @@ class GoCamp(MovementStrategy):
         cell = self.get_best_cell()
         return self.go_to(cell)
 
+    def get_destination_path(self):
+        cell = self.get_now_pos_cell()
+        return self.get_best_path(self.get_now_pos_cell(), cell)
     # def go_to_base(self):
     #     # print("base cell is ", self.get_base_cell())
     #     return self.go_to(self.get_base_cell())
@@ -96,3 +100,65 @@ class GoCamp(MovementStrategy):
     #
     # def need_bread(self):
     #     return 1
+
+
+    def report_gathering(self):
+        attacked = (self.base_ant.game.ant.health < self.base_ant.previous_health)
+
+        if self.base_ant.game.alive_turn == 3:
+            path = self.get_destination_path()
+
+            idx = max(0, len(path) - 3)
+            self.grid.chat_box_writer.report(
+                Gathering(path[idx], life_time=idx + 4, priority=self.base_ant.game.alive_turn))
+            self.meeting_cool_down = MovementStrategy.meet_default_cool_down
+            return
+
+        self.meeting_cool_down -= 1
+        if (not attacked) and (self.meeting_cool_down > 0):
+            return
+        # handle case when we are invited somewhere else todo
+
+        us = len(self.base_ant.near_scorpions(0))
+
+        all = 0
+        print("Count of US is", us)
+
+        max_dis = 0
+        for scorpion in self.base_ant.near_scorpions(Config.ants_view):
+            dis = self.grid.known_graph.get_shortest_distance( self.get_now_pos_cell(), Cell(scorpion.currentX, scorpion.currentY) )
+
+            if dis is None:
+                continue
+            if dis > 4:
+                continue
+
+            max_dis = max(max_dis, dis)
+            all += 1
+        print("Count of ALL is", all)
+        if all == us:
+            return
+
+        best = max_dis
+        best_cell = self.get_now_pos_cell()
+        # for cell in self.grid.get_all_cells():
+        #     dis = self.grid.known_graph.get_shortest_distance(self.get_now_pos_cell(), cell)
+        #     if (dis is None) or (dis > 4):
+        #         continue
+        #     max_dis = dis
+        #     for scorpion in self.near_scorpions(Config.ants_view):
+        #         dis = self.grid.known_graph.get_shortest_distance(self.get_now_pos_cell(),
+        #                                                           Cell(scorpion.currentX, scorpion.currentY))
+        #
+        #         if dis is None:
+        #             continue
+        #         if dis > 4:
+        #             continue
+        #
+        #         dis = cell.manhattan_distance( Cell(scorpion.currentX, scorpion.currentY) )
+        #         max_dis = max( max_dis, dis)
+        #     if max_dis < best:
+        #         best = max_dis
+        #         best_cell = cell
+        self.grid.chat_box_writer.report(Gathering(best_cell, life_time=best + 2, priority=self.base_ant.game.alive_turn))
+
