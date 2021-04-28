@@ -40,6 +40,11 @@ class GrabAndReturn(MovementStrategy):
                 self.best_cell = None
             elif self.best_cell == self.get_now_pos_cell():
                 self.best_cell = None
+            elif self.grid.unknown_graph.no_path(self.get_now_pos_cell(), self.best_cell):
+                self.best_cell = None
+            elif self.grid.base_trap_graph.no_path(self.get_now_pos_cell(), self.best_cell):
+                self.best_cell = None
+
 
         # also forget it if someone has grabbed it beforehand. is it good? todo
 
