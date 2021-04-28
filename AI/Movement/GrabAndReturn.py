@@ -86,8 +86,8 @@ class GrabAndReturn(MovementStrategy):
                 continue
             if my_resource.value > 0 and my_resource.type != self.grid.get_cell_resource_type(cell):
                 continue
-            if current_position.manhattan_distance(cell) > 4:
-                continue;
+            if current_position.manhattan_distance(cell) > max(3, self.grid.expected_distance(current_position, self.get_base_cell()) / 2.5):
+                continue
 
             if (my_resource.value <= 0 or my_resource.type == ResourceType.GRASS.value) and \
                     self.grid.get_cell_resource_type(cell) == ResourceType.GRASS.value:
@@ -150,13 +150,13 @@ class GrabAndReturn(MovementStrategy):
 
         x = self.grid.chat_box_reader.get_now_turn()
         if x <= 10:
-            return Config.start_worker
+            return max(1, Config.start_worker / 2)
         elif x <= 20:
-            return Config.start_worker * (1 + (x - 10) / 10)
+            return max(1, Config.start_worker * (1 + (x - 10) / 10) / 2)
         elif x <= 50:
-            return Config.start_worker * (2 + (x - 20) / 30)
+            return max(1, Config.start_worker * (2 + (x - 20) / 30) / 2)
         else:
-            return Config.start_worker * 3
+            return max(1, Config.start_worker * 3 / 2)
 
     def best_cell_importance(self):
         return 10
@@ -167,9 +167,10 @@ class GrabAndReturn(MovementStrategy):
     def bread_grass_coefficient(self):
         #if self.grid.chat_box_reader.get_now_turn() < 30:
         #return 1
-        _MAX = 1.7
-        return max(min(_MAX, (self.base_ant.total_bread_picked + 1) / (self.base_ant.total_grass_picked + 1) * 0.05), 1 / _MAX)
-        # todo must be optmized
+        _grass = 2
+        _bread = 0.9
+        return max(min(_grass, (self.base_ant.total_bread_picked + 1) / (self.base_ant.total_grass_picked + 1) * 0.05), _bread)
+        # todo: must be optmized
 
     def grass_importance(self):
         return (1.95 + (2.5 * self.grid.chat_box_reader.get_now_turn() / Config.max_turn)) * self.bread_grass_coefficient()
