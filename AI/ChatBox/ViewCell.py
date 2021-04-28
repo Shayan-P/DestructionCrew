@@ -19,7 +19,7 @@ class ViewCell(BaseNews):
 		return self.cell
 
 	def message_size(self) -> int:
-		return len(self.huffman_prefix) + 12 + 1  # prefix (x, y) type
+		return len(self.huffman_prefix) + 12 + 3  # prefix (x, y) type
 
 	def get_priority(self):
 		return 1
@@ -29,14 +29,14 @@ class ViewCell(BaseNews):
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
 		writer.write(self.cell.x, 6)
 		writer.write(self.cell.y, 6)
-		writer.write(max(0, self.cell.type - 1), 1)
+		writer.write(self.cell.type, 3)
 
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:
 		x = reader.read(6)
 		y = reader.read(6)
-		cell_type = reader.read(1)
-		cell = ModelCell(x, y, cell_type + 1, None, None)
+		cell_type = reader.read(3)
+		cell = ModelCell(x, y, cell_type, None, None)
 		return ViewCell(cell)
 
 

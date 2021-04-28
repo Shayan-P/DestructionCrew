@@ -92,7 +92,7 @@ class BaseAnt:
         attacked = (self.game.ant.health < self.previous_health)
         if self.game.antType != AntType.SARBAAZ.value:
             return
-        
+
         self.meeting_cool_down -= 1
         if (not attacked) and (self.meeting_cool_down > 0):
             return
