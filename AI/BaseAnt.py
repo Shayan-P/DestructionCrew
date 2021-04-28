@@ -63,7 +63,7 @@ class BaseAnt:
         if self.start_turn is None:
             self.start_turn = self.grid.chat_box_reader.get_now_turn()
 
-        self.print_statistics()
+        # self.print_statistics()
 
     def after_move(self):
         self.update_resource_history()

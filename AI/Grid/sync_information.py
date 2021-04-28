@@ -34,6 +34,8 @@ def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
 	if new_cell is None:
 		return
 	x, y = new_cell.x, new_cell.y
+
+
 	if grid.model_cell[x][y] is None:
 		grid.model_cell[x][y] = ModelCell(x, y, None, new_cell.resource_value, new_cell.resource_type)
 		grid.model_cell[x][y].ants = new_cell.ants
@@ -41,11 +43,15 @@ def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
 		if not is_from_chat_box:
 			grid.model_cell[x][y].ants = new_cell.ants
 		is_new_info = False
-		if new_cell.resource_type is not None and grid.last_update[x][y] <= news_turn and new_cell.resource_type != grid.model_cell[x][y].resource_type:
-			if grid.model_cell[x][y].resource_type is not None and new_cell.resource_type != grid.model_cell[x][y].resource_type:
+		if (new_cell.resource_type is None) or (new_cell.resource_value is None) or (grid.last_update[x][y] > news_turn):
+			return
+
+		if new_cell.resource_type != grid.model_cell[x][y].resource_type:
+			if (grid.model_cell[x][y].resource_type is not None) and (new_cell.resource_type != grid.model_cell[x][y].resource_type):
 				is_new_info = True
 			grid.model_cell[x][y].resource_type = new_cell.resource_type
-		if new_cell.resource_value is not None and grid.last_update[x][y] <= news_turn and new_cell.resource_value != grid.model_cell[x][y].resource_value:
+			grid.model_cell[x][y].resource_value = new_cell.resource_value
+		elif new_cell.resource_value != grid.model_cell[x][y].resource_value:
 			if grid.model_cell[x][y].resource_value is not None:
 				is_new_info = True
 			if new_cell.resource_value > 0:
@@ -53,6 +59,7 @@ def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
 			grid.model_cell[x][y].resource_value = new_cell.resource_value
 		if (not is_new_info):
 			return
+
 	grid.last_update[x][y] = news_turn
 	if update_chat_box:
 		grid.chat_box_writer.report(ViewResource(grid.model_cell[x][y]))

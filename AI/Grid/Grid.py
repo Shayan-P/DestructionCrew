@@ -162,9 +162,9 @@ class Grid:
         if remembered is not None:
             if remembered.resource_type is None \
                     or remembered.resource_value is None or remembered.resource_value <= 0:
-                return -1
+                return 2
             return remembered.resource_type
-        return -1
+        return 2
 
     def get_cell_ants(self, cell: Cell) -> List[Model.Ant]:
         remembered: ModelCell = self.model_cell[cell.x][cell.y]

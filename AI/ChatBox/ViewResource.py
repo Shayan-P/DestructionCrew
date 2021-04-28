@@ -13,13 +13,13 @@ class ViewResource(BaseNews):
 		self.cell: ModelCell = deepcopy(cell)
 
 	def __str__(self):
-		return f"RS{self.cell.x},{self.cell.y}"
+		return f"RS({self.cell.x},{self.cell.y}):{self.cell.resource_value}"
 
 	def get_cell(self) -> ModelCell:
 		return self.cell
 
 	def message_size(self) -> int:
-		return len(self.huffman_prefix) + 12 + 1 + 8  # prefix (x, y) type value
+		return len(self.huffman_prefix) + 12 + 2 + 8  # prefix (x, y) type value
 
 	def get_priority(self):
 		return 4
@@ -31,14 +31,14 @@ class ViewResource(BaseNews):
 		# print("resource value -> ", self.cell.resource_value)
 		# need to test carefully todo
 		self.cell.resource_value = max(0, self.cell.resource_value)
-		writer.write(self.cell.resource_type, 1)
+		writer.write(self.cell.resource_type, 2)
 		writer.write(min(255, self.cell.resource_value), 8)
 
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:
 		x = reader.read(6)
 		y = reader.read(6)
-		cell_resource_type = reader.read(1)
+		cell_resource_type = reader.read(2)
 		cell_resource_value = reader.read(8)
 		cell = ModelCell(x, y, CellType.EMPTY, cell_resource_value, cell_resource_type)
 		return ViewResource(cell)

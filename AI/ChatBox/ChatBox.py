@@ -128,7 +128,7 @@ class ChatBoxReader:
 
 def get_encoded_message(news: BaseNews):
 	writer = Writer(Config.max_com_length)
-	news.encode(writer=writer)
+	news.encode(writer)
 	return writer.get_message()
 
 
