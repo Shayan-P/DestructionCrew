@@ -318,12 +318,12 @@ class Grid:
 
     def rebuild_fight(self):
         self.fight = Grid.new_2d_array_of(0)
-        avg_dis = (Config.map_width + Config.map_height) // 2
+        avg_dis = (Config.map_width + Config.map_height) // 3
         for new in self.chat_box_reader.get_all_news(FightZone):
             turn_dif = self.chat_box_reader.get_now_turn() - new.turn
             if(avg_dis <= turn_dif): # it was long time ago
                 continue
-            self.add_fight(new.cell, log2(avg_dis - turn_dif), log2(avg_dis - turn_dif) / 2, 1)
+            self.add_fight(new.cell, log2(avg_dis - turn_dif), log2(avg_dis - turn_dif) / 4, 2)
             # self.add_fight(new.cell, 20 * ((avg_dis - turn_dif) / avg_dis), 10 * ((avg_dis - turn_dif) / avg_dis), 1)
 
     def report_crowded(self, cell: Cell):
