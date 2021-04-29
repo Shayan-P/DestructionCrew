@@ -6,4 +6,4 @@ cd ..
 cd AIC21-Game
 cd server
 pt=../../DestructionCrew/Warriors/
-java -jar server-v1.3.3.jar --first-team=$pt$1 --second-team=$pt$2
+java -jar server-* --first-team=$pt$1 --second-team=$pt$2
