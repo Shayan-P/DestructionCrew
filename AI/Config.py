@@ -52,15 +52,14 @@ class Config:
 	swamp_stay = 3 + 1
 
 	@staticmethod
-	def linear(start, finish, count):
-		if count == 1:
-			return [start]
-		d = (finish - start) / (count - 1)
-		return [start + d * i for i in range(count)]
-
-	limit_grass_arr = linear(80, 90, 10) + linear(90, 120, 10) + linear(120, 160, 10) + linear(160, 210, 10) + linear(
-		210, 270, 10) + linear(270, 340, 10) + linear(340, 500, 50) + linear(500, 800, 120) + linear(800, 1000, 100)
-
-	@staticmethod
 	def get_limit_of_grass_in_turn(turn):
-		return Config.limit_grass_arr[turn]
+		def linear(start, finish, count):
+			if count == 1:
+				return [start]
+			d = (finish - start) / (count - 1)
+			return [start + d * i for i in range(count)]
+
+		limit_grass_arr = linear(80, 90, 10) + linear(90, 120, 10) + linear(120, 160, 10) + \
+						  linear(160, 210, 10) + linear(210, 270, 10) + linear(270, 340, 10) + \
+						  linear(340, 500, 50) + linear(500, 800, 120) + linear(800, 1000, 100)
+		return limit_grass_arr[turn]

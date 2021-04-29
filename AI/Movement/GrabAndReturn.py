@@ -206,7 +206,7 @@ class GrabAndReturn(MovementStrategy):
             return 0.2, 0.8
         if alive_attackers >= 3 * alive_workers:
             return 0.7, 0.3
-        g = (alive_workers * Config.ant_max_rec_amount) / visible_grass
+        g = (alive_workers * Config.ant_max_rec_amount) / min(visible_grass, Config.get_limit_of_grass_in_turn(self.grid.chat_box_reader.get_now_turn()))
         print("calculating ", alive_workers, Config.ant_max_rec_amount, visible_grass)
         return 1-g, g
 
