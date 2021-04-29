@@ -93,6 +93,8 @@ class Grid:
         # add other types of messages todo
 
     def listen_to_chat_box(self):
+        for news in self.chat_box_reader.get_latest_news(ViewCell):
+            self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
         for _news_type in BaseNews.__subclasses__():
             for news in self.chat_box_reader.get_latest_news(_news_type):
                 self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
