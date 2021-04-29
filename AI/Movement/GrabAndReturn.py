@@ -157,15 +157,15 @@ class GrabAndReturn(MovementStrategy):
         my_resource = self.base_ant.game.ant.currentResource
         my_graph = self.grid.trap_graph if my_resource.value > 0 else self.grid.unknown_graph
         next_cell = self.go_to(best_cell, graph=my_graph)
-        if self.grid.get_cell_resource_value(best_cell) <= 0:
-            return next_cell
-        distance = my_graph.get_shortest_distance(now_cell, best_cell)
-        resource_type = self.grid.get_cell_resource_type(best_cell)
-        self.deactivate_resource(1 - resource_type, graph=my_graph)
-        my_graph.precalculate_source(now_cell)
-        if my_graph.get_shortest_distance(now_cell, best_cell) <= distance:
-            next_cell = self.go_to(best_cell, graph=my_graph)
-        self.activate_resource(1 - resource_type, graph=my_graph)
+        # if self.grid.get_cell_resource_value(best_cell) <= 0:
+        #     return next_cell
+        # distance = self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell)
+        # resource_type = self.grid.get_cell_resource_type(best_cell)
+        # self.deactivate_resource(1 - resource_type)
+        # self.grid.known_graph.precalculate_source(now_cell)
+        # if self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell) <= distance:
+        #     next_cell = self.go_to(best_cell, graph=my_graph)
+        # self.activate_resource(1 - resource_type)
         return next_cell
         # after this function distances are not right anymore!
 
