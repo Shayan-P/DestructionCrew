@@ -1,5 +1,6 @@
 from typing import List
 from AI.Grid.Cell import Cell
+from AI.Config import Config
 import heapq
 
 
@@ -67,27 +68,27 @@ class Graph:
 
     def __init__(self):
         self.no_of_vertices = 0
-        self.vert_dict = {}
         self.curr_source = None
         self.changed = False
         self.last_precompute_order = None
+        self.vertices: List[List[Vertex]] = [[None] * Config.map_height for i in range(Config.map_width)]
 
     # maybe the edge is repeated
     def get_vertex(self, a: Cell) -> Vertex:
-        if a in self.vert_dict:
-            return self.vert_dict[a]
+        if self.vertices[a.x][a.y] is not None:
+            return self.vertices[a.x][a.y]
         else:
             return None
 
     # maybe the vertex is repeated
     def add_vertex(self, a: Cell, w: int) -> Vertex:
         self.changed = True
-        if a not in self.vert_dict:
-            self.vert_dict[a] = Vertex(a, w)
+        if self.vertices[a.x][a.y] is None:
+            self.vertices[a.x][a.y] = Vertex(a, w)
             self.no_of_vertices += 1
 
         self.get_vertex(a).activate()
-        return self.vert_dict[a]
+        return self.vertices[a.x][a.y]
 
     def add_edge(self, a: Cell, b: Cell):
         self.changed = True
@@ -137,11 +138,8 @@ class Graph:
 
         ans = []
         while end_ver.get_cell() != start:
-            # print("Fuck Shayan !")
             ans.append(end_ver.get_cell())
-            # print(type(ans[-1]), ans[-1], ",$$$$$$")
             end_ver = end_ver.get_previous()
-            # print(type(end_ver))
 
         ans.append(start)
         

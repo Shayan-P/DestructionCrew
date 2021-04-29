@@ -25,7 +25,9 @@ def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
 	if new_cell is None:
 		return
 	x, y = new_cell.x, new_cell.y
-	assert grid.model_cell[x][y] is not None
+	if grid.model_cell[x][y] is None:
+		grid.model_cell[x][y] = ModelCell(x, y, new_cell.type, 0, 2)
+		grid.update_vertex_in_graph(Cell(x, y))
 	if grid.model_cell[x][y].resource_type != new_cell.resource_type or grid.model_cell[x][y].resource_value != new_cell.resource_value:
 		grid.model_cell[x][y].resource_type = new_cell.resource_type
 		grid.model_cell[x][y].resource_value = new_cell.resource_value
