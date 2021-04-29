@@ -63,24 +63,24 @@ class GrabAndReturn(MovementStrategy):
             score = 0
             if (my_resource.value <= 0 or my_resource.type == ResourceType.GRASS.value) and \
                     self.grid.get_cell_resource_type(cell) == ResourceType.GRASS.value:
-                score = min(self.expected_workers() * Config.ant_max_rec_amount,
+                score = min(self.grid.alive_worker_count() * Config.ant_max_rec_amount,
                             self.grid.get_cell_resource_value(cell)) * self.grass_importance()
             if (my_resource.value <= 0 or my_resource.type == ResourceType.BREAD.value) and \
                     self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
-                score = min(self.expected_workers() * Config.ant_max_rec_amount,
+                score = min(self.grid.alive_worker_count() * Config.ant_max_rec_amount,
                             self.grid.get_cell_resource_value(cell)) * self.bread_importance()
             if self.grid.known_graph.no_path(current_position, cell):
                 distance = self.grid.unknown_graph.get_shortest_distance(current_position, cell)
             else:
                 distance = self.grid.known_graph.get_shortest_distance(current_position, cell)
             # change this todo
+            print("semi score is", score)
             score -= self.distance_importance() * distance
             # this should be base distance! todo
 
+            print("importance is: ", self.bread_importance(), self.grass_importance())
             print("CANDIDATE: ",
                   cell, score, distance,
-                  "init score is", min(self.expected_workers() * Config.ant_max_rec_amount,
-                  self.grid.get_cell_resource_value(cell)) * self.bread_importance(),
                   "final score is", score)
 
             if cell == self.best_cell:
@@ -176,27 +176,12 @@ class GrabAndReturn(MovementStrategy):
             print(cell, self.grid.trap_graph.get_vertex(cell).get_weight())
         return self.go_to(self.get_base_cell(), graph=self.grid.trap_graph)
 
-    def expected_workers(self):
-        # increasing this untill it's not too much will help. I set this for small maps so work positive in others\
-        # todo: but it can be more optimized
-
-        x = self.grid.chat_box_reader.get_now_turn()
-        if x <= 10:
-            return max(1, Config.start_worker / 2)
-        elif x <= 20:
-            return max(1, Config.start_worker * (1 + (x - 10) / 10) / 2)
-        elif x <= 50:
-            return max(1, Config.start_worker * (2 + (x - 20) / 30) / 2)
-        else:
-            return max(1, Config.start_worker * 3 / 2)
-
     def best_cell_importance(self):
         return 10
 
     def distance_importance(self):
         return 20
 
-    @once_per_turn
     def bread_grass_coefficient(self):
         alive_workers = self.grid.alive_worker_count()
         alive_attackers = self.grid.alive_attacker_count()
@@ -205,6 +190,8 @@ class GrabAndReturn(MovementStrategy):
         visible_grass = 0
         for cell in Grid.get_all_cells():
             if self.grid.unknown_graph.no_path(self.get_now_pos_cell(), cell):
+                continue
+            if self.grid.base_trap_graph.no_path(self.get_base_cell(), cell):
                 continue
             dist = cell.manhattan_distance(self.get_base_cell())
             if self.grid.get_cell_resource_type(cell) == Model.ResourceType.GRASS.value:
@@ -220,7 +207,7 @@ class GrabAndReturn(MovementStrategy):
         if alive_attackers >= 3 * alive_workers:
             return 0.7, 0.3
         g = (alive_workers * Config.ant_max_rec_amount) / visible_grass
-        print("we like grass: ", 1-g, "we like bread: ", g)
+        print("calculating ", alive_workers, Config.ant_max_rec_amount, visible_grass)
         return 1-g, g
 
     def grass_importance(self):

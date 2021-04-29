@@ -166,7 +166,7 @@ class BaseAnt:
         #     print(attack.defender_col)
         #     print(attack.is_attacker_enemy)
 
-        # self.grid.print_all_we_know_from_map()
+        self.grid.print_all_we_know_from_map()
 
     def get_now_pos_cell(self):
         return Cell(Config.now_x, Config.now_y)
