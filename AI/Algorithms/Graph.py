@@ -70,6 +70,7 @@ class Graph:
         self.vert_dict = {}
         self.curr_source = None
         self.changed = False
+        self.last_precompute_order = None
 
     # maybe the edge is repeated
     def get_vertex(self, a: Cell) -> Vertex:
@@ -101,6 +102,7 @@ class Graph:
         self.get_vertex(a).deactivate()
 
     def no_path(self, a: Cell, b: Cell) -> bool: # True if there isn't any path between a & b
+        self.precalculate_source(self.last_precompute_order, is_force=True)
         reach_a = (a == self.curr_source) or (self.get_vertex(a).get_previous() is not None)
         reach_b = (b == self.curr_source) or (self.get_vertex(b).get_previous() is not None)
         if reach_a and reach_b:
@@ -109,6 +111,7 @@ class Graph:
 
     # always return None if there is no path
     def get_shortest_distance(self, start: Cell, end: Cell) -> int:
+        self.precalculate_source(self.last_precompute_order, is_force=True)
         assert not self.changed
         if self.no_path(start, end):
             return None
@@ -117,6 +120,7 @@ class Graph:
         return self.get_vertex(end).get_distance()
 
     def get_shortest_path(self, start: Cell, end: Cell) -> List[Cell]:
+        self.precalculate_source(self.last_precompute_order, is_force=True)
         assert self.get_vertex(start) is not None
         assert self.get_vertex(end) is not None
         assert not self.changed
@@ -149,10 +153,14 @@ class Graph:
         self.changed = True
         self.get_vertex(a).set_weight(w)
 
-    def precalculate_source(self, source: Cell):
+    def precalculate_source(self, source: Cell, is_force=False):
         # we are going to ask for paths that probably one side is source.
         # you have to do the pre calculations here
         # between the pre calculations and asking queries we will not change the graph
+
+        if not is_force:
+            self.last_precompute_order = source
+            return
 
         # print("START PRE CALCULATION ", source)
         if self.changed is False and self.curr_source == source:
