@@ -72,6 +72,7 @@ class Graph:
         self.changed = False
         self.last_precompute_order = None
         self.vertices: List[List[Vertex]] = [[None] * Config.map_height for i in range(Config.map_width)]
+        self.all_vertices: List[Vertex] = []
 
     # maybe the edge is repeated
     def get_vertex(self, a: Cell) -> Vertex:
@@ -85,6 +86,7 @@ class Graph:
         self.changed = True
         if self.vertices[a.x][a.y] is None:
             self.vertices[a.x][a.y] = Vertex(a, w)
+            self.all_vertices.append(self.vertices[a.x][a.y])
             self.no_of_vertices += 1
 
         self.get_vertex(a).activate()
@@ -166,7 +168,8 @@ class Graph:
 
         self.curr_source = source
         self.changed = False
-        for ver in self.vert_dict.values():
+
+        for ver in self.all_vertices:
             ver.prepare()
 
         start = self.get_vertex(source)
