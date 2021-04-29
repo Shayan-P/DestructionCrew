@@ -132,6 +132,7 @@ class GrabAndReturn(MovementStrategy):
         print("candids for grabbing are: ", "\n".join([f"{x}: {candidates[x]}" for x in candidates]))
         self.best_cell = Choosing.soft_max_choose(candidates)
         self.prev_best_cell_value = self.base_ant.grid.get_cell_resource_value(self.best_cell)
+        print(self.grid.base_trap_graph.no_path(self.get_base_cell(), self.best_cell))
         return self.best_cell
 
     def activate_resource(self, resource_type):
@@ -161,6 +162,10 @@ class GrabAndReturn(MovementStrategy):
         # after this function distances are not right anymore!
 
     def go_to_base(self):
+        PATH = self.grid.trap_graph.get_shortest_path(self.get_now_pos_cell(), self.get_base_cell())
+        print("we want to go back to base. path is: ")
+        for cell in PATH:
+            print(cell, self.grid.trap_graph.get_vertex(cell).get_weight())
         return self.go_to(self.get_base_cell(), graph=self.grid.trap_graph)
 
     def expected_workers(self):
