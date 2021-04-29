@@ -49,6 +49,8 @@ class GrabAndReturn(MovementStrategy):
 
         # also forget it if someone has grabbed it beforehand. is it good? todo
 
+        print("prev best cell is: ", self.best_cell)
+
         current_position = self.get_now_pos_cell()
         candidates = {}
         for cell in Grid.get_all_cells():
@@ -80,16 +82,15 @@ class GrabAndReturn(MovementStrategy):
             score -= self.distance_importance() * distance
             # this should be base distance! todo
 
-            # print("importance is: ", self.bread_importance(), self.grass_importance())
-            # print("CANDIDATE: ",
-            #       cell, score, distance,
-            #       "final score is", score)
+            print("importance bread/grass is: ", self.bread_importance(), self.grass_importance())
+            print("CANDIDATE: ", cell, score, distance)
 
             if cell == self.best_cell:
                 score += self.best_cell_importance()
                 # change this todo
             # boro be samti ke expected score et max she todo
             # ba in taabee momken nist dore khodemoon bekharkhim?
+            print("final score: ", score)
             candidates[cell] = score
         return candidates
 
