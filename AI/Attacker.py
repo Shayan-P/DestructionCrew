@@ -2,7 +2,7 @@ import Model
 
 from .BaseAnt import BaseAnt
 from .Grid import Cell, Grid
-from .Movement import Explore, Follower, Defender, GrabAndReturn, GoCamp, FuckOpponentBase
+from .Movement import Explore, Follower, AloneSpy, Defender, GrabAndReturn, GoCamp, FuckOpponentBase, GetNearOpponentBase
 from .ChatBox import Gathering
 from random import randint, random
 from AI.Config import Config
@@ -53,7 +53,7 @@ class Attacker(BaseAnt):
     def get_move(self):
         ret = super(Attacker, self).get_move()
         if self.previous_strategy is FuckOpponentBase:
-            return self.spread_filter(ret)
+            return ret
         elif self.previous_strategy is Explore:
             return self.escape_from_great_danger_filter(ret)
         elif self.previous_strategy is GoCamp:
@@ -66,16 +66,28 @@ class Attacker(BaseAnt):
         ))
 
     def choose_best_strategy(self):
+        if not self.grid.sure_opponent_base():
+            if self.previous_strategy is AloneSpy:
+                return AloneSpy
+            if Config.alive_turn == 1 and random() < 0.06:
+                return AloneSpy
+
+        if self.previous_strategy is GetNearOpponentBase:
+            return GetNearOpponentBase
+        if (self.previous_strategy is FuckOpponentBase) and (self.grid.sure_opponent_base()) and (len(self.near_scorpions(2)) >= 3):
+            return GetNearOpponentBase
+
         if self.grid.sure_opponent_base() and self.get_now_pos_cell().manhattan_distance(self.grid.expected_opponent_base()) <= Config.base_range:
             return FuckOpponentBase
         if self.grid.chat_box_reader.get_now_turn() >= 100: # change this if. to something like if map is partially known... todo
-            if len(self.near_scorpions(2)) >= 7: # change this todo
+            if len(self.near_scorpions(1)) >= 7: # change this todo
                 return FuckOpponentBase
         if self.previous_strategy is FuckOpponentBase:
             return FuckOpponentBase
-        if self.grid.chat_box_reader.get_now_turn() >= 160:  # change this! todo
+        if self.grid.chat_box_reader.get_now_turn() >= 165:  # change this! todo
             return FuckOpponentBase
-
+        if self.grid.chat_box_reader.get_now_turn() >= 150 and self.grid.sure_opponent_base():
+            return FuckOpponentBase
         # if there are a little unknown cells stop exploring todo
         # return GoCamp
         if self.previous_strategy is None:

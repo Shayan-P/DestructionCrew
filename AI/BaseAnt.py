@@ -35,8 +35,12 @@ class BaseAnt:
         NotImplementedError
 
     def get_move(self):
+        if  self.previous_strategy_object is not None:
+            self.previous_strategy_object.pre_calc()
         self.pre_move()
+
         strategy = self.choose_best_strategy()
+
         if strategy is self.previous_strategy:
             ret = self.previous_strategy_object.get_direction()
         else:
@@ -139,6 +143,8 @@ class BaseAnt:
                 for dy in range(-2, 3):
                     if abs(dx) + abs(dy) <= 2 and abs(dx) + abs(dy) != 0:
                         next_cell = self.get_now_pos_cell().move_to(dx, dy)
+                        if self.grid.known_graph.no_path(self.get_now_pos_cell(), next_cell):
+                            continue
                         if not self.grid.is_wall(next_cell):
                             if min_danger_cell is None or self.grid.get_total_danger(min_danger_cell) > self.grid.get_total_danger(next_cell):
                                 min_danger_cell = next_cell
