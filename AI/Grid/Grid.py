@@ -380,19 +380,19 @@ class Grid:
             return colorful_print("E", OKCYAN)
 
         # you should rotate and then print
-        print("map: ")
-        for j in range(Config.map_height):
-            arr = [colorful_cell(Cell(i, j)) for i in range(Config.map_width)]
-            print(*arr)
-        print("danger: ")
-        for j in range(Config.map_height):
-            arr = [self.total_danger[i][j] for i in range(Config.map_width)]
-            print(*arr)
-        print("fight zone: ")
-        for j in range(Config.map_height):
-            arr = [self.fight[i][j] for i in range(Config.map_width)]
-            print(*arr)
-        print("crowded: ")
-        for j in range(Config.map_height):
-            arr = [self.crowded[i][j] for i in range(Config.map_width)]
-            print(*arr)
+        # print("map: ")
+        # for j in range(Config.map_height):
+        #     arr = [colorful_cell(Cell(i, j)) for i in range(Config.map_width)]
+        #     print(*arr)
+        # print("danger: ")
+        # for j in range(Config.map_height):
+        #     arr = [self.total_danger[i][j] for i in range(Config.map_width)]
+        #     print(*arr)
+        # print("fight zone: ")
+        # for j in range(Config.map_height):
+        #     arr = [self.fight[i][j] for i in range(Config.map_width)]
+        #     print(*arr)
+        # print("crowded: ")
+        # for j in range(Config.map_height):
+        #     arr = [self.crowded[i][j] for i in range(Config.map_width)]
+        #     print(*arr)

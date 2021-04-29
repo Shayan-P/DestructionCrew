@@ -74,14 +74,14 @@ class GrabAndReturn(MovementStrategy):
             else:
                 distance = self.grid.known_graph.get_shortest_distance(current_position, cell)
             # change this todo
-            print("semi score is", score)
+            # print("semi score is", score)
             score -= self.distance_importance() * distance
             # this should be base distance! todo
 
-            print("importance is: ", self.bread_importance(), self.grass_importance())
-            print("CANDIDATE: ",
-                  cell, score, distance,
-                  "final score is", score)
+            # print("importance is: ", self.bread_importance(), self.grass_importance())
+            # print("CANDIDATE: ",
+            #       cell, score, distance,
+            #       "final score is", score)
 
             if cell == self.best_cell:
                 score += self.best_cell_importance()
@@ -135,21 +135,21 @@ class GrabAndReturn(MovementStrategy):
 
     def get_best_cell(self):
         candidates = self.get_scores()
-        print("candids for grabbing are: ", "\n".join([f"{x}: {candidates[x]}" for x in candidates]))
+        # print("candids for grabbing are: ", "\n".join([f"{x}: {candidates[x]}" for x in candidates]))
         self.best_cell = Choosing.soft_max_choose(candidates)
         self.prev_best_cell_value = self.base_ant.grid.get_cell_resource_value(self.best_cell)
-        print(self.grid.base_trap_graph.no_path(self.get_base_cell(), self.best_cell))
+        # print(self.grid.base_trap_graph.no_path(self.get_base_cell(), self.best_cell))
         return self.best_cell
 
-    def activate_resource(self, resource_type):
+    def activate_resource(self, resource_type, graph):
         for cell in Grid.get_all_cells():
             if self.grid.get_cell_resource_type(cell) == resource_type:
-                self.grid.unknown_graph.get_vertex(cell).activate()
+                graph.get_vertex(cell).activate()
 
-    def deactivate_resource(self, resource_type):
+    def deactivate_resource(self, resource_type, graph):
         for cell in Grid.get_all_cells():
             if self.grid.get_cell_resource_type(cell) == resource_type:
-                self.grid.unknown_graph.get_vertex(cell).deactivate()
+                graph.get_vertex(cell).deactivate()
 
     def go_grab_resource(self):
         now_cell = self.get_now_pos_cell()
@@ -157,23 +157,23 @@ class GrabAndReturn(MovementStrategy):
         my_resource = self.base_ant.game.ant.currentResource
         my_graph = self.grid.trap_graph if my_resource.value > 0 else self.grid.unknown_graph
         next_cell = self.go_to(best_cell, graph=my_graph)
-        if self.grid.get_cell_resource_value(best_cell) <= 0:
-            return next_cell
-        distance = self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell)
-        resource_type = self.grid.get_cell_resource_type(best_cell)
-        self.deactivate_resource(1 - resource_type)
-        self.grid.known_graph.precalculate_source(now_cell)
-        if self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell) <= distance:
-            next_cell = self.go_to(best_cell, graph=my_graph)
-        self.activate_resource(1 - resource_type)
+        # if self.grid.get_cell_resource_value(best_cell) <= 0:
+        #     return next_cell
+        # distance = self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell)
+        # resource_type = self.grid.get_cell_resource_type(best_cell)
+        # self.deactivate_resource(1 - resource_type)
+        # self.grid.known_graph.precalculate_source(now_cell)
+        # if self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell) <= distance:
+        #     next_cell = self.go_to(best_cell, graph=my_graph)
+        # self.activate_resource(1 - resource_type)
         return next_cell
         # after this function distances are not right anymore!
 
     def go_to_base(self):
         PATH = self.grid.trap_graph.get_shortest_path(self.get_now_pos_cell(), self.get_base_cell())
-        print("we want to go back to base. path is: ")
-        for cell in PATH:
-            print(cell, self.grid.trap_graph.get_vertex(cell).get_weight())
+        # print("we want to go back to base. path is: ")
+        #for cell in PATH:
+        #    print(cell, self.grid.trap_graph.get_vertex(cell).get_weight())
         return self.go_to(self.get_base_cell(), graph=self.grid.trap_graph)
 
     def best_cell_importance(self):
@@ -207,7 +207,7 @@ class GrabAndReturn(MovementStrategy):
         if alive_attackers >= 3 * alive_workers:
             return 0.7, 0.3
         g = (alive_workers * Config.ant_max_rec_amount) / min(visible_grass, Config.get_limit_of_grass_in_turn(self.grid.chat_box_reader.get_now_turn()))
-        print("calculating ", alive_workers, Config.ant_max_rec_amount, visible_grass)
+        # print("calculating ", alive_workers, Config.ant_max_rec_amount, visible_grass)
         return 1-g, g
 
     def grass_importance(self):

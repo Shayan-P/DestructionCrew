@@ -65,12 +65,12 @@ class ChatBoxWriter:
 				sum_priority += val
 				max_priority = max(max_priority, val)
 				self.last_turn_news.append(new)
-				print("sending ", new)
+				# print("sending ", new)
 			else:
 				# must
 				if(new is not Gathering):
 					self.stuck_news.append(new)
-				print("cant report news: ", new)
+				# print("cant report news: ", new)
 
 		self.priority = 100 * max_priority + sum_priority
 		# todo
@@ -113,7 +113,7 @@ class ChatBoxReader:
 				this_news.turn = msg.turn
 				self.news[message_type].append(this_news)
 				self.latest_news[message_type].append(this_news)
-				print("getting message: ", this_news)
+				# print("getting message: ", this_news)
 		for msg in box.allChats:
 			self.last_check = max(self.last_check, msg.turn)
 

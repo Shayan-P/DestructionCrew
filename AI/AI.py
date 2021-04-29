@@ -29,6 +29,8 @@ class AI:
 	def turn(self) -> (str, int, int):
 		global turn_count
 
+		start_time = time.time()
+
 		update_config(self.game)
 		Config.alive_turn = turn_count
 		if turn_count == 0:
@@ -45,12 +47,14 @@ class AI:
 		if HAS_SLEEP:
 			time.sleep(0.1)
 
+		print("turn: ", turn_count, f"took us {time.time() - start_time} seconds")
 		return self.message, self.value, self.direction.value
 
 
 turn_count = 0
 worker = None
 attacker = None
+stop_watch = 0
 
 
 def init(game):

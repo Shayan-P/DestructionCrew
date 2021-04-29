@@ -156,14 +156,15 @@ class BaseAnt:
         return move
 
     def print_statistics(self):
-        print("I'm in ", self.get_now_pos_cell())
-        print("expected turn is ", self.grid.chat_box_reader.get_now_turn())
-        print("alived turn is ", Config.alive_turn)
-        print("prev startegy was", self.previous_strategy)
-        print("now we have", self.game.ant.currentResource.type, self.game.ant.currentResource.value)
-        print("we think opponent's base is in ", self.grid.expected_opponent_base())
-        print("Alive workers: ", self.grid.alive_worker_count())
-        print("Alive attackers: ", self.grid.alive_attacker_count())
+        pass
+        # print("I'm in ", self.get_now_pos_cell())
+        # print("expected turn is ", self.grid.chat_box_reader.get_now_turn())
+        # print("alived turn is ", Config.alive_turn)
+        # print("prev startegy was", self.previous_strategy)
+        # print("now we have", self.game.ant.currentResource.type, self.game.ant.currentResource.value)
+        # print("we think opponent's base is in ", self.grid.expected_opponent_base())
+        # print("Alive workers: ", self.grid.alive_worker_count())
+        # print("Alive attackers: ", self.grid.alive_attacker_count())
         # print("attacks: ")
         # for attack in self.game.ant.attacks:
         #     print(attack.attacker_row)
@@ -172,7 +173,7 @@ class BaseAnt:
         #     print(attack.defender_col)
         #     print(attack.is_attacker_enemy)
 
-        self.grid.print_all_we_know_from_map()
+        # self.grid.print_all_we_know_from_map()
 
     def get_now_pos_cell(self):
         return Cell(Config.now_x, Config.now_y)
