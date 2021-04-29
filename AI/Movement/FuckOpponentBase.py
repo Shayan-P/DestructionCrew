@@ -14,7 +14,7 @@ class FuckOpponentBase(MovementStrategy):
 		opponent_base = self.base_ant.grid.expected_opponent_base()
 		candid = None
 		escape = False
-		if self.grid.sure_opponent_base() and opponent_base.manhattan_distance(self.get_now_pos_cell()) <= 6:
+		if self.grid.sure_opponent_base() and 6 <= opponent_base.manhattan_distance(self.get_now_pos_cell()) <= 7:
 			escape = True
 
 		for cell in Grid.get_all_cells():
@@ -26,7 +26,7 @@ class FuckOpponentBase(MovementStrategy):
 		return candid
 	def get_direction(self):
 		us = max(1, len( self.base_ant.near_scorpions(0) ) )
-		if random() < (us // 2) / us:
+		if random() < (us // 3) / us:
 			return Direction.CENTER
 		return self.go_to(self.cell_near_opponent_base(), graph=self.grid.unknown_graph)
 
