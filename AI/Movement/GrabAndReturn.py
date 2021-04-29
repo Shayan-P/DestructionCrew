@@ -213,8 +213,6 @@ class GrabAndReturn(MovementStrategy):
             return 0.2, 0.8
         if alive_attackers >= 3 * alive_workers:
             return 0.7, 0.3
-        if Config.alive_turn <= 8:
-            return 0.7, 0.3
         g = (alive_workers * Config.ant_max_rec_amount) / visible_grass
         return 1-g, g
 
