@@ -145,6 +145,7 @@ class GrabAndReturn(MovementStrategy):
         self.best_cell = Choosing.soft_max_choose(candidates)
         self.prev_best_cell_value = self.base_ant.grid.get_cell_resource_value(self.best_cell)
         # print(self.grid.base_trap_graph.no_path(self.get_base_cell(), self.best_cell))
+        print("best cell is: ", self.best_cell)
         return self.best_cell
 
     def activate_resource(self, resource_type, graph):
@@ -176,7 +177,7 @@ class GrabAndReturn(MovementStrategy):
         # after this function distances are not right anymore!
 
     def go_to_base(self):
-        PATH = self.grid.trap_graph.get_shortest_path(self.get_now_pos_cell(), self.get_base_cell())
+        # PATH = self.grid.trap_graph.get_shortest_path(self.get_now_pos_cell(), self.get_base_cell())
         # print("we want to go back to base. path is: ")
         #for cell in PATH:
         #    print(cell, self.grid.trap_graph.get_vertex(cell).get_weight())
@@ -192,6 +193,7 @@ class GrabAndReturn(MovementStrategy):
     def bread_grass_coefficient(self):
         alive_workers = self.grid.alive_worker_count()
         alive_attackers = self.grid.alive_attacker_count()
+        print("alive workers/attackers are: ", alive_workers, alive_attackers)
         grasses_per_turn = 0
         breads_per_turn = 0
         visible_grass = 0

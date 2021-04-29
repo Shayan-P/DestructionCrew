@@ -31,8 +31,10 @@ class Worker(BaseAnt):
         if self.grid.chat_box_reader.get_now_turn() >= 30 and Config.alive_turn == 0 and random.random() <= 0.3:
             self.spy = True
             if random.random() <= 0.5:
+                print("sending deep safe explorer")
                 return DeepSafeExplore
             else:
+                print("sending alone spy")
                 return AloneSpy
         if self.spy:
             return self.previous_strategy
