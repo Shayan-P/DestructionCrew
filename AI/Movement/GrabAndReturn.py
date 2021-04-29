@@ -141,15 +141,15 @@ class GrabAndReturn(MovementStrategy):
         # print(self.grid.base_trap_graph.no_path(self.get_base_cell(), self.best_cell))
         return self.best_cell
 
-    def activate_resource(self, resource_type):
+    def activate_resource(self, resource_type, graph):
         for cell in Grid.get_all_cells():
             if self.grid.get_cell_resource_type(cell) == resource_type:
-                self.grid.unknown_graph.get_vertex(cell).activate()
+                graph.get_vertex(cell).activate()
 
-    def deactivate_resource(self, resource_type):
+    def deactivate_resource(self, resource_type, graph):
         for cell in Grid.get_all_cells():
             if self.grid.get_cell_resource_type(cell) == resource_type:
-                self.grid.unknown_graph.get_vertex(cell).deactivate()
+                graph.get_vertex(cell).deactivate()
 
     def go_grab_resource(self):
         now_cell = self.get_now_pos_cell()
@@ -159,13 +159,13 @@ class GrabAndReturn(MovementStrategy):
         next_cell = self.go_to(best_cell, graph=my_graph)
         if self.grid.get_cell_resource_value(best_cell) <= 0:
             return next_cell
-        distance = self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell)
+        distance = my_graph.get_shortest_distance(now_cell, best_cell)
         resource_type = self.grid.get_cell_resource_type(best_cell)
-        self.deactivate_resource(1 - resource_type)
-        self.grid.known_graph.precalculate_source(now_cell)
-        if self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell) <= distance:
+        self.deactivate_resource(1 - resource_type, graph=my_graph)
+        my_graph.precalculate_source(now_cell)
+        if my_graph.get_shortest_distance(now_cell, best_cell) <= distance:
             next_cell = self.go_to(best_cell, graph=my_graph)
-        self.activate_resource(1 - resource_type)
+        self.activate_resource(1 - resource_type, graph=my_graph)
         return next_cell
         # after this function distances are not right anymore!
 
