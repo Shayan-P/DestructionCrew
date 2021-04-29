@@ -5,13 +5,15 @@ import heapq
 
 
 class Vertex:
+    INF = 2**31
+
     def __init__(self, cell: Cell, w: int):
         self.cell = cell
         self.weight = w
         self.adjacent = []
         # Set distance to infinity for all nodes
         # this type of infinity can cause problem
-        self.distance = 2**31
+        self.distance = Vertex.INF
         # Mark all nodes unvisited
         self.visited = False
         # Predecessor
@@ -23,7 +25,7 @@ class Vertex:
 
     def prepare(self):
         # change this
-        self.distance = 2**31
+        self.distance = Vertex.INF
         self.visited = False
         self.previous = None
 

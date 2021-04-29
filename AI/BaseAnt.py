@@ -35,7 +35,7 @@ class BaseAnt:
         NotImplementedError
 
     def get_move(self):
-        if  self.previous_strategy_object is not None:
+        if self.previous_strategy_object is not None:
             self.previous_strategy_object.pre_calc()
         self.pre_move()
 
@@ -116,6 +116,7 @@ class BaseAnt:
                                                    update_chat_box=True, is_from_chat_box=False)
 
         if Config.alive_turn % Config.PingRate == 0:
+            print(f"printing alive turn {Config.alive_turn}, id: {self.random_id}")
             self.grid.update_with_news(ImAlive(
                 is_worker=self.game.antType == Model.AntType.KARGAR.value, ant_id=self.random_id),
                 update_chat_box=True, is_from_chat_box=False)

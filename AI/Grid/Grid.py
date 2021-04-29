@@ -72,7 +72,8 @@ class Grid:
         self.scorpion_fear = scorpion_fear
 
     def update_with_news(self, base_news: BaseNews, is_from_chat_box=True, update_chat_box=False):
-        base_news.turn = self.chat_box_reader.get_now_turn()
+        if not is_from_chat_box:
+            base_news.turn = self.chat_box_reader.get_now_turn()
         # print(type(base_news))
         if type(base_news) == ImAlive:
             see_alive_ant(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
@@ -82,13 +83,13 @@ class Grid:
             see_cell(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
         if type(base_news) == ViewOppBase:
             view_opp_base(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
-        if type(base_news) == ViewScorpion:
+        if type(base_news) == ViewScorpion and self.chat_box_reader.get_now_turn() - base_news.turn < 15:
             view_scorpion(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
         if type(base_news) == ViewResource:
             see_resource(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
-        if type(base_news) is FightZone:
+        if type(base_news) is FightZone and self.chat_box_reader.get_now_turn() - base_news.turn < 15:
             view_fight(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
-        if type(base_news) is SafeDangerCell:
+        if type(base_news) is SafeDangerCell and self.chat_box_reader.get_now_turn() - base_news.turn < 15:
             view_safe_danger_cell(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
         # add other types of messages todo
 
