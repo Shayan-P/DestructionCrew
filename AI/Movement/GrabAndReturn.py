@@ -84,7 +84,11 @@ class GrabAndReturn(MovementStrategy):
 
             print("importance bread/grass is: ", self.bread_importance(), self.grass_importance())
             print("CANDIDATE: ", cell, score, distance)
-
+            print("no path and distance: ",
+                  self.grid.known_graph.no_path(current_position, cell),
+                  self.grid.known_graph.get_shortest_distance(current_position, cell),
+                  self.grid.unknown_graph.no_path(current_position, cell),
+                  self.grid.unknown_graph.get_shortest_distance(current_position, cell))
             if cell == self.best_cell:
                 score += self.best_cell_importance()
                 # change this todo
