@@ -1,3 +1,6 @@
+import time
+
+
 class Config:
 	ant_type = -1
 	map_width = -1
@@ -63,3 +66,11 @@ class Config:
 						  linear(160, 210, 10) + linear(210, 270, 10) + linear(270, 340, 10) + \
 						  linear(340, 500, 50) + linear(500, 800, 120) + linear(800, 1000, 100)
 		return limit_grass_arr[turn]
+
+	start_time = 0
+
+	@staticmethod
+	def how_much_time():
+		return time.time() - Config.start_time
+
+	CHAT_BOX_LISTENING_TL = 0.8

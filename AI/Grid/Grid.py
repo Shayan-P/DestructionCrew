@@ -47,6 +47,7 @@ class Grid:
         self.chat_box_reader: ChatBoxReader = ChatBoxReader()
 
         self.opponent_base_reports = []  # there is no function to return this. and it's type is ModelCell
+        self.not_listened_chat_box = []
 
         self.alive_worker_reports = {}
         self.alive_attacker_reports = {}
@@ -94,17 +95,18 @@ class Grid:
         # add other types of messages todo
 
     def listen_to_chat_box(self):
-        for news in self.chat_box_reader.get_latest_news(ViewCell):
+        self.not_listened_chat_box += self.chat_box_reader.get_latest_news_all_types()
+        self.not_listened_chat_box.sort(key=lambda e: e.get_priority())
+        while len(self.not_listened_chat_box) and Config.how_much_time() < Config.CHAT_BOX_LISTENING_TL:
+            news = self.not_listened_chat_box.pop()
             self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
-        for _news_type in BaseNews.__subclasses__():
-            for news in self.chat_box_reader.get_latest_news(_news_type):
-                self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
-
-    def prepare_graph_vertex(self, graph, cell, extra_add=0, danger_cof=1):
-        swamp_cof = Config.swamp_stay if self.is_swamp(cell) else 1
-        graph.change_vertex_weight(cell, (Grid.initial_vertex_weight + danger_cof * self.total_danger[cell.x][cell.y] + extra_add) * swamp_cof)
 
     def pre_calculations(self, now: Cell):
+        def prepare_graph_vertex(graph, cell, extra_add=0, danger_cof=1):
+            swamp_cof = Config.swamp_stay if self.is_swamp(cell) else 1
+            graph.change_vertex_weight(cell, (Grid.initial_vertex_weight + danger_cof * self.total_danger[cell.x][
+                cell.y] + extra_add) * swamp_cof)
+
         expected_base = self.expected_opponent_base()
         for cell in Grid.get_all_cells():
             base_danger = 0
@@ -120,15 +122,15 @@ class Grid:
             self.total_danger[cell.x][cell.y] = (self.opponent_base_fear * base_danger +
                                                  self.scorpion_fear * self.scorpion_danger[cell.x][cell.y] +
                                                  self.fight_fear * self.fight[cell.x][cell.y])
-            self.prepare_graph_vertex(self.known_graph, cell)
+            prepare_graph_vertex(self.known_graph, cell)
             hate_cof = 0 if self.is_unknown(cell) else self.hate_known
-            self.prepare_graph_vertex(self.unknown_graph, cell, extra_add=hate_cof)
-            self.prepare_graph_vertex(self.simple_graph, cell, danger_cof=0)
+            prepare_graph_vertex(self.unknown_graph, cell, extra_add=hate_cof)
+            prepare_graph_vertex(self.simple_graph, cell, danger_cof=0)
             if self.is_trap(cell):
-                self.prepare_graph_vertex(self.trap_graph, cell, extra_add=Config.map_width + Config.map_height)
+                prepare_graph_vertex(self.trap_graph, cell, extra_add=Config.map_width + Config.map_height)
             else:
-                self.prepare_graph_vertex(self.trap_graph, cell, extra_add=0)
-            self.prepare_graph_vertex(self.base_trap_graph, cell, extra_add=0)
+                prepare_graph_vertex(self.trap_graph, cell, extra_add=0)
+            prepare_graph_vertex(self.base_trap_graph, cell, extra_add=0)
             # bias this dangers todo
         self.unknown_graph.precalculate_source(now)
         self.known_graph.precalculate_source(now)
