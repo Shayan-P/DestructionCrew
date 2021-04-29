@@ -73,4 +73,6 @@ class Config:
 	def how_much_time():
 		return time.time() - Config.start_time
 
-	CHAT_BOX_LISTENING_TL = 0.8
+	CHAT_BOX_LISTENING_TL = 0.6
+	EXTRA_TIME_TL = 0.85
+

@@ -6,6 +6,7 @@ from .Worker import Worker
 from AI.Config import Config
 from Utils import logger
 from settings import DEBUG, HAS_SLEEP
+from AI.BaseAnt import BaseAnt
 
 # just remove this and everything will be printed in console
 
@@ -36,7 +37,7 @@ class AI:
 		if turn_count == 0:
 			init(self.game)
 		turn_count += 1  # store the turns
-		ant = get_ant(self.game.antType)
+		ant: BaseAnt = get_ant(self.game.antType)
 		ant.game = self.game
 		self.direction = ant.get_move()
 		self.message, self.value = ant.get_message_and_priority()
@@ -45,8 +46,9 @@ class AI:
 
 		# this is for server failiure in fast games!
 		if HAS_SLEEP:
-			time.sleep(0.1)
+			time.sleep(0.01)
 
+		ant.use_extra_time()
 		print("turn: ", turn_count, f"took us {Config.how_much_time()} seconds")
 		return self.message, self.value, self.direction.value
 

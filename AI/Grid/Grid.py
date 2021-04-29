@@ -94,10 +94,10 @@ class Grid:
             view_safe_danger_cell(self, base_news, is_from_chat_box=is_from_chat_box, update_chat_box=update_chat_box)
         # add other types of messages todo
 
-    def listen_to_chat_box(self):
+    def listen_to_chat_box(self, time_limit=Config.CHAT_BOX_LISTENING_TL):
         self.not_listened_chat_box += self.chat_box_reader.get_latest_news_all_types()
         self.not_listened_chat_box.sort(key=lambda e: e.get_priority())
-        while len(self.not_listened_chat_box) and Config.how_much_time() < Config.CHAT_BOX_LISTENING_TL:
+        while len(self.not_listened_chat_box) and Config.how_much_time() < time_limit:
             news = self.not_listened_chat_box.pop()
             self.update_with_news(news, update_chat_box=False, is_from_chat_box=True)
 

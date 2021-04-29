@@ -50,6 +50,9 @@ class BaseAnt:
         self.after_move()
         return ret
 
+    def use_extra_time(self):
+        self.grid.listen_to_chat_box(Config.EXTRA_TIME_TL)
+
     def pre_move(self):
         if self.previous_health is None:
             self.previous_health = self.game.ant.health
