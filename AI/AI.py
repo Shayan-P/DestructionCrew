@@ -43,7 +43,7 @@ class AI:
 
 		# this is for server failiure in fast games!
 		if HAS_SLEEP:
-			time.sleep(0.01)
+			time.sleep(0.1)
 
 		return self.message, self.value, self.direction.value
 

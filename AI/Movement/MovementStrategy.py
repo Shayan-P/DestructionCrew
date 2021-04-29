@@ -27,6 +27,7 @@ class MovementStrategy:
         if not graph.no_path(self.get_now_pos_cell(), destination):
             path = graph.get_shortest_path(self.get_now_pos_cell(), destination)
             return self.get_first_step_direction(path)
+        return self.get_first_step_direction([self.get_now_pos_cell()])
 
     def get_first_step_direction(self, path):
         assert path[0] == self.get_now_pos_cell()

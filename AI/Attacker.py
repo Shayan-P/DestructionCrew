@@ -4,7 +4,7 @@ from .BaseAnt import BaseAnt
 from .Grid import Cell, Grid
 from .Movement import Explore, Follower, Defender, GrabAndReturn, GoCamp, FuckOpponentBase
 from .ChatBox import Gathering
-from random import randint
+from random import randint, random
 from AI.Config import Config
 from typing import Optional
 
@@ -12,6 +12,14 @@ class Attacker(BaseAnt):
     def __init__(self, game):
         super(Attacker, self).__init__(game)
         self.movement = Defender(self)
+
+    def spread_filter(self, move):
+        us = len(self.near_scorpions(0))
+        if us == 1:
+            return move
+        if random() < 0.25:
+            return Model.Direction.CENTER
+        return move
 
     def get_gathered_filter(self, move):
         gathering_best_new: Optional[Gathering] = None
@@ -35,6 +43,7 @@ class Attacker(BaseAnt):
         print("we meet at (", gathering_best_new.get_cell().x,",", gathering_best_new.get_cell().y, ")")
         path = self.grid.known_graph.get_shortest_path(self.get_now_pos_cell(), Cell.from_model_cell(gathering_best_new.get_cell()))
 
+        self.previous_strategy_object.stay = self.previous_strategy_object.max_stay
         self.meeting_cool_down = BaseAnt.meet_default_cool_down
 
         if len(path) == 1:
@@ -44,12 +53,12 @@ class Attacker(BaseAnt):
     def get_move(self):
         ret = super(Attacker, self).get_move()
         if self.previous_strategy is FuckOpponentBase:
-            return ret
+            return self.spread_filter(ret)
         elif self.previous_strategy is Explore:
             return self.escape_from_great_danger_filter(ret)
-        else:
+        elif self.previous_strategy is GoCamp:
             return self.escape_from_great_danger_filter(self.get_gathered_filter(ret))
-
+        return ret
     def near_scorpions(self, distance):
         return list(filter(
              lambda e: e.antTeam == Model.AntTeam.ALLIED.value and e.antType == Model.AntType.SARBAAZ.value,
