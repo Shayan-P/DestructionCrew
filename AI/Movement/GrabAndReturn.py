@@ -77,7 +77,11 @@ class GrabAndReturn(MovementStrategy):
             score -= self.distance_importance() * distance
             # this should be base distance! todo
 
-            print("CANDIDATE: ", cell, score, distance, self.grid.unknown_graph.get_shortest_distance(current_position, cell), self.grid.known_graph.get_shortest_distance(current_position, cell), "EXP", self.expected_workers(), self.grid.get_cell_resource_value(cell))
+            print("CANDIDATE: ",
+                  cell, score, distance,
+                  "init score is", min(self.expected_workers() * Config.ant_max_rec_amount,
+                  self.grid.get_cell_resource_value(cell)) * self.bread_importance(),
+                  "final score is", score)
 
             if cell == self.best_cell:
                 score += self.best_cell_importance()
