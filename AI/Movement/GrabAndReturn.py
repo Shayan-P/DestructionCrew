@@ -15,6 +15,7 @@ class GrabAndReturn(MovementStrategy):
         self.best_cell = None
         self.prev_best_cell_value = None
 
+    @once_per_turn
     def get_direction(self):
         # print("We are choosing direction. we have resource: ", self.base_ant.game.ant.currentResource.value)
         # shayad bad nabashe ye vaghta tama kone bishtar biare
@@ -28,6 +29,7 @@ class GrabAndReturn(MovementStrategy):
             return self.go_to_base()
         return self.go_grab_resource()
 
+    @once_per_turn
     def get_scores(self):
         # what if candidates are empty todo
         my_resource = self.base_ant.game.ant.currentResource
@@ -91,6 +93,7 @@ class GrabAndReturn(MovementStrategy):
             candidates[cell] = score
         return candidates
 
+    @once_per_turn
     def has_close_resource(self):
         my_resource = self.base_ant.game.ant.currentResource
         current_position = self.get_now_pos_cell()
@@ -115,6 +118,7 @@ class GrabAndReturn(MovementStrategy):
                 return True
         return False
 
+    @once_per_turn
     def is_not_good(self):
         if self.base_ant.game.ant.currentResource.value > 0:
             return False
@@ -125,6 +129,7 @@ class GrabAndReturn(MovementStrategy):
         # other stuff todo
         return False
 
+    @once_per_turn
     def is_really_good(self):
         # print("RUNNING IS REALLY GOOD")
         candidates = self.get_scores()
@@ -133,6 +138,7 @@ class GrabAndReturn(MovementStrategy):
         return True
     # change this todo
 
+    @once_per_turn
     def get_best_cell(self):
         candidates = self.get_scores()
         # print("candids for grabbing are: ", "\n".join([f"{x}: {candidates[x]}" for x in candidates]))
@@ -182,6 +188,7 @@ class GrabAndReturn(MovementStrategy):
     def distance_importance(self):
         return 20
 
+    @once_per_turn
     def bread_grass_coefficient(self):
         alive_workers = self.grid.alive_worker_count()
         alive_attackers = self.grid.alive_attacker_count()

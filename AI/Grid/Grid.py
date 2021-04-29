@@ -8,6 +8,7 @@ from AI.ChatBox import BaseNews, ViewCell, ViewOppBase, ViewScorpion, ViewResour
 from .sync_information import see_cell, view_opp_base, view_scorpion, see_resource, view_fight, view_safe_danger_cell, see_alive_ant
 from AI.Config import Config
 from AI.ChatBox import ChatBoxWriter, ChatBoxReader
+from Utils.decorators import once_per_turn
 
 
 class Grid:
@@ -45,7 +46,6 @@ class Grid:
         self.chat_box_writer: ChatBoxWriter = ChatBoxWriter()
         self.chat_box_reader: ChatBoxReader = ChatBoxReader()
 
-        self.saved_expected_opponent_base = None
         self.opponent_base_reports = []  # there is no function to return this. and it's type is ModelCell
 
         self.alive_worker_reports = {}
@@ -105,8 +105,6 @@ class Grid:
         graph.change_vertex_weight(cell, (Grid.initial_vertex_weight + danger_cof * self.total_danger[cell.x][cell.y] + extra_add) * swamp_cof)
 
     def pre_calculations(self, now: Cell):
-        self.saved_expected_opponent_base = self.calculate_expected_opponent_base()
-
         expected_base = self.expected_opponent_base()
         for cell in Grid.get_all_cells():
             base_danger = 0
@@ -234,10 +232,8 @@ class Grid:
             return self.known_graph.get_shortest_distance(cell_start, cell_end)
         return 1000
 
+    @once_per_turn
     def expected_opponent_base(self):
-        return self.saved_expected_opponent_base
-
-    def calculate_expected_opponent_base(self):
         if len(self.opponent_base_reports) > 0:
             assert len(self.opponent_base_reports) == 1
             return self.opponent_base_reports[0]
