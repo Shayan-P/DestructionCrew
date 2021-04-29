@@ -4,5 +4,6 @@ from .Explore import Explore
 from .Defender import Defender
 from .GoCamp import GoCamp
 from .FuckOpponentBase import FuckOpponentBase
+from .GetNearOppBase import GetNearOpponentBase
 from .DeepSafeExplore import DeepSafeExplore
 from .AloneSpy import AloneSpy
