@@ -114,11 +114,6 @@ class Grid:
             if self.sure_opponent_base():
                 if dis <= Config.base_range:
                     base_danger = Grid.infinity_danger
-            else:
-                if dis <= Config.base_range + 2:
-                    base_danger += 120 - dis * 8
-                elif dis <= Config.base_range + 5:
-                    base_danger += 88 - dis * 8
             self.total_danger[cell.x][cell.y] = (self.opponent_base_fear * base_danger +
                                                  self.scorpion_fear * self.scorpion_danger[cell.x][cell.y] +
                                                  self.fight_fear * self.fight[cell.x][cell.y])
