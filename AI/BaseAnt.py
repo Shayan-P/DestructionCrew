@@ -150,6 +150,7 @@ class BaseAnt:
         return move
 
     def print_statistics(self):
+        pass
         # print("I'm in ", self.get_now_pos_cell())
         # print("expected turn is ", self.grid.chat_box_reader.get_now_turn())
         # print("alived turn is ", Config.alive_turn)
