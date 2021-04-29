@@ -214,6 +214,7 @@ class GrabAndReturn(MovementStrategy):
         if alive_attackers >= 3 * alive_workers:
             return 0.7, 0.3
         g = (alive_workers * Config.ant_max_rec_amount) / visible_grass
+        print("we like grass: ", 1-g, "we like bread: ", g)
         return 1-g, g
 
     def grass_importance(self):
