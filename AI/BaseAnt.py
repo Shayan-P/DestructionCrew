@@ -27,7 +27,8 @@ class BaseAnt:
         self.total_grass_picked = 0
         self.random_id = randrange(0, 127)
         self.meeting_cool_down = BaseAnt.meet_default_cool_down
-
+        self.age = 0
+        
     def get_message_and_priority(self):
         return self.grid.chat_box_writer.flush(), self.grid.chat_box_writer.get_priority()
 
@@ -35,9 +36,10 @@ class BaseAnt:
         NotImplementedError
 
     def get_move(self):
-        if self.previous_strategy_object is not None:
-            self.previous_strategy_object.pre_calc()
         self.pre_move()
+
+        if self.age == 0:
+            self.age = 255 - self.grid.chat_box_reader.get_now_turn()
 
         strategy = self.choose_best_strategy()
 
@@ -75,9 +77,6 @@ class BaseAnt:
         self.print_statistics()
 
     def after_move(self):
-        if self.previous_strategy_object is not None:
-            self.previous_strategy_object.report_gathering()
-
         self.update_resource_history()
         self.previous_health = self.game.ant.health
         self.previous_cell = self.get_now_pos_cell()

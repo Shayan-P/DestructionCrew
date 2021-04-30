@@ -6,8 +6,8 @@ from Model import Cell as ModelCell
 from random import randint
 
 
-class Gathering(BaseNews):
-	huffman_prefix = "0011"
+class Party(BaseNews):
+	huffman_prefix = "00011"
 
 	priority_size = 10
 	def __init__(self, cell: ModelCell, age, ant_id):
@@ -19,13 +19,13 @@ class Gathering(BaseNews):
 		return self.cell
 
 	def __str__(self):
-		return f"meet({self.cell.x}, {self.cell.y})"
+		return f"party({self.cell.x}, {self.cell.y})"
 
 	def message_size(self) -> int:
-		return len(self.huffman_prefix) + 12 + 16 # prefix (x, y) priority expired
+		return len(self.huffman_prefix) + 12 + 16 # prefix (x, y) priority
 
 	def get_priority(self):
-		return self.priority * 2
+		return self.priority
 
 	def encode(self, writer: Writer):
 		# print("ENCODING ", self.cell.x, self.cell.y)
@@ -40,7 +40,7 @@ class Gathering(BaseNews):
 		y = reader.read(6)
 		priority = reader.read(16)
 		cell = ModelCell(x, y, None, None, None)
-		return Gathering(cell, priority // 256, priority % 256)
+		return Party(cell, priority // 256, priority % 256)
 
 
 """

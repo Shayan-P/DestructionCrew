@@ -2,7 +2,7 @@ import Model
 
 from .BaseAnt import BaseAnt
 from .Grid import Cell, Grid
-from .Movement import Explore, Follower, AloneSpy, Defender, GrabAndReturn, GoCamp, FuckOpponentBase, GetNearOpponentBase
+from .Movement import Explore, Follower, AloneSpy, Defender, GrabAndReturn, GoCamp, FuckOpponentBase, HardCoreRush
 from .ChatBox import Gathering
 from random import randint, random
 from AI.Config import Config
@@ -20,35 +20,6 @@ class Attacker(BaseAnt):
             return Model.Direction.CENTER
         return move
 
-    def get_gathered_filter(self, move):
-        gathering_best_new: Optional[Gathering] = None
-        for news in self.grid.chat_box_reader.get_all_news(Gathering):
-            dis = self.grid.known_graph.get_shortest_distance(self.get_now_pos_cell(), Cell.from_model_cell(news.get_cell()))
-            if dis is None:
-                continue
-
-            reaching_time = self.grid.chat_box_reader.get_now_turn() + dis
-            if(reaching_time > news.turn + news.life_time):
-                continue
-
-            if (gathering_best_new is None) or (gathering_best_new.priority < news.get_new_priority()):
-                gathering_best_new = news
-
-        if gathering_best_new is None:
-            return move
-
-        # print("Finally a gathering !")
-        # print("at turn", self.grid.chat_box_reader.get_now_turn())
-        # print("we meet at (", gathering_best_new.get_cell().x,",", gathering_best_new.get_cell().y, ")")
-        path = self.grid.known_graph.get_shortest_path(self.get_now_pos_cell(), Cell.from_model_cell(gathering_best_new.get_cell()))
-
-        self.previous_strategy_object.stay = self.previous_strategy_object.max_stay
-        self.meeting_cool_down = BaseAnt.meet_default_cool_down
-
-        if len(path) == 1:
-            return path[0].direction_to(path[0])
-        return path[0].direction_to(path[1])
-
     def get_move(self):
         ret = super(Attacker, self).get_move()
         if self.previous_strategy is FuckOpponentBase:
@@ -56,8 +27,9 @@ class Attacker(BaseAnt):
         elif self.previous_strategy is Explore:
             return self.escape_from_great_danger_filter(ret)
         elif self.previous_strategy is GoCamp:
-            return self.escape_from_great_danger_filter(self.get_gathered_filter(ret))
+            return ret
         return ret
+
     def near_scorpions(self, distance):
         return list(filter(
              lambda e: e.antTeam == Model.AntTeam.ALLIED.value and e.antType == Model.AntType.SARBAAZ.value,
@@ -65,33 +37,42 @@ class Attacker(BaseAnt):
         ))
 
     def choose_best_strategy(self):
-        if not self.grid.sure_opponent_base():
+        start_spy = Config.start_spy
+        spy_prod_rate = Config.spy_prod_rate
+        start_rush = Config.start_rush
+
+        if (not self.grid.sure_opponent_base()) and (start_spy <= self.grid.chat_box_reader.get_now_turn()):
             if self.previous_strategy is AloneSpy:
                 return AloneSpy
-            if Config.alive_turn == 1 and random() < 0.06:
+            if ((Config.alive_turn == 1) or self.grid.chat_box_reader.get_now_turn() == start_spy) and (random() < spy_prod_rate):
                 return AloneSpy
 
-        if self.previous_strategy is GetNearOpponentBase:
-            return GetNearOpponentBase
-        if (self.previous_strategy is FuckOpponentBase) and (self.grid.sure_opponent_base()) and (len(self.near_scorpions(2)) >= 3):
-            return GetNearOpponentBase
+        # if self.previous_strategy is GetNearOpponentBase:
+        #     return GetNearOpponentBase
+        # if (self.previous_strategy is FuckOpponentBase) and (self.grid.sure_opponent_base()) and (len(self.near_scorpions(2)) >= 3):
+        #     return GetNearOpponentBase
+        if (self.grid.sure_opponent_base()) and (self.grid.chat_box_reader.get_now_turn() >= start_rush):
+            return HardCoreRush
 
-        if self.grid.sure_opponent_base() and self.get_now_pos_cell().manhattan_distance(self.grid.expected_opponent_base()) <= Config.base_range:
-            return FuckOpponentBase
-        if self.grid.chat_box_reader.get_now_turn() >= 100: # change this if. to something like if map is partially known... todo
-            if len(self.near_scorpions(1)) >= 7: # change this todo
-                return FuckOpponentBase
-        if self.previous_strategy is FuckOpponentBase:
-            return FuckOpponentBase
-        if self.grid.chat_box_reader.get_now_turn() >= 165:  # change this! todo
-            return FuckOpponentBase
-        if self.grid.chat_box_reader.get_now_turn() >= 150 and self.grid.sure_opponent_base():
-            return FuckOpponentBase
+        # if self.grid.sure_opponent_base() and self.get_now_pos_cell().manhattan_distance(self.grid.expected_opponent_base()) <= Config.base_range:
+        #     return FuckOpponentBase
+        # if self.grid.chat_box_reader.get_now_turn() >= 100: # change this if. to something like if map is partially known... todo
+        #     if len(self.near_scorpions(1)) >= 7: # change this todo
+        #         return FuckOpponentBase
+        # if self.previous_strategy is FuckOpponentBase:
+        #     return FuckOpponentBase
+        # if self.grid.chat_box_reader.get_now_turn() >= 165:  # change this! todo
+        #     return FuckOpponentBase
+        # if self.grid.chat_box_reader.get_now_turn() >= 150 and self.grid.sure_opponent_base():
+        #     return FuckOpponentBase
         # if there are a little unknown cells stop exploring todo
         # return GoCamp
         if self.previous_strategy is None:
-            self.previous_strategy = Explore
-            self.previous_strategy_object = Explore(self)
+            if GoCamp(self).is_not_good():
+                self.previous_strategy = Explore
+            else:
+                self.previous_strategy = GoCamp
+            self.previous_strategy_object = self.previous_strategy(self)
 
         # # momkene ye chiz kam dastet bashe baad be khatere oon natooni chizi bardari. todo fix this
         if self.previous_strategy is GoCamp:

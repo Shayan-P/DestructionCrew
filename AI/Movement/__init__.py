@@ -7,3 +7,4 @@ from .FuckOpponentBase import FuckOpponentBase
 from .GetNearOppBase import GetNearOpponentBase
 from .DeepSafeExplore import DeepSafeExplore
 from .AloneSpy import AloneSpy
+from .HardCoreRush import HardCoreRush

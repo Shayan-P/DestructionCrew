@@ -8,3 +8,4 @@ from .ImAlive import ImAlive
 from .SafeDangerCell import SafeDangerCell
 from .Gathering import Gathering
 from .BaseNews import BaseNews
+from .Party import Party
