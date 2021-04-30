@@ -7,6 +7,7 @@ from AI.BaseAnt import BaseAnt, Config
 from AI import Choosing
 from Utils.decorators import once_per_turn
 from copy import deepcopy
+from math import log
 
 
 class GrabAndReturn(MovementStrategy):
@@ -19,7 +20,7 @@ class GrabAndReturn(MovementStrategy):
     def get_direction(self):
         # print("We are choosing direction. we have resource: ", self.base_ant.game.ant.currentResource.value)
         # shayad bad nabashe ye vaghta tama kone bishtar biare
-        if Cell(self.base_ant.game.baseX, self.base_ant.game.baseY) == self.base_ant.get_now_pos_cell():
+        if self.base_ant.get_base_cell() == self.base_ant.get_now_pos_cell():
             self.best_cell = None
 
         # todo: shayad hamoon 0.5 kafi bashe ke bargardim!
@@ -49,8 +50,6 @@ class GrabAndReturn(MovementStrategy):
 
         # also forget it if someone has grabbed it beforehand. is it good? todo
 
-        print("prev best cell is: ", self.best_cell)
-
         current_position = self.get_now_pos_cell()
         candidates = {}
         for cell in Grid.get_all_cells():
@@ -65,36 +64,36 @@ class GrabAndReturn(MovementStrategy):
             if my_resource.value > 0 and my_resource.type != self.grid.get_cell_resource_type(cell):
                 continue
             score = 0
-            if (my_resource.value <= 0 or my_resource.type == ResourceType.GRASS.value) and \
-                    self.grid.get_cell_resource_type(cell) == ResourceType.GRASS.value:
-                score = min(self.grid.alive_worker_count() * Config.ant_max_rec_amount,
-                            self.grid.get_cell_resource_value(cell)) * self.grass_importance()
-            if (my_resource.value <= 0 or my_resource.type == ResourceType.BREAD.value) and \
-                    self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
-                score = min(self.grid.alive_worker_count() * Config.ant_max_rec_amount,
-                            self.grid.get_cell_resource_value(cell)) * self.bread_importance()
             if self.grid.known_graph.no_path(current_position, cell):
                 distance = self.grid.unknown_graph.get_shortest_distance(current_position, cell)
             else:
                 distance = self.grid.known_graph.get_shortest_distance(current_position, cell)
+            base_distance = self.grid.base_trap_graph.get_shortest_distance(self.get_base_cell(), cell)
+            if (my_resource.value <= 0 or my_resource.type == ResourceType.GRASS.value) and \
+                    self.grid.get_cell_resource_type(cell) == ResourceType.GRASS.value:
+                score = log(min(self.grid.alive_worker_count() * Config.ant_max_rec_amount,
+                            self.grid.get_cell_resource_value(cell)) / (2 * distance)) * self.grass_importance()
+            if (my_resource.value <= 0 or my_resource.type == ResourceType.BREAD.value) and \
+                    self.grid.get_cell_resource_type(cell) == ResourceType.BREAD.value:
+                score = log(min(self.grid.alive_worker_count() * Config.ant_max_rec_amount,
+                            self.grid.get_cell_resource_value(cell)) / (2 * distance)) * self.bread_importance()
             # change this todo
             # print("semi score is", score)
-            score -= self.distance_importance() * distance
             # this should be base distance! todo
 
-            print("importance bread/grass is: ", self.bread_importance(), self.grass_importance())
-            print("CANDIDATE: ", cell, score, distance)
-            print("no path and distance: ",
-                  self.grid.known_graph.no_path(current_position, cell),
-                  self.grid.known_graph.get_shortest_distance(current_position, cell),
-                  self.grid.unknown_graph.no_path(current_position, cell),
-                  self.grid.unknown_graph.get_shortest_distance(current_position, cell))
+            # print("importance bread/grass is: ", self.bread_importance(), self.grass_importance())
+            # print("CANDIDATE: ", cell, score, distance)
+            # print("no path and distance: ",
+            #       self.grid.known_graph.no_path(current_position, cell),
+            #       self.grid.known_graph.get_shortest_distance(current_position, cell),
+            #       self.grid.unknown_graph.no_path(current_position, cell),
+            #       self.grid.unknown_graph.get_shortest_distance(current_position, cell))
             if cell == self.best_cell:
                 score += self.best_cell_importance()
                 # change this todo
             # boro be samti ke expected score et max she todo
             # ba in taabee momken nist dore khodemoon bekharkhim?
-            print("final score: ", score)
+            # print("final score: ", score)
             candidates[cell] = score
         return candidates
 
@@ -128,7 +127,9 @@ class GrabAndReturn(MovementStrategy):
         if self.base_ant.game.ant.currentResource.value > 0:
             return False
         candidates = self.get_scores()
-        # print("there is not any resource near here so we are changing strategy!")
+        my_resource = self.base_ant.game.ant.currentResource
+        if my_resource.value > 0 and self.base_ant.grid.base_trap_graph.no_path(self.get_base_cell(), self.get_now_pos_cell()):
+            return True
         if len(candidates) == 0:
             return True
         # other stuff todo
@@ -136,14 +137,16 @@ class GrabAndReturn(MovementStrategy):
 
     @once_per_turn
     def is_really_good(self):
-        # print("RUNNING IS REALLY GOOD")
         candidates = self.get_scores()
         if len(candidates) == 0:
             return False
+        my_resource = self.base_ant.game.ant.currentResource
+        if my_resource.value > 0 and self.base_ant.grid.base_trap_graph.no_path(self.get_base_cell(), self.get_now_pos_cell()):
+            return False
+        if self.has_close_resource():
+            return True
         return True
-    # change this todo
 
-    @once_per_turn
     def get_best_cell(self):
         candidates = self.get_scores()
         # print("candids for grabbing are: ", "\n".join([f"{x}: {candidates[x]}" for x in candidates]))
@@ -166,18 +169,18 @@ class GrabAndReturn(MovementStrategy):
     def go_grab_resource(self):
         now_cell = self.get_now_pos_cell()
         best_cell: Cell = self.get_best_cell()
+        print("after setting", self.best_cell)
         my_resource = self.base_ant.game.ant.currentResource
-        my_graph = self.grid.trap_graph if my_resource.value > 0 else self.grid.unknown_graph
-        next_cell = self.go_to(best_cell, graph=my_graph)
-        # if self.grid.get_cell_resource_value(best_cell) <= 0:
-        #     return next_cell
-        # distance = self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell)
-        # resource_type = self.grid.get_cell_resource_type(best_cell)
-        # self.deactivate_resource(1 - resource_type)
-        # self.grid.known_graph.precalculate_source(now_cell)
-        # if self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell) <= distance:
-        #     next_cell = self.go_to(best_cell, graph=my_graph)
-        # self.activate_resource(1 - resource_type)
+        if my_resource.value > 0:
+            return self.go_to(best_cell, graph=self.grid.trap_graph)
+        next_cell = self.go_to(best_cell, graph=self.grid.unknown_graph)
+        distance = self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell)
+        resource_type = self.grid.get_cell_resource_type(best_cell)
+        self.deactivate_resource(1 - resource_type, graph=self.grid.unknown_graph)
+        self.grid.unknown_graph.precalculate_source(now_cell)
+        if self.grid.unknown_graph.get_shortest_distance(now_cell, best_cell) <= distance:
+            next_cell = self.go_to(best_cell, graph=self.grid.unknown_graph)
+        self.activate_resource(1 - resource_type, graph=self.grid.unknown_graph)
         return next_cell
         # after this function distances are not right anymore!
 
@@ -199,21 +202,15 @@ class GrabAndReturn(MovementStrategy):
         alive_workers = self.grid.alive_worker_count()
         alive_attackers = self.grid.alive_attacker_count()
         print("alive workers/attackers are: ", alive_workers, alive_attackers)
-        grasses_per_turn = 0
-        breads_per_turn = 0
         visible_grass = 0
         for cell in Grid.get_all_cells():
             if self.grid.unknown_graph.no_path(self.get_now_pos_cell(), cell):
                 continue
             if self.grid.base_trap_graph.no_path(self.get_base_cell(), cell):
                 continue
-            dist = cell.manhattan_distance(self.get_base_cell())
             if self.grid.get_cell_resource_type(cell) == Model.ResourceType.GRASS.value:
                 val = self.grid.get_cell_resource_value(cell)
                 visible_grass += val
-                grasses_per_turn += val / (2 * dist)
-            elif self.grid.get_cell_resource_type(cell) == Model.ResourceType.BREAD.value:
-                breads_per_turn += self.grid.get_cell_resource_value(cell) / (2 * dist)
         if alive_workers * Config.ant_max_rec_amount >= visible_grass:
             return 0.2, 0.8
         if alive_workers >= 15:
@@ -229,7 +226,6 @@ class GrabAndReturn(MovementStrategy):
 
     def bread_importance(self):
         return self.bread_grass_coefficient()[0] * 4.5
-    # this *3 is for compatibility with previous code
 
     def change_grid_coffs(self):
-        self.grid.set_coffs(hate_known=3, opponent_base_fear=5)
+        self.grid.set_coffs(hate_known=0, opponent_base_fear=5)

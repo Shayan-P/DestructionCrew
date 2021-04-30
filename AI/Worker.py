@@ -8,7 +8,6 @@ from AI.Config import Config
 class Worker(BaseAnt):
     def __init__(self, game):
         super(Worker, self).__init__(game)
-        self.movement = GrabAndReturn(self)
         self.spy = False
 
     def get_move(self):
@@ -23,8 +22,8 @@ class Worker(BaseAnt):
         if self.game.ant.currentResource.value >= Config.ant_max_rec_amount * 0.5:
             self.spy = False
             return GrabAndReturn
-        # momkene ye chiz kam dastet bashe baad be khatere oon natooni chizi bardari. todo fix this
-        if GrabAndReturn(self).is_really_good():
+        grab_and_return_object = self.previous_strategy_object if self.previous_strategy is GrabAndReturn else GrabAndReturn(self)
+        if grab_and_return_object.is_really_good():
             self.spy = False
             return GrabAndReturn
 

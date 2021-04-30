@@ -24,12 +24,12 @@ class Config:
 	ants_reg_rate = 0.8
 	base_range = 6
 	base_damage = 3
-	base_health = 10
+	base_health = 20
 	max_com_per_turn = 5
 	max_com_length = 32
 	max_turn = 200
-	worker_health = 3
-	attacker_health = 5
+	worker_health = 6
+	attacker_health = 8
 	attacker_range = 4
 	attacker_damage = 1
 	worker_price = 10
