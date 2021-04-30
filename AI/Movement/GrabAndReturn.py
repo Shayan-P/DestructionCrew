@@ -128,7 +128,7 @@ class GrabAndReturn(MovementStrategy):
             return False
         candidates = self.get_scores()
         my_resource = self.base_ant.game.ant.currentResource
-        if my_resource  .value > 0 and self.base_ant.grid.base_trap_graph.no_path(self.get_base_cell(), self.get_now_pos_cell()):
+        if my_resource.value > 0 and self.base_ant.grid.base_trap_graph.no_path(self.get_base_cell(), self.get_now_pos_cell()):
             return True
         if len(candidates) == 0:
             return True
@@ -228,4 +228,4 @@ class GrabAndReturn(MovementStrategy):
         return self.bread_grass_coefficient()[0] * 4.5
 
     def change_grid_coffs(self):
-        self.grid.set_coffs(hate_known=3, opponent_base_fear=5)
+        self.grid.set_coffs(hate_known=0, opponent_base_fear=5)
