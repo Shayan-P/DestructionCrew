@@ -21,6 +21,7 @@ class GoCamp(MovementStrategy):
     def get_direction(self):
         self.cool_down -= 1
         self.report_gathering()
+        self.report_party()
         # print("We are choosing direction. we have resource: ", self.base_ant.game.ant.currentResource.value)
         # shayad bad nabashe ye vaghta tama kone bishtar biare
         return self.go_to_meeting()
@@ -55,6 +56,31 @@ class GoCamp(MovementStrategy):
         # other stuff todo
         return False
 
+    def get_best_cell_resource(self, center: Cell) -> Cell:
+        best_val = None
+        best_cell = center
+        for dx in range(-1, 2):
+            for dy in range(-1, 2):
+                if abs(dx) + abs(dy) == 2:
+                    continue
+                resource_sum = 0
+                cell = center.move_to(dx, dy)
+                for d2x in range(-1, 2):
+                    for d2y in range(-1, 2):
+                        if abs(d2x) + abs(d2y) == 2:
+                            continue
+                        res_cell = cell.move_to(d2x, d2y)
+
+                        if self.grid.model_cell[res_cell.x][res_cell.y] is not None:
+                            if self.grid.model_cell[res_cell.x][res_cell.y].resource_type is not None:
+                                resource_sum += self.grid.model_cell[res_cell.x][res_cell.y].resource_value
+                cell_value = ((resource_sum + 100) / 100) * self.grid.fight[cell.x][cell.y]
+                if (best_val is None) or (best_val < cell_value):
+                    best_val = cell_value
+                    best_cell = cell
+
+        return best_cell
+
     @once_per_turn
     def get_best_cell_camp(self):
         if (self.is_not_good()):
@@ -66,7 +92,8 @@ class GoCamp(MovementStrategy):
 
         candidates = self.get_scores()
         # print("Candidates are :", candidates)
-        self.best_cell = Choosing.max_choose(candidates)
+        ret = Choosing.max_choose(candidates)
+        self.best_cell = self.get_best_cell_resource(ret)
         self.stay = self.max_stay
         # print("Fuck !", self.grid.fight[self.best_cell.x][self.best_cell.y])
         return self.best_cell
@@ -144,9 +171,11 @@ class GoCamp(MovementStrategy):
         return
 
     def report_party(self) -> bool:
-        meet_cell = self.get_meeting_address()
-        if meet_cell is None:
+        meet_news = self.get_meeting_address()
+        if meet_news is None:
             return False
+        meet_cell = meet_news.get_cell()
+
         dis = self.grid.simple_graph.get_shortest_distance(self.base_ant.get_now_pos_cell(), meet_cell)
         if (dis != 4) or (self.cool_down > 0):
             return False
