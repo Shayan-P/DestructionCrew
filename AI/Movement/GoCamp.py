@@ -65,6 +65,9 @@ class GoCamp(MovementStrategy):
                     continue
                 resource_sum = 0
                 cell = center.move_to(dx, dy)
+                if self.grid.known_graph.no_path(self.base_ant.get_now_pos_cell(), cell) :
+                    continue
+
                 for d2x in range(-1, 2):
                     for d2y in range(-1, 2):
                         if abs(d2x) + abs(d2y) == 2:
