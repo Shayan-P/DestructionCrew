@@ -38,6 +38,8 @@ def see_resource(grid, news: ViewResource, is_from_chat_box, update_chat_box):
 
 
 def view_opp_base(grid, news: ViewOppBase, is_from_chat_box, update_chat_box):
+	if grid.sure_opponent_base():
+		return
 	grid.report_opponent_base(Cell.from_model_cell(news.get_cell()))
 	if update_chat_box:
 		grid.chat_box_writer.report(news)

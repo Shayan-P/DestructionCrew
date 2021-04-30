@@ -130,11 +130,13 @@ class BaseAnt:
             self.grid.update_with_news(SafeDangerCell(self.previous_cell, danger=False),
                                        update_chat_box=Config.alive_turn != 0, is_from_chat_box=False)
 
+        print("size of attacks: ", len(self.game.ant.attacks))
         for attack in self.game.ant.attacks:
             if attack.is_attacker_enemy:
                 a = Cell(attack.attacker_col, attack.attacker_row)
                 b = Cell(attack.defender_col, attack.defender_row)
                 if a.manhattan_distance(b) > Config.attacker_range:
+                    print("reporting base!")
                     self.grid.update_with_news(ViewOppBase(a), update_chat_box=True, is_from_chat_box=False)
 
         # self.report_gathering()

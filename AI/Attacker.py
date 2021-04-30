@@ -11,7 +11,6 @@ from typing import Optional
 class Attacker(BaseAnt):
     def __init__(self, game):
         super(Attacker, self).__init__(game)
-        self.movement = Defender(self)
 
     def spread_filter(self, move):
         us = len(self.near_scorpions(0))
