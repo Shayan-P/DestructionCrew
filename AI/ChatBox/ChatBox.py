@@ -14,6 +14,7 @@ from .ViewResource import ViewResource
 from .FightZone import FightZone
 from .ImAlive import ImAlive
 from .Gathering import Gathering
+from .Party import Party
 
 all_message_types: List[Type[BaseNews]] = BaseNews.__subclasses__()
 
@@ -72,14 +73,11 @@ class ChatBoxWriter:
 					self.stuck_news.append(new)
 				# print("cant report news: ", new)
 
-		self.priority = 100 * max_priority + sum_priority
-		# todo
-		# store the messages that ignored because of not enough space
-		# return ""
+		self.priority = 10 * max_priority + sum_priority
 		return ret.get_message()
 
 	def get_priority(self) -> int:
-		return self.turn * 10000 + self.priority
+		return self.priority
 
 
 class ChatBoxReader:

@@ -7,7 +7,6 @@ from AI.Config import Config
 from Utils import logger
 from settings import DEBUG, HAS_SLEEP
 from AI.BaseAnt import BaseAnt
-
 # just remove this and everything will be printed in console
 
 

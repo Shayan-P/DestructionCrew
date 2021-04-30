@@ -41,6 +41,3 @@ class MovementStrategy:
 
     def report_gathering(self):
         pass
-
-    def pre_calc(self):
-        pass

@@ -10,12 +10,10 @@ class Gathering(BaseNews):
 	huffman_prefix = "0011"
 
 	priority_size = 10
-	def __init__(self, cell: ModelCell, priority=-1, life_time=6):
+	def __init__(self, cell: ModelCell, age, ant_id):
 		super().__init__()
 		self.cell: ModelCell = deepcopy(cell)
-		if priority == -1:
-			self.priority = randint(0, 2**Gathering.priority_size - 1)
-		self.life_time = life_time
+		self.priority = 256 * age + ant_id
 
 	def get_cell(self) -> ModelCell:
 		return self.cell
@@ -24,30 +22,25 @@ class Gathering(BaseNews):
 		return f"meet({self.cell.x}, {self.cell.y})"
 
 	def message_size(self) -> int:
-		return len(self.huffman_prefix) + 12 + Gathering.priority_size + 4  # prefix (x, y) priority expired
+		return len(self.huffman_prefix) + 12 + 16 # prefix (x, y) priority expired
 
 	def get_priority(self):
-		return 100
-
-	def get_new_priority(self):
-		return self.priority
+		return self.priority * 2
 
 	def encode(self, writer: Writer):
 		# print("ENCODING ", self.cell.x, self.cell.y)
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))
 		writer.write(self.cell.x, 6)
 		writer.write(self.cell.y, 6)
-		writer.write(self.priority, Gathering.priority_size)
-		writer.write(self.life_time, 4)
+		writer.write(self.priority, 16)
 
 	@staticmethod
 	def decode(reader: Reader) -> BaseNews:
 		x = reader.read(6)
 		y = reader.read(6)
-		priority = reader.read(Gathering.priority_size)
-		life_time = reader.read(4)
+		priority = reader.read(16)
 		cell = ModelCell(x, y, None, None, None)
-		return Gathering(cell, priority, life_time)
+		return Gathering(cell, priority // 256, priority % 256)
 
 
 """
