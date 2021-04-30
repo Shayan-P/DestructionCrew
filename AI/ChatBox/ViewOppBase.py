@@ -22,7 +22,7 @@ class ViewOppBase(BaseNews):
 		return len(self.huffman_prefix) + 12  # prefix (x, y)
 
 	def get_priority(self):
-		return 6
+		return 3000000
 
 	def encode(self, writer: Writer):
 		writer.write(int(self.huffman_prefix, 2), len(self.huffman_prefix))

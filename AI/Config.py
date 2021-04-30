@@ -54,6 +54,11 @@ class Config:
 	alive_turn = -1
 	swamp_stay = 3 + 1
 
+	start_spy = 130
+	spy_prod_rate = 0.15
+	start_rush = 163
+	start_rape = 180
+
 	@staticmethod
 	def get_limit_of_grass_in_turn(turn):
 		def linear(start, finish, count):

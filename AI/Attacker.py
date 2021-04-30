@@ -2,7 +2,7 @@ import Model
 
 from .BaseAnt import BaseAnt
 from .Grid import Cell, Grid
-from .Movement import Explore, Follower, AloneSpy, Defender, GrabAndReturn, GoCamp, FuckOpponentBase, GetNearOpponentBase
+from .Movement import Explore, Follower, AloneSpy, Defender, GrabAndReturn, GoCamp, FuckOpponentBase, HardCoreRush
 from .ChatBox import Gathering
 from random import randint, random
 from AI.Config import Config
@@ -38,28 +38,34 @@ class Attacker(BaseAnt):
         ))
 
     def choose_best_strategy(self):
-        # if not self.grid.sure_opponent_base():
-        #     if self.previous_strategy is AloneSpy:
-        #         return AloneSpy
-        #     if Config.alive_turn == 1 and random() < 0.06:
-        #         return AloneSpy
+        start_spy = Config.start_spy
+        spy_prod_rate = Config.spy_prod_rate
+        start_rush = Config.start_rush
+
+        if (not self.grid.sure_opponent_base()) and (start_spy <= self.grid.chat_box_reader.get_now_turn()):
+            if self.previous_strategy is AloneSpy:
+                return AloneSpy
+            if ((Config.alive_turn == 1) or self.grid.chat_box_reader.get_now_turn() == start_spy) and (random() < spy_prod_rate):
+                return AloneSpy
 
         # if self.previous_strategy is GetNearOpponentBase:
         #     return GetNearOpponentBase
         # if (self.previous_strategy is FuckOpponentBase) and (self.grid.sure_opponent_base()) and (len(self.near_scorpions(2)) >= 3):
         #     return GetNearOpponentBase
+        if (self.grid.sure_opponent_base()) and (self.grid.chat_box_reader.get_now_turn() >= start_rush):
+            return HardCoreRush
 
-        if self.grid.sure_opponent_base() and self.get_now_pos_cell().manhattan_distance(self.grid.expected_opponent_base()) <= Config.base_range:
-            return FuckOpponentBase
-        if self.grid.chat_box_reader.get_now_turn() >= 100: # change this if. to something like if map is partially known... todo
-            if len(self.near_scorpions(1)) >= 7: # change this todo
-                return FuckOpponentBase
-        if self.previous_strategy is FuckOpponentBase:
-            return FuckOpponentBase
-        if self.grid.chat_box_reader.get_now_turn() >= 165:  # change this! todo
-            return FuckOpponentBase
-        if self.grid.chat_box_reader.get_now_turn() >= 150 and self.grid.sure_opponent_base():
-            return FuckOpponentBase
+        # if self.grid.sure_opponent_base() and self.get_now_pos_cell().manhattan_distance(self.grid.expected_opponent_base()) <= Config.base_range:
+        #     return FuckOpponentBase
+        # if self.grid.chat_box_reader.get_now_turn() >= 100: # change this if. to something like if map is partially known... todo
+        #     if len(self.near_scorpions(1)) >= 7: # change this todo
+        #         return FuckOpponentBase
+        # if self.previous_strategy is FuckOpponentBase:
+        #     return FuckOpponentBase
+        # if self.grid.chat_box_reader.get_now_turn() >= 165:  # change this! todo
+        #     return FuckOpponentBase
+        # if self.grid.chat_box_reader.get_now_turn() >= 150 and self.grid.sure_opponent_base():
+        #     return FuckOpponentBase
         # if there are a little unknown cells stop exploring todo
         # return GoCamp
         if self.previous_strategy is None:
