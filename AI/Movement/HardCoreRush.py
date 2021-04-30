@@ -18,7 +18,7 @@ class HardCoreRush(MovementStrategy):
 		pass
 
 	def set_destination(self):
-		opp_base = self.grid.expected_opponent_base
+		opp_base = self.grid.expected_opponent_base()
 		candids = []
 		for cell in self.grid.get_all_cells():
 			if cell.manhattan_distance(opp_base) <= 6:
